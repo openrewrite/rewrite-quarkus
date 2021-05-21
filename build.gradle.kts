@@ -8,7 +8,7 @@ import java.util.*
 plugins {
     `java-library`
     `maven-publish`
-    //signing
+    signing
 
     id("org.jetbrains.kotlin.jvm") version "1.5.0"
     id("nebula.maven-resolved-dependencies") version "17.3.2"
@@ -56,15 +56,15 @@ nexusPublishing {
     }
 }
 
-//signing {
-//    setRequired({
-//        !project.version.toString().endsWith("SNAPSHOT") || project.hasProperty("forceSigning")
-//    })
-//    val signingKey: String? by project
-//    val signingPassword: String? by project
-//    useInMemoryPgpKeys(signingKey, signingPassword)
-//    sign(publishing.publications["nebula"])
-//}
+signing {
+    setRequired({
+        !project.version.toString().endsWith("SNAPSHOT") || project.hasProperty("forceSigning")
+    })
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications["nebula"])
+}
 
 configurations.all {
     resolutionStrategy {
