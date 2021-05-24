@@ -106,7 +106,7 @@ dependencies {
     testRuntimeOnly("org.openrewrite:rewrite-java-11:${rewriteVersion}")
     testRuntimeOnly("org.openrewrite:rewrite-java-8:${rewriteVersion}")
 
-    testRuntimeOnly("io.smallrye.reactive:mutiny:0.12+")
+    testRuntimeOnly("io.smallrye.reactive:mutiny:0.12.+")
 }
 
 tasks.named<Test>("test") {
