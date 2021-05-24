@@ -15,7 +15,7 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.quarkus.Quarkus1_11to1_13Migration
+name: org.openrewrite.java.quarkus.Quarkus1to1_13Migration
 displayName: Quarkus 1.13 migration from Quarkus 1.11
 description: Migrates Quarkus 1.11 to 1.13.
 recipeList:
