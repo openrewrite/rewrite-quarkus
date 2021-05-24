@@ -106,6 +106,7 @@ dependencies {
     testRuntimeOnly("org.openrewrite:rewrite-java-11:${rewriteVersion}")
     testRuntimeOnly("org.openrewrite:rewrite-java-8:${rewriteVersion}")
 
+    testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.4.Final")
     testRuntimeOnly("io.smallrye.reactive:mutiny:0.12.+")
 }
 
