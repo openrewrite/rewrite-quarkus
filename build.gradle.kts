@@ -106,23 +106,7 @@ dependencies {
     testRuntimeOnly("org.openrewrite:rewrite-java-11:${rewriteVersion}")
     testRuntimeOnly("org.openrewrite:rewrite-java-8:${rewriteVersion}")
 
-    testRuntimeOnly("org.reactivestreams:reactive-streams:1+")
-    testRuntimeOnly("io.quarkus:quarkus-mutiny:1.11+")
-    testRuntimeOnly("io.quarkus:quarkus-mutiny-reactive-streams-operators:1.11+")
-    testRuntimeOnly("io.quarkus:quarkus-mutiny-reactive-streams-operators-deployment:1.11+")
-    testRuntimeOnly("io.quarkus:quarkus-resteasy-mutiny:1.11+")
-    testRuntimeOnly("io.smallrye.reactive:mutiny-reactor:0.12+")
-    testRuntimeOnly("io.smallrye.reactive:mutiny-rxjava:0.12+")
     testRuntimeOnly("io.smallrye.reactive:mutiny:0.12+")
-
-    testRuntimeOnly("io.quarkus:quarkus-resteasy:1.11+")
-    testRuntimeOnly("io.quarkus:quarkus-arc:1.11+")
-
-
-    testRuntimeOnly("io.quarkus:quarkus-smallrye-context-propagation:1.11+")
-    testRuntimeOnly("io.quarkus:quarkus-resteasy-reactive-common:1.11+")
-    testRuntimeOnly("io.quarkus:quarkus-resteasy-jsonb:1.11+")
-
 }
 
 tasks.named<Test>("test") {
