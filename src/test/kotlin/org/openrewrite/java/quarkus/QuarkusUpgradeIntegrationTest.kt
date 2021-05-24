@@ -31,7 +31,7 @@ class QuarkusUpgradeIntegrationTest : JavaRecipeTest {
         .scanRuntimeClasspath("org.openrewrite.java.quarkus")
         .build()
         .activateRecipes(
-            "org.openrewrite.java.quarkus.Quarkus1_11to1_13Migration"
+            "org.openrewrite.java.quarkus.Quarkus1to1_13Migration"
         )
 
     @Test
