@@ -15,14 +15,23 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.quarkus.Quarkus1_11to1_12Migration
-displayName: Uprgade Quarkus project from 1.11 to 1.12
-description: Uprgade Quarkus project from 1.11 to 1.12.
+name: org.openrewrite.java.quarkus.Quarkus1to1_13Migration
+displayName: Quarkus 1.13 migration from Quarkus 1.11
+description: Migrates Quarkus 1.11 to 1.13.
 recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: io.quarkus
-      newVersion: 1.12
-      trustParent: true
+      artifactId: quarkus-universe-bom
+      newVersion: 1.13.x
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: io.smallrye.mutiny.Multi collectItems()
-      newMethodName: collect()
+      newMethodName: collect
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.Multi groupItems()
+      newMethodName: group
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.Multi transform()
+      newMethodName: select
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.groups.MultiTransform byTakingFirstItems(..)
+      newMethodName: first
