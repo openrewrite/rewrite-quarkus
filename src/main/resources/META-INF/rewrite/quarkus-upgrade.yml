@@ -35,3 +35,6 @@ recipeList:
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: io.smallrye.mutiny.groups.MultiTransform byTakingFirstItems(..)
       newMethodName: first
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: quarkus.dev.instrumentation
+      newPropertyKey: quarkus.live-reload.instrumentation
