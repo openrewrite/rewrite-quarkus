@@ -66,6 +66,6 @@ recipeList:
       oldPropertyKey: quarkus.quartz.force-start
       newPropertyKey: quarkus.quartz.start-mode
   - org.openrewrite.properties.ChangePropertyValue:
-      propertyKey:  quarkus.quartz.store-type
+      propertyKey: quarkus.quartz.store-type
       oldValue: db
       newValue: jdbc-cmt
