@@ -47,6 +47,19 @@ recipeList:
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: quarkus.dev.instrumentation
       newPropertyKey: quarkus.live-reload.instrumentation
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: smallrye.jwt.sign.key-location
+      newPropertyKey: smallrye.jwt.sign.key.location
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: smallrye.jwt.encrypt.key-location
+      newPropertyKey: smallrye.jwt.encrypt.key.location
+  - org.openrewrite.properties.ChangePropertyValue:
+      propertyKey: quarkus.quartz.force-start
+      newValue: forced
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: quarkus.quartz.force-start
+      newPropertyKey: quarkus.quartz.start-mode
+
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.quarkus.Quarkus1to2Migration
