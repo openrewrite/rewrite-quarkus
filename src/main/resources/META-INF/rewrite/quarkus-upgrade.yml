@@ -23,6 +23,7 @@ recipeList:
       groupId: io.quarkus
       artifactId: quarkus-universe-bom
       newVersion: 1.13.x
+  - org.openrewrite.java.quarkus.ConfigPropertiesToConfigMapping
   - org.openrewrite.java.quarkus.MultiTransformHotStreamToMultiHotStream
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: io.smallrye.mutiny.Multi collectItems()
