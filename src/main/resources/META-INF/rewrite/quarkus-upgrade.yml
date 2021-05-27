@@ -49,6 +49,7 @@ recipeList:
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: quarkus.dev.instrumentation
       newPropertyKey: quarkus.live-reload.instrumentation
+  - org.openrewrite.java.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.quarkus.Quarkus1to2Migration
