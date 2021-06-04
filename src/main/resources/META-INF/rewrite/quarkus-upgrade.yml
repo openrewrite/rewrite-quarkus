@@ -80,6 +80,4 @@ recipeList:
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: io.quarkus.qute.api.ResourcePath
       newFullyQualifiedTypeName: io.quarkus.qute.Location
-  - org.openrewrite.maven.RemovePlugin:
-      groupId: org.apache.avro
-      artifactId: avro-maven-plugin
+  - org.openrewrite.java.quarkus.quarkus2.RemoveAvroMavenPlugin
