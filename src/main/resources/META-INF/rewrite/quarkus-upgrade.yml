@@ -23,6 +23,10 @@ recipeList:
       groupId: io.quarkus
       artifactId: quarkus-universe-bom
       newVersion: 1.13.x
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: io.quarkus
+      artifactId: quarkus-maven-plugin
+      newVersion: 1.13.x
   - org.openrewrite.java.quarkus.ConfigPropertiesToConfigMapping
   - org.openrewrite.java.quarkus.MultiTransformHotStreamToMultiHotStream
   - org.openrewrite.java.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
@@ -81,3 +85,7 @@ recipeList:
       oldFullyQualifiedTypeName: io.quarkus.qute.api.ResourcePath
       newFullyQualifiedTypeName: io.quarkus.qute.Location
   - org.openrewrite.java.quarkus.quarkus2.RemoveAvroMavenPlugin
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: io.quarkus
+      artifactId: quarkus-maven-plugin
+      newVersion: 2.x
