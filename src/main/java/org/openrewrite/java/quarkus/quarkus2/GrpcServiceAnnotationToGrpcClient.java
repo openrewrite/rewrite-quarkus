@@ -32,12 +32,12 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Migrate `@GrpcService` To `@GrpcClient`";
+        return "Use `@GrpcClient`";
     }
 
     @Override
     public String getDescription() {
-        return "Migrate the `@GrpcService` annotation to `@GrpcClient`. Removes the optional `@GrpcClient.value()` unless the service name is different from the name of annotated element.";
+        return "The `@GrpcService` annotation is replaced with `@GrpcClient` in Quarkus 2.x. Removes the optional `@GrpcClient.value()` unless the service name is different from the name of annotated element.";
     }
 
     @Override

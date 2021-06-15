@@ -30,12 +30,12 @@ public class MultiTransformHotStreamToMultiHotStream extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Mutiny `multi.transform().hotStream()` to `multi.hotStream()`.";
+        return "Use Mutiny `multi.toHotStream()`.";
     }
 
     @Override
     public String getDescription() {
-        return "Replace deprecated Mutiny `multi.transform().toHotStream()` with `multi.toHotStream()`.";
+        return "Replace Mutiny API usages of `multi.transform().toHotStream()` with `multi.toHotStream()`.";
     }
 
     @Override

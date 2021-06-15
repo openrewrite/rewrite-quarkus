@@ -28,12 +28,12 @@ import org.openrewrite.java.tree.J;
 public class ConfigPropertiesToConfigMapping extends Recipe {
     @Override
     public String getDisplayName() {
-        return "Migrate `@ConfigProperties` To `@ConfigMapping`";
+        return "Use `@ConfigMapping`";
     }
 
     @Override
     public String getDescription() {
-        return "Migrate the Quarkus `@ConfigProperties` annotated configurations to the equivalent Smallrye `@ConfigMapping`.";
+        return "Migrate Quarkus configuration classes annotated with `@ConfigProperties` to the equivalent Smallrye `@ConfigMapping`.";
     }
 
     @Override

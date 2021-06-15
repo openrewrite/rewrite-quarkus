@@ -32,7 +32,7 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Migrate `quarkus-maven-plugin` `native-image` goal";
+        return "Use `native` profile in `quarkus-maven-plugin`";
     }
 
     @Override
