@@ -55,6 +55,7 @@ class MultiTransformHotStreamToMultiHotStreamTest : JavaRecipeTest {
                             .collect();
                 }
             }
-        """
+        """,
+        skipEnhancedTypeValidation = true // fixme
     )
 }
