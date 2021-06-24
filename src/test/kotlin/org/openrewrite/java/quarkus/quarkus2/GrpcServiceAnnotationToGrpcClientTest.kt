@@ -47,6 +47,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
             package org.openrewrite.example;
 
             import io.quarkus.grpc.runtime.annotations.GrpcService;
+
             import javax.inject.Inject;
 
             public class ExampleResource {
@@ -59,6 +60,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
             package org.openrewrite.example;
 
             import io.quarkus.grpc.GrpcClient;
+
             import javax.inject.Inject;
 
             public class ExampleResource {
@@ -76,6 +78,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
             package org.openrewrite.example;
 
             import io.quarkus.grpc.runtime.annotations.GrpcService;
+
             import javax.inject.Inject;
 
             public class ExampleResource {
@@ -88,6 +91,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
             package org.openrewrite.example;
 
             import io.quarkus.grpc.GrpcClient;
+
             import javax.inject.Inject;
 
             public class ExampleResource {
