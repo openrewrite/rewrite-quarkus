@@ -13,20 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
----
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.quarkus.Quarkus1to1_13Migration
 displayName: Quarkus 1.13 migration from Quarkus 1.11
 description: Migrates Quarkus 1.11 to 1.13.
 recipeList:
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: io.quarkus
-      artifactId: quarkus-universe-bom
-      newVersion: 1.13.x
-  - org.openrewrite.maven.UpgradePluginVersion:
-      groupId: io.quarkus
-      artifactId: quarkus-maven-plugin
-      newVersion: 1.13.x
+# (https://github.com/openrewrite/rewrite-quarkus/issues/37) fixme
+#  - org.openrewrite.maven.UpgradeDependencyVersion:
+#      groupId: io.quarkus
+#      artifactId: quarkus-universe-bom
+#      newVersion: 1.13.x
+#  - org.openrewrite.maven.UpgradePluginVersion:
+#      groupId: io.quarkus
+#      artifactId: quarkus-maven-plugin
+#      newVersion: 1.13.x
   - org.openrewrite.java.quarkus.ConfigPropertiesToConfigMapping
   - org.openrewrite.java.quarkus.MultiTransformHotStreamToMultiHotStream
   - org.openrewrite.java.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
@@ -61,6 +61,7 @@ name: org.openrewrite.java.quarkus.quarkus2.Quarkus1to2Migration
 displayName: Quarkus 2.x migration from Quarkus 1.x
 description: Migrates Quarkus 1.x to 2.x.
 recipeList:
+  - org.openrewrite.java.quarkus.Quarkus1to1_13Migration
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: smallrye.jwt.sign.key-location
       newPropertyKey: smallrye.jwt.sign.key.location

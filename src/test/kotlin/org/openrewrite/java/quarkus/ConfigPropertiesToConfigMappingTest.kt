@@ -37,8 +37,9 @@ class ConfigPropertiesToConfigMappingTest : JavaRecipeTest {
             import io.quarkus.arc.config.ConfigProperties;
 
             @ConfigProperties(prefix = "greeting")
-            public interface MyConfiguration {
+            interface MyConfiguration {
                 String message();
+
                 String name();
             }
         """,
@@ -46,8 +47,9 @@ class ConfigPropertiesToConfigMappingTest : JavaRecipeTest {
             import io.smallrye.config.ConfigMapping;
 
             @ConfigMapping(prefix = "greeting")
-            public interface MyConfiguration {
+            interface MyConfiguration {
                 String message();
+
                 String name();
             }
         """
@@ -61,8 +63,9 @@ class ConfigPropertiesToConfigMappingTest : JavaRecipeTest {
             import io.quarkus.arc.config.ConfigProperties;
 
             @ConfigProperties(prefix = "greeting")
-            public class MyConfiguration {
+            class MyConfiguration {
                 String message;
+
                 String name;
             }
         """,
@@ -70,10 +73,12 @@ class ConfigPropertiesToConfigMappingTest : JavaRecipeTest {
             import io.smallrye.config.ConfigMapping;
 
             @ConfigMapping(prefix = "greeting")
-            public interface MyConfiguration {
+            interface MyConfiguration {
                 String message();
+
                 String name();
             }
         """
     )
+
 }

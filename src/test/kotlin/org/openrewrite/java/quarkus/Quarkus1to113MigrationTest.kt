@@ -21,7 +21,7 @@ import org.openrewrite.config.Environment
 import org.openrewrite.java.JavaParser
 import org.openrewrite.java.JavaRecipeTest
 
-class QuarkusUpgradeIntegrationTest : JavaRecipeTest {
+class Quarkus1to113MigrationTest : JavaRecipeTest {
     override val parser: JavaParser = JavaParser.fromJavaVersion()
         .logCompilationWarningsAndErrors(true)
         .classpath("mutiny", "reactive-streams")
@@ -30,9 +30,7 @@ class QuarkusUpgradeIntegrationTest : JavaRecipeTest {
     override val recipe: Recipe = Environment.builder()
         .scanRuntimeClasspath("org.openrewrite.java.quarkus")
         .build()
-        .activateRecipes(
-            "org.openrewrite.java.quarkus.Quarkus1to1_13Migration"
-        )
+        .activateRecipes("org.openrewrite.java.quarkus.Quarkus1to1_13Migration")
 
     @Test
     fun changeMultiTransformAndByTakingFirst() = assertChanged(
@@ -46,13 +44,17 @@ class QuarkusUpgradeIntegrationTest : JavaRecipeTest {
             class Test {
                 public static Multi<String> greetings(int count, String name) {
                     return Multi.createFrom().ticks().every(Duration.ofMillis(1))
-                            .onItem().transform(n -> "hello " + name + " -" + n)
-                            .transform().byTakingFirstItems(count);
+                            .onItem()
+                            .transform(n -> "hello " + name + " -" + n)
+                            .transform()
+                            .byTakingFirstItems(count);
                 }
 
                 public static Uni<List<String>> collectItems(int count, String name) {
                     Multi<String> multi = greetings(count, name);
-                    Uni<List<String>> uni = multi.collectItems().asList();
+                    Uni<List<String>> uni = multi
+                            .collectItems()
+                            .asList();
                     return uni;
                 }
             }
@@ -67,16 +69,21 @@ class QuarkusUpgradeIntegrationTest : JavaRecipeTest {
             class Test {
                 public static Multi<String> greetings(int count, String name) {
                     return Multi.createFrom().ticks().every(Duration.ofMillis(1))
-                            .onItem().transform(n -> "hello " + name + " -" + n)
-                            .select().first(count);
+                            .onItem()
+                            .transform(n -> "hello " + name + " -" + n)
+                            .select()
+                            .first(count);
                 }
 
                 public static Uni<List<String>> collectItems(int count, String name) {
                     Multi<String> multi = greetings(count, name);
-                    Uni<List<String>> uni = multi.collect().asList();
+                    Uni<List<String>> uni = multi
+                            .collect()
+                            .asList();
                     return uni;
                 }
             }
         """
     )
+
 }
