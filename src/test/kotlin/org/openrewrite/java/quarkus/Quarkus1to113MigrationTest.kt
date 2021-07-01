@@ -86,4 +86,70 @@ class Quarkus1to113MigrationTest : JavaRecipeTest {
         """
     )
 
+    @Test
+    fun changeUniApplyToTransform() = assertChanged(
+        before = """
+            import io.smallrye.mutiny.Uni;
+            import io.smallrye.mutiny.groups.UniAwait;
+
+            class Test {
+                public static UniAwait<String> method() {
+                    Uni<String> uni = Uni.createFrom().item(() -> null);
+                    return uni
+                            .onItem()
+                            .ifNotNull()
+                            .apply(String::toUpperCase)
+                            .await();
+                }
+            }
+        """,
+        after = """
+            import io.smallrye.mutiny.Uni;
+            import io.smallrye.mutiny.groups.UniAwait;
+            
+            class Test {
+                public static UniAwait<String> method() {
+                    Uni<String> uni = Uni.createFrom().item(() -> null);
+                    return uni
+                            .onItem()
+                            .ifNotNull()
+                            .transform(String::toUpperCase)
+                            .await();
+                }
+            }
+        """
+    )
+
+    @Test
+    fun changeMultiApplyToTransform() = assertChanged(
+        before = """
+            import io.smallrye.mutiny.Multi;
+
+            import java.time.Duration;
+
+            class Test {
+                public static Multi<String> greetings(int count, String name) {
+                    return Multi.createFrom().ticks().every(Duration.ofMillis(1))
+                            .onItem()
+                            .apply(n -> "hello " + name + " -" + n)
+                            .cache();
+                }
+            }
+        """,
+        after = """
+            import io.smallrye.mutiny.Multi;
+
+            import java.time.Duration;
+
+            class Test {
+                public static Multi<String> greetings(int count, String name) {
+                    return Multi.createFrom().ticks().every(Duration.ofMillis(1))
+                            .onItem()
+                            .transform(n -> "hello " + name + " -" + n)
+                            .cache();
+                }
+            }
+        """
+    )
+
 }
