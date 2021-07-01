@@ -52,6 +52,12 @@ recipeList:
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: io.smallrye.mutiny.Uni subscribeOn(java.util.concurrent.Executor)
       newMethodName: runSubscriptionOn
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.groups.MultiOnItem apply(java.util.function.Function)
+      newMethodName: transform
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.groups.UniOnNotNull apply(java.util.function.Function)
+      newMethodName: transform
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: quarkus.dev.instrumentation
       newPropertyKey: quarkus.live-reload.instrumentation
