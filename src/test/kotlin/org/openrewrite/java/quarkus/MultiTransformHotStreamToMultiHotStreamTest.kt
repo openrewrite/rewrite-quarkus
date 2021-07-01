@@ -22,7 +22,7 @@ import org.openrewrite.java.JavaRecipeTest
 
 class MultiTransformHotStreamToMultiHotStreamTest : JavaRecipeTest {
     override val parser: JavaParser = JavaParser.fromJavaVersion()
-        .logCompilationWarningsAndErrors(false)
+        .logCompilationWarningsAndErrors(true)
         .classpath("mutiny", "reactive-streams")
         .build()
 

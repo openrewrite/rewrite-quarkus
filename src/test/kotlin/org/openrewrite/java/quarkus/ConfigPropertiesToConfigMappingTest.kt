@@ -24,7 +24,7 @@ import org.openrewrite.java.JavaRecipeTest
 
 class ConfigPropertiesToConfigMappingTest : JavaRecipeTest {
     override val parser: JavaParser = JavaParser.fromJavaVersion()
-        .logCompilationWarningsAndErrors(false)
+        .logCompilationWarningsAndErrors(true)
         .classpath("quarkus-arc")
         .build()
 
