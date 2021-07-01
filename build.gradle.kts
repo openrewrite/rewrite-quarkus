@@ -88,6 +88,7 @@ dependencies {
 
     implementation("org.openrewrite:rewrite-java:${rewriteVersion}")
     implementation("org.openrewrite:rewrite-maven:${rewriteVersion}")
+    implementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
 
     runtimeOnly("org.openrewrite:rewrite-java-11:${rewriteVersion}")
 
@@ -104,6 +105,7 @@ dependencies {
 
     testImplementation("org.openrewrite:rewrite-test:${rewriteVersion}")
     testImplementation("org.openrewrite:rewrite-maven:${rewriteVersion}")
+    testImplementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
 
     testImplementation("org.assertj:assertj-core:latest.release")
 
