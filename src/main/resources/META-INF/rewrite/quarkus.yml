@@ -31,6 +31,9 @@ recipeList:
   - org.openrewrite.java.quarkus.MultiTransformHotStreamToMultiHotStream
   - org.openrewrite.java.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
   - org.openrewrite.java.quarkus.ConfigureQuarkusMavenPluginWithReasonableDefaults
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: quarkus.dev.instrumentation
+      newPropertyKey: quarkus.live-reload.instrumentation
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: io.smallrye.mutiny.Multi collectItems()
       newMethodName: collect
@@ -53,14 +56,23 @@ recipeList:
       methodPattern: io.smallrye.mutiny.Uni subscribeOn(java.util.concurrent.Executor)
       newMethodName: runSubscriptionOn
   - org.openrewrite.java.ChangeMethodName:
-      methodPattern: io.smallrye.mutiny.groups.MultiOnItem apply(java.util.function.Function)
+      methodPattern: io.smallrye.mutiny.groups.UniOnFailure apply(java.util.function.Function)
+      newMethodName: transform
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.groups.UniOnItem apply(java.util.function.Function)
+      newMethodName: transform
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.groups.UniOnItemOrFailure apply(java.util.function.BiFunction)
       newMethodName: transform
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: io.smallrye.mutiny.groups.UniOnNotNull apply(java.util.function.Function)
       newMethodName: transform
-  - org.openrewrite.properties.ChangePropertyKey:
-      oldPropertyKey: quarkus.dev.instrumentation
-      newPropertyKey: quarkus.live-reload.instrumentation
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.groups.MultiOnFailure apply(java.util.function.Function)
+      newMethodName: transform
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: io.smallrye.mutiny.groups.MultiOnItem apply(java.util.function.Function)
+      newMethodName: transform
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.quarkus.quarkus2.Quarkus1to2Migration

@@ -15,6 +15,7 @@
  */
 package org.openrewrite.java.quarkus
 
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.openrewrite.Recipe
 import org.openrewrite.config.Environment
@@ -86,70 +87,140 @@ class Quarkus1to113MigrationTest : JavaRecipeTest {
         """
     )
 
-    @Test
-    fun changeUniApplyToTransform() = assertChanged(
-        before = """
-            import io.smallrye.mutiny.Uni;
-            import io.smallrye.mutiny.groups.UniAwait;
+    @Nested
+    inner class MutinyUniMultiApplyToTransform {
+        @Test
+        fun uniOnFailure() = assertChanged(
+            before = """
+                import io.smallrye.mutiny.Uni;
 
-            class Test {
-                public static UniAwait<String> method() {
-                    Uni<String> uni = Uni.createFrom().item(() -> null);
-                    return uni
-                            .onItem()
-                            .ifNotNull()
-                            .apply(String::toUpperCase)
-                            .await();
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onFailure().apply(f -> new RuntimeException("boom"));
+                    }
                 }
-            }
-        """,
-        after = """
-            import io.smallrye.mutiny.Uni;
-            import io.smallrye.mutiny.groups.UniAwait;
-            
-            class Test {
-                public static UniAwait<String> method() {
-                    Uni<String> uni = Uni.createFrom().item(() -> null);
-                    return uni
-                            .onItem()
-                            .ifNotNull()
-                            .transform(String::toUpperCase)
-                            .await();
+            """,
+            after = """
+                import io.smallrye.mutiny.Uni;
+
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onFailure().transform(f -> new RuntimeException("boom"));
+                    }
                 }
-            }
-        """
-    )
+            """
+        )
 
-    @Test
-    fun changeMultiApplyToTransform() = assertChanged(
-        before = """
-            import io.smallrye.mutiny.Multi;
+        @Test
+        fun uniOnItem() = assertChanged(
+            before = """
+                import io.smallrye.mutiny.Uni;
 
-            import java.time.Duration;
-
-            class Test {
-                public static Multi<String> greetings(int count, String name) {
-                    return Multi.createFrom().ticks().every(Duration.ofMillis(1))
-                            .onItem()
-                            .apply(n -> "hello " + name + " -" + n)
-                            .cache();
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onItem().apply(String::toUpperCase);
+                    }
                 }
-            }
-        """,
-        after = """
-            import io.smallrye.mutiny.Multi;
+            """,
+            after = """
+                import io.smallrye.mutiny.Uni;
 
-            import java.time.Duration;
-
-            class Test {
-                public static Multi<String> greetings(int count, String name) {
-                    return Multi.createFrom().ticks().every(Duration.ofMillis(1))
-                            .onItem()
-                            .transform(n -> "hello " + name + " -" + n)
-                            .cache();
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onItem().transform(String::toUpperCase);
+                    }
                 }
-            }
-        """
-    )
+            """
+        )
+
+        @Test
+        fun uniOnItemOrFailure() = assertChanged(
+            before = """
+                import io.smallrye.mutiny.Uni;
+
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onItemOrFailure().apply((a, b) -> a + b);
+                    }
+                }
+            """,
+            after = """
+                import io.smallrye.mutiny.Uni;
+
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onItemOrFailure().transform((a, b) -> a + b);
+                    }
+                }
+            """
+        )
+
+        @Test
+        fun uniOnNotNull() = assertChanged(
+            before = """
+                import io.smallrye.mutiny.Uni;
+
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onItem().ifNotNull().apply(String::toUpperCase);
+                    }
+                }
+            """,
+            after = """
+                import io.smallrye.mutiny.Uni;
+
+                class Test {
+                    public static Uni<String> method(Uni<String> uni) {
+                        return uni.onItem().ifNotNull().transform(String::toUpperCase);
+                    }
+                }
+            """
+        )
+
+        @Test
+        fun multiOnFailure() = assertChanged(
+            before = """
+                import io.smallrye.mutiny.Multi;
+                
+                class Test {
+                    public static Multi<String> method(Multi<String> multi) {
+                        return multi.onFailure().apply(f -> new RuntimeException("boom"));
+                    }
+                }
+            """,
+            after = """
+                import io.smallrye.mutiny.Multi;
+                
+                class Test {
+                    public static Multi<String> method(Multi<String> multi) {
+                        return multi.onFailure().transform(f -> new RuntimeException("boom"));
+                    }
+                }
+            """
+        )
+
+        @Test
+        fun multiOnItem() = assertChanged(
+            before = """
+                import io.smallrye.mutiny.Multi;
+
+                class Test {
+                    public static Multi<String> method(Multi<String> multi) {
+                        return multi.onItem().apply(String::toUpperCase);
+                    }
+                }
+            """,
+            after = """
+                import io.smallrye.mutiny.Multi;
+
+                class Test {
+                    public static Multi<String> method(Multi<String> multi) {
+                        return multi.onItem().transform(String::toUpperCase);
+                    }
+                }
+            """
+        )
+
+    }
 
 }
