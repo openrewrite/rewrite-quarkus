@@ -53,9 +53,9 @@ class ConfigPropertiesToConfigMappingTest : JavaRecipeTest {
         """
     )
 
+    @Test
     @Issue("https://github.com/openrewrite/rewrite-quarkus/issues/24")
     @Disabled
-    @Test
     fun changeConfigClassType() = assertChanged(
         before = """
             import io.quarkus.arc.config.ConfigProperties;

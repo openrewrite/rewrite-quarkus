@@ -44,28 +44,29 @@ public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
 
     @Override
     protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new MavenVisitor() {
-            @Override
-            public Maven visitMaven(Maven maven, ExecutionContext ctx) {
-                doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("build"));
-                doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code"));
-                doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code-tests"));
-
-                FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
-                    Optional<Xml.Tag> maybeExtensions = plugin.getChild("extensions");
-                    if (!maybeExtensions.isPresent()) {
-                        Xml.Tag extensionsTag = Xml.Tag.build("<extensions>true</extensions>");
-                        doAfterVisit(new AddToTagVisitor<>(plugin, extensionsTag));
-                    } else {
-                        // note, might want to instead interpret `<extensions>false</extensions>` as a specific decision fixme
-                        doAfterVisit(new ChangeTagValueVisitor<>(maybeExtensions.get(), "true"));
-                    }
-                });
-
-                return super.visitMaven(maven, ctx);
-            }
-        };
+        return new ConfigureQuarkusMavenPluginWithReasonableDefaultsVisitor();
     }
 
+    private static class ConfigureQuarkusMavenPluginWithReasonableDefaultsVisitor extends MavenVisitor {
+        @Override
+        public Maven visitMaven(Maven maven, ExecutionContext ctx) {
+            doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("build"));
+            doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code"));
+            doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code-tests"));
+
+            FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
+                Optional<Xml.Tag> maybeExtensions = plugin.getChild("extensions");
+                if (!maybeExtensions.isPresent()) {
+                    Xml.Tag extensionsTag = Xml.Tag.build("<extensions>true</extensions>");
+                    doAfterVisit(new AddToTagVisitor<>(plugin, extensionsTag));
+                } else {
+                    // note, might want to instead interpret `<extensions>false</extensions>` as a specific decision fixme
+                    doAfterVisit(new ChangeTagValueVisitor<>(maybeExtensions.get(), "true"));
+                }
+            });
+
+            return super.visitMaven(maven, ctx);
+        }
+    }
 }
 

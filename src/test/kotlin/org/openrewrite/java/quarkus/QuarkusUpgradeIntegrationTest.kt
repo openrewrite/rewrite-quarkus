@@ -39,15 +39,18 @@ class QuarkusUpgradeIntegrationTest : JavaRecipeTest {
         before = """
             import io.smallrye.mutiny.Multi;
             import io.smallrye.mutiny.Uni;
+
             import java.util.List;
             import java.time.Duration;
-            public class A {
-                public Multi<String> greetings(int count, String name) {
+
+            class Test {
+                public static Multi<String> greetings(int count, String name) {
                     return Multi.createFrom().ticks().every(Duration.ofMillis(1))
                             .onItem().transform(n -> "hello " + name + " -" + n)
                             .transform().byTakingFirstItems(count);
                 }
-                public Uni<List<String>> collectItems(int count, String name) {
+
+                public static Uni<List<String>> collectItems(int count, String name) {
                     Multi<String> multi = greetings(count, name);
                     Uni<List<String>> uni = multi.collectItems().asList();
                     return uni;
@@ -57,15 +60,18 @@ class QuarkusUpgradeIntegrationTest : JavaRecipeTest {
         after = """
             import io.smallrye.mutiny.Multi;
             import io.smallrye.mutiny.Uni;
+
             import java.util.List;
             import java.time.Duration;
-            public class A {
-                public Multi<String> greetings(int count, String name) {
+
+            class Test {
+                public static Multi<String> greetings(int count, String name) {
                     return Multi.createFrom().ticks().every(Duration.ofMillis(1))
                             .onItem().transform(n -> "hello " + name + " -" + n)
                             .select().first(count);
                 }
-                public Uni<List<String>> collectItems(int count, String name) {
+
+                public static Uni<List<String>> collectItems(int count, String name) {
                     Multi<String> multi = greetings(count, name);
                     Uni<List<String>> uni = multi.collect().asList();
                     return uni;

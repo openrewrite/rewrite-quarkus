@@ -29,7 +29,6 @@ import org.openrewrite.xml.tree.Xml;
 import java.util.Optional;
 
 public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
-
     @Override
     public String getDisplayName() {
         return "Use `native` profile in `quarkus-maven-plugin`";
@@ -50,17 +49,16 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
     private static class MigrateQuarkusMavenPluginNativeImageGoalVisitor extends MavenVisitor {
         @Override
         public Maven visitMaven(Maven maven, ExecutionContext ctx) {
-            FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
-                FindTags.find(plugin, "//executions/execution/goals/goal").forEach(goal -> {
-                    if (goal.getContent() != null && goal.getContent().size() == 1 && goal.getContent().get(0) instanceof Xml.CharData) {
-                        Xml.CharData existingValue = (Xml.CharData) goal.getContent().get(0);
-                        if (existingValue.getText().equalsIgnoreCase("native-image")) {
-                            doAfterVisit(new RemoveContentVisitor<>(goal, true));
-                            doAfterVisit(new AddQuarkusPackageTypePropertyToNativeProfile());
+            FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").forEach(plugin ->
+                    FindTags.find(plugin, "//executions/execution/goals/goal").forEach(goal -> {
+                        if (goal.getContent() != null && goal.getContent().size() == 1 && goal.getContent().get(0) instanceof Xml.CharData) {
+                            Xml.CharData existingValue = (Xml.CharData) goal.getContent().get(0);
+                            if (existingValue.getText().equalsIgnoreCase("native-image")) {
+                                doAfterVisit(new RemoveContentVisitor<>(goal, true));
+                                doAfterVisit(new AddQuarkusPackageTypePropertyToNativeProfile());
+                            }
                         }
-                    }
-                });
-            });
+                    }));
 
             return super.visitMaven(maven, ctx);
         }

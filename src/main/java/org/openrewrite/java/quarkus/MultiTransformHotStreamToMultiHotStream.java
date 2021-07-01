@@ -25,12 +25,11 @@ import org.openrewrite.java.search.UsesMethod;
 import org.openrewrite.java.tree.J;
 
 public class MultiTransformHotStreamToMultiHotStream extends Recipe {
-
-    private static final MethodMatcher hotStreamMethodMatcher = new MethodMatcher("io.smallrye.mutiny.groups.MultiTransform toHotStream()");
+    private static final MethodMatcher HOT_STREAM_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.groups.MultiTransform toHotStream()");
 
     @Override
     public String getDisplayName() {
-        return "Use Mutiny `multi.toHotStream()`.";
+        return "Use Mutiny `multi.toHotStream()`";
     }
 
     @Override
@@ -40,28 +39,30 @@ public class MultiTransformHotStreamToMultiHotStream extends Recipe {
 
     @Override
     protected @Nullable TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new UsesMethod<>(hotStreamMethodMatcher);
+        return new UsesMethod<>(HOT_STREAM_METHOD_MATCHER);
     }
 
     @Override
     protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new JavaIsoVisitor<ExecutionContext>() {
-            final MethodMatcher transformMethodMatcher = new MethodMatcher("io.smallrye.mutiny.Multi transform()");
-            final MethodMatcher selectMethodMatcher = new MethodMatcher("io.smallrye.mutiny.Multi select()");
+        return new MultiTransformHotStreamToMultiHotStreamVisitor();
+    }
 
-            @Override
-            public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext executionContext) {
-                J.MethodInvocation mi = super.visitMethodInvocation(method, executionContext);
-                if (hotStreamMethodMatcher.matches(mi)) {
-                    if (mi.getSelect() != null && mi.getSelect() instanceof J.MethodInvocation) {
-                        J.MethodInvocation mSelect = (J.MethodInvocation) mi.getSelect();
-                        if (transformMethodMatcher.matches(mSelect) || selectMethodMatcher.matches(mSelect)) {
-                            return mi.withSelect(mSelect.getSelect());
-                        }
+    private static class MultiTransformHotStreamToMultiHotStreamVisitor extends JavaIsoVisitor<ExecutionContext> {
+        private static final MethodMatcher TRANSFORM_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.Multi transform()");
+        private static final MethodMatcher SELECT_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.Multi select()");
+
+        @Override
+        public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext executionContext) {
+            J.MethodInvocation mi = super.visitMethodInvocation(method, executionContext);
+            if (HOT_STREAM_METHOD_MATCHER.matches(mi)) {
+                if (mi.getSelect() != null && mi.getSelect() instanceof J.MethodInvocation) {
+                    J.MethodInvocation mSelect = (J.MethodInvocation) mi.getSelect();
+                    if (TRANSFORM_METHOD_MATCHER.matches(mSelect) || SELECT_METHOD_MATCHER.matches(mSelect)) {
+                        return mi.withSelect(mSelect.getSelect());
                     }
                 }
-                return mi;
             }
-        };
+            return mi;
+        }
     }
 }

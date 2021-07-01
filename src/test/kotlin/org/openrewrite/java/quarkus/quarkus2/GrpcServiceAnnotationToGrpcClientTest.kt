@@ -33,8 +33,8 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
         private const val greeterBlockingStub: String = """
             package org.openrewrite.example;
 
-            public class GreeterGrpc {
-                public class GreeterBlockingStub {
+            final class GreeterGrpc {
+                public static final class GreeterBlockingStub {
                 }
             }
         """
@@ -50,7 +50,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
 
             import javax.inject.Inject;
 
-            public class ExampleResource {
+            class ExampleResource {
                 @Inject
                 @GrpcService("client")
                 GreeterGrpc.GreeterBlockingStub client;
@@ -63,7 +63,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
 
             import javax.inject.Inject;
 
-            public class ExampleResource {
+            class ExampleResource {
                 @Inject
                 @GrpcClient
                 GreeterGrpc.GreeterBlockingStub client;
@@ -81,7 +81,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
 
             import javax.inject.Inject;
 
-            public class ExampleResource {
+            class ExampleResource {
                 @Inject
                 @GrpcService("hello-service")
                 GreeterGrpc.GreeterBlockingStub client;
@@ -94,7 +94,7 @@ class GrpcServiceAnnotationToGrpcClientTest : JavaRecipeTest {
 
             import javax.inject.Inject;
 
-            public class ExampleResource {
+            class ExampleResource {
                 @Inject
                 @GrpcClient("hello-service")
                 GreeterGrpc.GreeterBlockingStub client;

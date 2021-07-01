@@ -33,10 +33,12 @@ class MultiTransformHotStreamToMultiHotStreamTest : JavaRecipeTest {
     fun replaceTransform() = assertChanged(
         before = """
             import io.smallrye.mutiny.Multi;
-            import java.util.List;
+            import io.smallrye.mutiny.groups.MultiCollect;
+
             import java.time.Duration;
-            public class A {
-                public MultiCollect<Long> hotStreamGreetings(int count, String name) {
+
+            class Test {
+                public static MultiCollect<Long> hotStreamGreetings(int count, String name) {
                     return Multi.createFrom().ticks().every(Duration.ofMillis(1))
                             .transform()
                             .toHotStream()
@@ -46,16 +48,17 @@ class MultiTransformHotStreamToMultiHotStreamTest : JavaRecipeTest {
         """,
         after = """
             import io.smallrye.mutiny.Multi;
-            import java.util.List;
+            import io.smallrye.mutiny.groups.MultiCollect;
+
             import java.time.Duration;
-            public class A {
-                public MultiCollect<Long> hotStreamGreetings(int count, String name) {
+
+            class Test {
+                public static MultiCollect<Long> hotStreamGreetings(int count, String name) {
                     return Multi.createFrom().ticks().every(Duration.ofMillis(1))
                             .toHotStream()
                             .collect();
                 }
             }
-        """,
-        skipEnhancedTypeValidation = true // fixme
+        """
     )
 }
