@@ -99,7 +99,7 @@ recipeList:
       propertyKey: quarkus.quartz.store-type
       oldValue: db
       newValue: jdbc-cmt
-#  - org.openrewrite.java.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
+  - org.openrewrite.java.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: io.quarkus.qute.api.CheckedTemplate
       newFullyQualifiedTypeName: io.quarkus.qute.CheckedTemplate
