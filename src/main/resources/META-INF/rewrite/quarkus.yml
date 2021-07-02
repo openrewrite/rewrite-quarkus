@@ -107,6 +107,9 @@ recipeList:
       oldFullyQualifiedTypeName: io.quarkus.qute.api.ResourcePath
       newFullyQualifiedTypeName: io.quarkus.qute.Location
   - org.openrewrite.java.quarkus.quarkus2.RemoveAvroMavenPlugin
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: io.quarkus.mongodb.runtime.MongoClientName
+      newFullyQualifiedTypeName: io.quarkus.mongodb.MongoClientName
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: io.quarkus
       artifactId: quarkus-universe-bom

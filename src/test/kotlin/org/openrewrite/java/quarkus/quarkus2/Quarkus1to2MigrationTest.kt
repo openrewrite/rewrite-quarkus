@@ -24,7 +24,10 @@ import org.openrewrite.java.JavaRecipeTest
 class Quarkus1to2MigrationTest : JavaRecipeTest {
     override val parser: JavaParser = JavaParser.fromJavaVersion()
         .logCompilationWarningsAndErrors(true)
-        .classpath("quarkus-qute", "qute-core")
+        .classpath(
+            "quarkus-qute", "qute-core",
+            "quarkus-mongodb-client", "mongodb-driver-sync", "inject-api"
+        )
         .build()
 
     override val recipe: Recipe = Environment.builder()
@@ -84,6 +87,34 @@ class Quarkus1to2MigrationTest : JavaRecipeTest {
             @CheckedTemplate
             class Templates {
                 public static native TemplateInstance hello(String name);
+            }
+        """
+    )
+
+    @Test
+    fun migrateQuarkusMongoClientName() = assertChanged(
+        before = """
+            import com.mongodb.client.MongoClient;
+            import io.quarkus.mongodb.runtime.MongoClientName;
+
+            import javax.inject.Inject;
+
+            public class MongoStore {
+                @Inject
+                @MongoClientName("clientName")
+                MongoClient mongoClient;
+            }
+        """,
+        after = """
+            import com.mongodb.client.MongoClient;
+            import io.quarkus.mongodb.MongoClientName;
+
+            import javax.inject.Inject;
+
+            public class MongoStore {
+                @Inject
+                @MongoClientName("clientName")
+                MongoClient mongoClient;
             }
         """
     )
