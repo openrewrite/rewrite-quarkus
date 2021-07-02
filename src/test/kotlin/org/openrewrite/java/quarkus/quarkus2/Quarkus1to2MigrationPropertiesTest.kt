@@ -29,12 +29,12 @@ class Quarkus1to2MigrationPropertiesTest : PropertiesRecipeTest {
     @Test
     fun smallryeJwt() = assertChanged(
         before = """
-            smallrye.jwt.sign.key-location=/somedir
-            smallrye.jwt.encrypt.key-location=/anotherdir
+            smallrye.jwt.sign.key-location=/keys/signing
+            smallrye.jwt.encrypt.key-location=/keys/encrypt
         """,
         after = """
-            smallrye.jwt.sign.key.location=/somedir
-            smallrye.jwt.encrypt.key.location=/anotherdir
+            smallrye.jwt.sign.key.location=/keys/signing
+            smallrye.jwt.encrypt.key.location=/keys/encrypt
         """
     )
 
