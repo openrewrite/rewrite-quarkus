@@ -50,4 +50,14 @@ class Quarkus1to2MigrationPropertiesTest : PropertiesRecipeTest {
         """
     )
 
+    @Test
+    fun quarkusNeo4j() = assertChanged(
+        before = """
+            quarkus.neo4j.pool.metrics-enabled=true
+        """,
+        after = """
+            quarkus.neo4j.pool.metrics.enabled=true
+        """
+    )
+
 }

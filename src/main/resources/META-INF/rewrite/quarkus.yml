@@ -86,6 +86,9 @@ recipeList:
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: smallrye.jwt.encrypt.key-location
       newPropertyKey: smallrye.jwt.encrypt.key.location
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: quarkus.neo4j.pool.metrics-enabled
+      newPropertyKey: quarkus.neo4j.pool.metrics.enabled
   - org.openrewrite.properties.ChangePropertyValue:
       propertyKey: quarkus.quartz.force-start
       newValue: forced
