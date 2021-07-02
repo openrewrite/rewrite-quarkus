@@ -99,7 +99,7 @@ class Quarkus1to2MigrationTest : JavaRecipeTest {
 
             import javax.inject.Inject;
 
-            public class MongoStore {
+            class MongoStore {
                 @Inject
                 @MongoClientName("clientName")
                 MongoClient mongoClient;
@@ -111,7 +111,7 @@ class Quarkus1to2MigrationTest : JavaRecipeTest {
 
             import javax.inject.Inject;
 
-            public class MongoStore {
+            class MongoStore {
                 @Inject
                 @MongoClientName("clientName")
                 MongoClient mongoClient;
