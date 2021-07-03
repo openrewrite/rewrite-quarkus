@@ -18,10 +18,13 @@ name: org.openrewrite.java.quarkus.Quarkus1to1_13Migration
 displayName: Quarkus 1.13 migration from Quarkus 1.11
 description: Migrates Quarkus 1.11 to 1.13.
 recipeList:
-# (https://github.com/openrewrite/rewrite-quarkus/issues/37) fixme
 #  - org.openrewrite.maven.UpgradeDependencyVersion:
 #      groupId: io.quarkus
 #      artifactId: quarkus-universe-bom
+#      newVersion: 1.13.x
+#  - org.openrewrite.maven.UpgradeDependencyVersion:
+#      groupId: io.quarkus
+#      artifactId: quarkus-bom
 #      newVersion: 1.13.x
 #  - org.openrewrite.maven.UpgradePluginVersion:
 #      groupId: io.quarkus
@@ -113,6 +116,10 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: io.quarkus
       artifactId: quarkus-universe-bom
+      newVersion: 2.x
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: io.quarkus
+      artifactId: quarkus-bom
       newVersion: 2.x
   - org.openrewrite.maven.UpgradePluginVersion:
       groupId: io.quarkus
