@@ -83,6 +83,8 @@ displayName: Quarkus 2.x migration from Quarkus 1.x
 description: Migrates Quarkus 1.x to 2.x.
 recipeList:
   - org.openrewrite.java.quarkus.Quarkus1to1_13Migration
+  - org.openrewrite.java.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
+  - org.openrewrite.java.quarkus.quarkus2.RemoveAvroMavenPlugin
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: smallrye.jwt.sign.key-location
       newPropertyKey: smallrye.jwt.sign.key.location
@@ -102,14 +104,12 @@ recipeList:
       propertyKey: quarkus.quartz.store-type
       oldValue: db
       newValue: jdbc-cmt
-  - org.openrewrite.java.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: io.quarkus.qute.api.CheckedTemplate
       newFullyQualifiedTypeName: io.quarkus.qute.CheckedTemplate
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: io.quarkus.qute.api.ResourcePath
       newFullyQualifiedTypeName: io.quarkus.qute.Location
-  - org.openrewrite.java.quarkus.quarkus2.RemoveAvroMavenPlugin
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: io.quarkus.mongodb.runtime.MongoClientName
       newFullyQualifiedTypeName: io.quarkus.mongodb.MongoClientName
