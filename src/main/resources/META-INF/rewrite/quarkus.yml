@@ -125,3 +125,7 @@ recipeList:
       groupId: io.quarkus
       artifactId: quarkus-maven-plugin
       newVersion: 2.x
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: io.vertx.core.http.HttpMethod
+      newPackageName: io.quarkus.vertx.web.Route.HttpMethod
+      recursive: false
