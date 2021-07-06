@@ -85,6 +85,7 @@ recipeList:
   - org.openrewrite.java.quarkus.Quarkus1to1_13Migration
   - org.openrewrite.java.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
   - org.openrewrite.java.quarkus.quarkus2.RemoveAvroMavenPlugin
+  - org.openrewrite.java.quarkus.quarkus2.UseIdentifierOnDefaultKafkaBroker
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: smallrye.jwt.sign.key-location
       newPropertyKey: smallrye.jwt.sign.key.location
