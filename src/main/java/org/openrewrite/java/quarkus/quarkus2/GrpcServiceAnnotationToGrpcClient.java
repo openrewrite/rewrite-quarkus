@@ -77,7 +77,7 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
                         J.Assignment assignment = (J.Assignment) arg;
                         if (assignment.getVariable() instanceof J.Identifier && assignment.getAssignment() instanceof J.Literal) {
                             J.Identifier assignName = (J.Identifier) assignment.getVariable();
-                            if (assignName.getSimpleName().equals("value")) {
+                            if ("value".equals(assignName.getSimpleName())) {
                                 if (shouldRemoveArgument(namedVariable, (J.Literal) assignment.getAssignment())) {
                                     return null;
                                 }
