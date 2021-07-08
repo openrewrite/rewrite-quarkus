@@ -122,6 +122,7 @@ dependencies {
     testRuntimeOnly("io.quarkus:quarkus-qute:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-mongodb-client:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-hibernate-orm-panache:1.13.+")
+    testRuntimeOnly("io.quarkus:quarkus-hibernate-reactive-panache:1.13.+")
     testRuntimeOnly("io.smallrye.reactive:mutiny:0.12.+")
 }
 
