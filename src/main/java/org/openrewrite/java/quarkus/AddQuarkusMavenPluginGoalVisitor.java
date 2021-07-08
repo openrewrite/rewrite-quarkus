@@ -27,7 +27,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class AddQuarkusMavenPluginGoalVisitor extends MavenVisitor {
-    private static final Predicate<? super Xml.Tag> TAG_KEY_NAME_MATCHES = tag -> tag.getName().equals("goal");
+    private static final Predicate<? super Xml.Tag> TAG_KEY_NAME_MATCHES = tag -> "goal".equals(tag.getName());
     private static final Predicate<? super Xml.Tag> TAG_HAS_CONTENT = tag -> tag.getContent() != null && tag.getContent().size() == 1;
     private static final Predicate<? super Xml.Tag> TAG_CONTENT_IS_CHAR_DATA = tag -> tag.getContent().get(0) instanceof Xml.CharData;
     private static final BiPredicate<? super Xml.Tag, String> TAG_CONTENT_MATCHES = (tag, str) -> ((Xml.CharData) tag.getContent().get(0)).getText().equals(str);
@@ -53,7 +53,7 @@ public class AddQuarkusMavenPluginGoalVisitor extends MavenVisitor {
                 doAfterVisit(new AddQuarkusMavenPluginGoalVisitor(goalName));
             } else {
                 Xml.Tag executions = maybeExecutions.get();
-                Optional<Xml.Tag> maybeExecution = executions.getChildren().stream().filter(exe -> exe.getName().equals("execution")).findFirst();
+                Optional<Xml.Tag> maybeExecution = executions.getChildren().stream().filter(exe -> "execution".equals(exe.getName())).findFirst();
                 if (!maybeExecution.isPresent()) {
                     Xml.Tag executionTag = Xml.Tag.build("<execution/>");
                     doAfterVisit(new AddToTagVisitor<>(executions, executionTag));
