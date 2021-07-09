@@ -120,6 +120,7 @@ dependencies {
 
     testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-qute:1.13.+")
+    testRuntimeOnly("io.quarkus:quarkus-mailer:1.11.+")
     testRuntimeOnly("io.quarkus:quarkus-mongodb-client:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-mongodb-panache:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-hibernate-orm-panache:1.13.+")
