@@ -60,7 +60,7 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Return `Uni<T extends ReactivePanacheMongoEntityBase>` on `ReactivePanacheMongoEntityBase#persist()`";
+        return "Use `Uni<T extends ReactivePanacheMongoEntityBase>`";
     }
 
     @Override
