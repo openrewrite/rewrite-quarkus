@@ -84,4 +84,3 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
     }
 
 }
-

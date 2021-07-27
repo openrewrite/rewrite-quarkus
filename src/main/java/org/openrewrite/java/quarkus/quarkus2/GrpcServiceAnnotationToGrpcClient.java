@@ -99,4 +99,3 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     }
 
 }
-

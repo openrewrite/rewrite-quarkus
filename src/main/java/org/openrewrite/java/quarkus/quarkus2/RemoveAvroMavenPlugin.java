@@ -63,4 +63,3 @@ public class RemoveAvroMavenPlugin extends Recipe {
     }
 
 }
-

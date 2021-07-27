@@ -89,4 +89,3 @@ public class UsePanacheEntityBaseStaticMethods extends Recipe {
     }
 
 }
-
