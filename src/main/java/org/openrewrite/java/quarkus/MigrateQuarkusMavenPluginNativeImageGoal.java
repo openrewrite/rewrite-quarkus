@@ -101,4 +101,3 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
     }
 
 }
-

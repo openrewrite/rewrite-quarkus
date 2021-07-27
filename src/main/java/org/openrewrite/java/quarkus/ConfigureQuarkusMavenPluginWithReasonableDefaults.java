@@ -69,4 +69,3 @@ public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
         }
     }
 }
-
