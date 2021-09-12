@@ -74,12 +74,12 @@ public class UsePanacheEntityBaseStaticMethods extends Recipe {
             if (GET_ENTITY_MANAGER.matches(method)) {
                 String selectType = getSelectTypeFQ(method);
                 if (selectType != null) {
-                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase getEntityManager()", selectType, null));
+                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase getEntityManager()", selectType, null, null));
                 }
             } else if (FLUSH.matches(method)) {
                 String selectType = getSelectTypeFQ(method);
                 if (selectType != null) {
-                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase flush()", selectType, null));
+                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase flush()", selectType, null, null));
                 }
             }
 
