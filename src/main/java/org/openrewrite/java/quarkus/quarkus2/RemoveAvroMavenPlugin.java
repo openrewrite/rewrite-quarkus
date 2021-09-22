@@ -23,7 +23,6 @@ import org.openrewrite.maven.MavenVisitor;
 import org.openrewrite.maven.RemovePlugin;
 import org.openrewrite.maven.search.FindPlugin;
 import org.openrewrite.maven.tree.Maven;
-import org.openrewrite.xml.marker.XmlSearchResult;
 
 public class RemoveAvroMavenPlugin extends Recipe {
     @Override
@@ -42,7 +41,7 @@ public class RemoveAvroMavenPlugin extends Recipe {
             @Override
             public Maven visitMaven(Maven maven, ExecutionContext ctx) {
                 if (!FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").isEmpty()) {
-                    maven = maven.withMarkers(maven.getMarkers().addIfAbsent(new XmlSearchResult(RemoveAvroMavenPlugin.this)));
+                    maven = maven.withMarkers(maven.getMarkers().searchResult());
                 }
                 return super.visitMaven(maven, ctx);
             }
