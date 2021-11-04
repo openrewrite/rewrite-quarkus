@@ -85,7 +85,7 @@ public class UsePanacheEntityBaseUniT extends Recipe {
 
     private static class UsePanacheEntityBaseUniTVisitor extends JavaIsoVisitor<ExecutionContext> {
         private static boolean hasVoidParameterization(J.MethodInvocation method) {
-            JavaType.Parameterized returnType = TypeUtils.asParameterized(method.getReturnType());
+            JavaType.Parameterized returnType = TypeUtils.asParameterized(method.getType());
             if (returnType != null) {
                 List<JavaType> parameterized = returnType.getTypeParameters();
                 if (!parameterized.isEmpty()) {
