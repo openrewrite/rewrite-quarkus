@@ -21,11 +21,12 @@ import org.openrewrite.config.Environment
 import org.openrewrite.java.JavaParser
 import org.openrewrite.java.JavaRecipeTest
 
+@Suppress("deprecation")
 class Quarkus1to2MigrationTest : JavaRecipeTest {
     override val parser: JavaParser = JavaParser.fromJavaVersion()
         .logCompilationWarningsAndErrors(true)
         .classpath(
-            "quarkus-qute", "qute-core",
+            "quarkus-qute", "qute-core", "mongodb-driver-core",
             "quarkus-mongodb-client", "mongodb-driver-sync", "inject-api"
         )
         .build()

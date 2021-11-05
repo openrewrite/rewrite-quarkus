@@ -23,7 +23,7 @@ import org.openrewrite.java.JavaRecipeTest
 class UsePanacheEntityBaseUniTTest : JavaRecipeTest {
     override val parser: JavaParser = JavaParser.fromJavaVersion()
         .logCompilationWarningsAndErrors(true)
-        .classpath("quarkus-hibernate-reactive-panache", "mutiny", "persistence-api")
+        .classpath("quarkus-hibernate-reactive-panache", "mutiny", "persistence-api", "reactive-streams")
         .build()
 
     override val recipe: Recipe

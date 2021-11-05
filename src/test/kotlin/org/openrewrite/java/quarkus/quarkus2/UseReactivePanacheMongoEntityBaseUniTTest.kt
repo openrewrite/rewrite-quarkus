@@ -23,7 +23,7 @@ import org.openrewrite.java.JavaRecipeTest
 class UseReactivePanacheMongoEntityBaseUniTTest : JavaRecipeTest {
     override val parser: JavaParser = JavaParser.fromJavaVersion()
         .logCompilationWarningsAndErrors(true)
-        .classpath("quarkus-mongodb-panache", "mutiny", "persistence-api")
+        .classpath("quarkus-mongodb-panache", "mutiny", "persistence-api", "reactive-streams")
         .build()
 
     override val recipe: Recipe
