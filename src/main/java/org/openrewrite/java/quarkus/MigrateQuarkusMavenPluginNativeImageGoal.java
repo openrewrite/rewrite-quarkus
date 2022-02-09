@@ -18,9 +18,9 @@ package org.openrewrite.java.quarkus;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.maven.MavenIsoVisitor;
 import org.openrewrite.maven.MavenVisitor;
 import org.openrewrite.maven.search.FindPlugin;
-import org.openrewrite.maven.tree.Maven;
 import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.RemoveContentVisitor;
 import org.openrewrite.xml.search.FindTags;
@@ -43,32 +43,28 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
 
     @Override
     protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new MigrateQuarkusMavenPluginNativeImageGoalVisitor();
-    }
-
-    private static class MigrateQuarkusMavenPluginNativeImageGoalVisitor extends MavenVisitor {
-        @Override
-        public Maven visitMaven(Maven maven, ExecutionContext ctx) {
-            FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").forEach(plugin ->
-                    FindTags.find(plugin, "//executions/execution/goals/goal").forEach(goal -> {
-                        if (goal.getContent() != null && goal.getContent().size() == 1 && goal.getContent().get(0) instanceof Xml.CharData) {
-                            Xml.CharData existingValue = (Xml.CharData) goal.getContent().get(0);
-                            if ("native-image".equalsIgnoreCase(existingValue.getText())) {
-                                doAfterVisit(new RemoveContentVisitor<>(goal, true));
-                                doAfterVisit(new AddQuarkusPackageTypePropertyToNativeProfile());
+        return new MavenIsoVisitor<ExecutionContext>() {
+            @Override
+            public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
+                FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").forEach(plugin ->
+                        FindTags.find(plugin, "//executions/execution/goals/goal").forEach(goal -> {
+                            if (goal.getContent() != null && goal.getContent().size() == 1 && goal.getContent().get(0) instanceof Xml.CharData) {
+                                Xml.CharData existingValue = (Xml.CharData) goal.getContent().get(0);
+                                if ("native-image".equalsIgnoreCase(existingValue.getText())) {
+                                    doAfterVisit(new RemoveContentVisitor<>(goal, true));
+                                    doAfterVisit(new AddQuarkusPackageTypePropertyToNativeProfile());
+                                }
                             }
-                        }
-                    }));
-
-            return super.visitMaven(maven, ctx);
-        }
-
+                        }));
+                return super.visitDocument(document, ctx);
+            }
+        };
     }
 
-    private static class AddQuarkusPackageTypePropertyToNativeProfile extends MavenVisitor {
+    private static class AddQuarkusPackageTypePropertyToNativeProfile extends MavenIsoVisitor<ExecutionContext> {
         @Override
-        public Maven visitMaven(Maven maven, ExecutionContext ctx) {
-            FindTags.find(maven, "/project/profiles/profile").forEach(profile -> {
+        public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
+            FindTags.find(document, "/project/profiles/profile").forEach(profile -> {
                 Optional<Xml.Tag> maybeId = profile.getChild("id");
                 if (maybeId.isPresent()) {
                     String profileId = maybeId.get().getValue().orElse(null);
@@ -95,9 +91,8 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
                 }
             });
 
-            return super.visitMaven(maven, ctx);
+            return super.visitDocument(document, ctx);
         }
-
     }
 
 }

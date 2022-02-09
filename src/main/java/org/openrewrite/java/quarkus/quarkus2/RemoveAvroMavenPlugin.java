@@ -19,10 +19,10 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.internal.lang.Nullable;
-import org.openrewrite.maven.MavenVisitor;
+import org.openrewrite.maven.MavenIsoVisitor;
 import org.openrewrite.maven.RemovePlugin;
 import org.openrewrite.maven.search.FindPlugin;
-import org.openrewrite.maven.tree.Maven;
+import org.openrewrite.xml.tree.Xml;
 
 public class RemoveAvroMavenPlugin extends Recipe {
     @Override
@@ -37,28 +37,26 @@ public class RemoveAvroMavenPlugin extends Recipe {
 
     @Override
     protected @Nullable TreeVisitor<?, ExecutionContext> getApplicableTest() {
-        return new MavenVisitor() {
+        return new MavenIsoVisitor<ExecutionContext>() {
+
             @Override
-            public Maven visitMaven(Maven maven, ExecutionContext ctx) {
-                if (!FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").isEmpty()) {
-                    maven = maven.withMarkers(maven.getMarkers().searchResult());
+            public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
+                if (!FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").isEmpty()) {
+                    document = document.withMarkers(document.getMarkers().searchResult());
                 }
-                return super.visitMaven(maven, ctx);
+                return super.visitDocument(document, ctx);
             }
         };
     }
 
     @Override
     protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new RemoveAvroMavenPluginVisitor();
+        return new MavenIsoVisitor<ExecutionContext>() {
+            @Override
+            public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
+                doAfterVisit(new RemovePlugin("org.apache.avro", "avro-maven-plugin"));
+                return document;
+            }
+        };
     }
-
-    private static class RemoveAvroMavenPluginVisitor extends MavenVisitor {
-        @Override
-        public Maven visitMaven(Maven maven, ExecutionContext ctx) {
-            doAfterVisit(new RemovePlugin("org.apache.avro", "avro-maven-plugin"));
-            return super.visitMaven(maven, ctx);
-        }
-    }
-
 }

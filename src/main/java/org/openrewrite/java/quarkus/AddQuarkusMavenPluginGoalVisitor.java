@@ -16,9 +16,9 @@
 package org.openrewrite.java.quarkus;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.maven.MavenIsoVisitor;
 import org.openrewrite.maven.MavenVisitor;
 import org.openrewrite.maven.search.FindPlugin;
-import org.openrewrite.maven.tree.Maven;
 import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.tree.Xml;
 
@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public class AddQuarkusMavenPluginGoalVisitor extends MavenVisitor {
+public class AddQuarkusMavenPluginGoalVisitor extends MavenIsoVisitor<ExecutionContext> {
     private static final Predicate<? super Xml.Tag> TAG_KEY_NAME_MATCHES = tag -> "goal".equals(tag.getName());
     private static final Predicate<? super Xml.Tag> TAG_HAS_CONTENT = tag -> tag.getContent() != null && tag.getContent().size() == 1;
     private static final Predicate<? super Xml.Tag> TAG_CONTENT_IS_CHAR_DATA = tag -> tag.getContent().get(0) instanceof Xml.CharData;
@@ -38,14 +38,15 @@ public class AddQuarkusMavenPluginGoalVisitor extends MavenVisitor {
         this.goalName = goalName;
     }
 
+
     @Override
-    public Maven visitMaven(Maven maven, ExecutionContext ctx) {
-        /**
+    public Xml.Document visitDocument(Xml.Document document, ExecutionContext executionContext) {
+        /*
          * There must be room for making this better. It feels like this shouldn't need so much ceremony around building up a path. Or what would
          * really be helpful is having this walk a configured (fully-defined) path, and try to add any new nodes if none exist.
          * fixme
          */
-        FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
+        FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
             Optional<Xml.Tag> maybeExecutions = plugin.getChild("executions");
             if (!maybeExecutions.isPresent()) {
                 Xml.Tag executionsTag = Xml.Tag.build("<executions/>");
@@ -81,7 +82,6 @@ public class AddQuarkusMavenPluginGoalVisitor extends MavenVisitor {
                 }
             }
         });
-
-        return super.visitMaven(maven, ctx);
+        return super.visitDocument(document, executionContext);
     }
 }

@@ -20,9 +20,9 @@ import lombok.Value;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.maven.MavenIsoVisitor;
 import org.openrewrite.maven.MavenVisitor;
 import org.openrewrite.maven.search.FindPlugin;
-import org.openrewrite.maven.tree.Maven;
 import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.ChangeTagValueVisitor;
 import org.openrewrite.xml.tree.Xml;
@@ -47,14 +47,14 @@ public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
         return new ConfigureQuarkusMavenPluginWithReasonableDefaultsVisitor();
     }
 
-    private static class ConfigureQuarkusMavenPluginWithReasonableDefaultsVisitor extends MavenVisitor {
+    private static class ConfigureQuarkusMavenPluginWithReasonableDefaultsVisitor extends MavenIsoVisitor<ExecutionContext> {
         @Override
-        public Maven visitMaven(Maven maven, ExecutionContext ctx) {
+        public Xml.Document visitDocument(Xml.Document document, ExecutionContext executionContext) {
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("build"));
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code"));
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code-tests"));
 
-            FindPlugin.find(maven, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
+            FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
                 Optional<Xml.Tag> maybeExtensions = plugin.getChild("extensions");
                 if (!maybeExtensions.isPresent()) {
                     Xml.Tag extensionsTag = Xml.Tag.build("<extensions>true</extensions>");
@@ -64,8 +64,7 @@ public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
                     doAfterVisit(new ChangeTagValueVisitor<>(maybeExtensions.get(), "true"));
                 }
             });
-
-            return super.visitMaven(maven, ctx);
+            return document;
         }
     }
 }
