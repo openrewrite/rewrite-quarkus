@@ -25,6 +25,8 @@ import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 
+import java.time.Duration;
+
 public class ConfigPropertiesToConfigMapping extends Recipe {
     @Override
     public String getDisplayName() {
@@ -58,5 +60,10 @@ public class ConfigPropertiesToConfigMapping extends Recipe {
             }
             return cd;
         }
+    }
+
+    @Override
+    public Duration getEstimatedEffortPerOccurrence() {
+        return Duration.ofMinutes(5);
     }
 }

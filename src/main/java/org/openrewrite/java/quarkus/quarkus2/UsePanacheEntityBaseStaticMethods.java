@@ -27,6 +27,8 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
+import java.time.Duration;
+
 public class UsePanacheEntityBaseStaticMethods extends Recipe {
     private static final MethodMatcher GET_ENTITY_MANAGER = new MethodMatcher("io.quarkus.hibernate.orm.panache.PanacheEntityBase getEntityManager()");
     private static final MethodMatcher FLUSH = new MethodMatcher("io.quarkus.hibernate.orm.panache.PanacheEntityBase flush()");
@@ -39,6 +41,11 @@ public class UsePanacheEntityBaseStaticMethods extends Recipe {
     @Override
     public String getDescription() {
         return "The `getEntityManager()` and the `flush()` methods of `PanacheEntityBase` are now static methods.";
+    }
+
+    @Override
+    public Duration getEstimatedEffortPerOccurrence() {
+        return Duration.ofMinutes(5);
     }
 
     @Override

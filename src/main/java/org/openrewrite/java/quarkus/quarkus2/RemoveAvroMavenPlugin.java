@@ -24,6 +24,8 @@ import org.openrewrite.maven.RemovePlugin;
 import org.openrewrite.maven.search.FindPlugin;
 import org.openrewrite.xml.tree.Xml;
 
+import java.time.Duration;
+
 public class RemoveAvroMavenPlugin extends Recipe {
     @Override
     public String getDisplayName() {
@@ -33,6 +35,11 @@ public class RemoveAvroMavenPlugin extends Recipe {
     @Override
     public String getDescription() {
         return "Removes the `avro-maven-plugin` if the `quarkus-maven-plugin` is found in the project's `pom.xml`. Avro has been integrated with the Quarkus code generation mechanism. This replaces the need to use the Avro plugin.";
+    }
+
+    @Override
+    public Duration getEstimatedEffortPerOccurrence() {
+        return Duration.ofMinutes(5);
     }
 
     @Override

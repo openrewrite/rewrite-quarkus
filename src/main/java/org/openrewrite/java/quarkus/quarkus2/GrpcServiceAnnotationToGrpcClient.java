@@ -26,6 +26,8 @@ import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
 
+import java.time.Duration;
+
 public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     private static final String GRPC_SERVICE_ANNOTATION_FQN = "io.quarkus.grpc.runtime.annotations.GrpcService";
     private static final String GRPC_CLIENT_ANNOTATION_FQN = "io.quarkus.grpc.GrpcClient";
@@ -38,6 +40,11 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     @Override
     public String getDescription() {
         return "The `@GrpcService` annotation is replaced with `@GrpcClient` in Quarkus 2.x. Removes the optional `@GrpcClient.value()` unless the service name is different from the name of annotated element.";
+    }
+
+    @Override
+    public Duration getEstimatedEffortPerOccurrence() {
+        return Duration.ofMinutes(5);
     }
 
     @Override

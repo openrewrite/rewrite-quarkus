@@ -24,6 +24,8 @@ import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.search.UsesMethod;
 import org.openrewrite.java.tree.J;
 
+import java.time.Duration;
+
 public class MultiTransformHotStreamToMultiHotStream extends Recipe {
     private static final MethodMatcher HOT_STREAM_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.groups.MultiTransform toHotStream()");
 
@@ -35,6 +37,11 @@ public class MultiTransformHotStreamToMultiHotStream extends Recipe {
     @Override
     public String getDescription() {
         return "Replace Mutiny API usages of `multi.transform().toHotStream()` with `multi.toHotStream()`.";
+    }
+
+    @Override
+    public Duration getEstimatedEffortPerOccurrence() {
+        return Duration.ofMinutes(5);
     }
 
     @Override

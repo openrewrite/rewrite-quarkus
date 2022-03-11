@@ -26,6 +26,7 @@ import org.openrewrite.xml.RemoveContentVisitor;
 import org.openrewrite.xml.search.FindTags;
 import org.openrewrite.xml.tree.Xml;
 
+import java.time.Duration;
 import java.util.Optional;
 
 public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
@@ -93,6 +94,11 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
 
             return super.visitDocument(document, ctx);
         }
+    }
+
+    @Override
+    public Duration getEstimatedEffortPerOccurrence() {
+        return Duration.ofMinutes(5);
     }
 
 }

@@ -26,6 +26,7 @@ import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 
+import java.time.Duration;
 import java.util.Collections;
 
 public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
@@ -49,6 +50,11 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
     @Override
     public String getDescription() {
         return "Use `@io.smallrye.common.annotation.Identifier` on default kafka broker configuration.";
+    }
+
+    @Override
+    public Duration getEstimatedEffortPerOccurrence() {
+        return Duration.ofMinutes(5);
     }
 
     @Override
