@@ -23,6 +23,7 @@ import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.ChangeType;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
+import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
 
@@ -77,7 +78,7 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
                     a.getArguments() != null &&
                     getCursor().getParentOrThrow().getValue() instanceof J.VariableDeclarations) {
 
-                a = a.withArguments(ListUtils.map(a.getArguments(), arg -> {
+                a = a.withArguments(ListUtils.map(a.getArguments(), (Expression arg) -> {
                     Cursor varDecsCursor = getCursor().getParentOrThrow();
                     J.VariableDeclarations.NamedVariable namedVariable = varDecsCursor.<J.VariableDeclarations>getValue().getVariables().get(0);
                     if (arg instanceof J.Assignment) {

@@ -25,6 +25,7 @@ import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.RemoveContentVisitor;
 import org.openrewrite.xml.search.FindTags;
 import org.openrewrite.xml.tree.Xml;
+import org.openrewrite.xml.tree.Xml.Tag;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -65,7 +66,7 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
     private static class AddQuarkusPackageTypePropertyToNativeProfile extends MavenIsoVisitor<ExecutionContext> {
         @Override
         public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
-            FindTags.find(document, "/project/profiles/profile").forEach(profile -> {
+            FindTags.find(document, "/project/profiles/profile").forEach((Xml.Tag profile) -> {
                 Optional<Xml.Tag> maybeId = profile.getChild("id");
                 if (maybeId.isPresent()) {
                     String profileId = maybeId.get().getValue().orElse(null);

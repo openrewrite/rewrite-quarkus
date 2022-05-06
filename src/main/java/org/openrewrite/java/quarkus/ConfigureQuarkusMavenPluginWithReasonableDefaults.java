@@ -26,6 +26,7 @@ import org.openrewrite.maven.search.FindPlugin;
 import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.ChangeTagValueVisitor;
 import org.openrewrite.xml.tree.Xml;
+import org.openrewrite.xml.tree.Xml.Tag;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -60,7 +61,7 @@ public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code"));
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code-tests"));
 
-            FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
+            FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").forEach((Xml.Tag plugin) -> {
                 Optional<Xml.Tag> maybeExtensions = plugin.getChild("extensions");
                 if (!maybeExtensions.isPresent()) {
                     Xml.Tag extensionsTag = Xml.Tag.build("<extensions>true</extensions>");
