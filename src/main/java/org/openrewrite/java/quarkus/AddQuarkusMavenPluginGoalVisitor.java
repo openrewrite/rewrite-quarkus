@@ -21,6 +21,7 @@ import org.openrewrite.maven.MavenVisitor;
 import org.openrewrite.maven.search.FindPlugin;
 import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.tree.Xml;
+import org.openrewrite.xml.tree.Xml.Tag;
 
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -46,7 +47,7 @@ public class AddQuarkusMavenPluginGoalVisitor extends MavenIsoVisitor<ExecutionC
          * really be helpful is having this walk a configured (fully-defined) path, and try to add any new nodes if none exist.
          * fixme
          */
-        FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").forEach(plugin -> {
+        FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").forEach((Xml.Tag plugin) -> {
             Optional<Xml.Tag> maybeExecutions = plugin.getChild("executions");
             if (!maybeExecutions.isPresent()) {
                 Xml.Tag executionsTag = Xml.Tag.build("<executions/>");
