@@ -111,6 +111,7 @@ dependencies {
     testImplementation("org.openrewrite:rewrite-test:${rewriteVersion}")
     testImplementation("org.openrewrite:rewrite-maven:${rewriteVersion}")
     testImplementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
+    testImplementation("org.openrewrite:rewrite-java-tck:${rewriteVersion}")
 
     testImplementation("org.assertj:assertj-core:latest.release")
 
