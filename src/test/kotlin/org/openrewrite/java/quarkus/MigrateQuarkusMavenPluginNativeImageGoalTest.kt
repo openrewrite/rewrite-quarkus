@@ -16,16 +16,17 @@
 package org.openrewrite.java.quarkus
 
 import org.junit.jupiter.api.Test
-import org.openrewrite.Recipe
-import org.openrewrite.maven.MavenRecipeTest
+import org.openrewrite.maven.Assertions.pomXml
+import org.openrewrite.test.RecipeSpec
+import org.openrewrite.test.RewriteTest
 
-class MigrateQuarkusMavenPluginNativeImageGoalTest : MavenRecipeTest {
-    override val recipe: Recipe
-        get() = MigrateQuarkusMavenPluginNativeImageGoal()
-
+class MigrateQuarkusMavenPluginNativeImageGoalTest : RewriteTest {
+    override fun defaults(spec: RecipeSpec) {
+        spec.recipe(MigrateQuarkusMavenPluginNativeImageGoal())
+    }
     @Test
-    fun removeQuarkusMavenPluginNativeImageGoalTest() = assertChanged(
-        before = """
+    fun removeQuarkusMavenPluginNativeImageGoalTest() = rewriteRun(
+        pomXml("""
             <project>
               <modelVersion>4.0.0</modelVersion>
               <groupId>org.openrewrite.example</groupId>
@@ -54,7 +55,7 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest : MavenRecipeTest {
               </build>
             </project>
         """,
-        after = """
+        """
             <project>
               <modelVersion>4.0.0</modelVersion>
               <groupId>org.openrewrite.example</groupId>
@@ -81,12 +82,12 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest : MavenRecipeTest {
                 </plugins>
               </build>
             </project>
-        """
+        """)
     )
 
     @Test
-    fun addPropertyToNativeProfile() = assertChanged(
-        before = """
+    fun addPropertyToNativeProfile() = rewriteRun(
+        pomXml("""
             <project>
               <modelVersion>4.0.0</modelVersion>
               <groupId>org.openrewrite.example</groupId>
@@ -125,7 +126,7 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest : MavenRecipeTest {
               </profiles>
             </project>
         """,
-        after = """
+        """
             <project>
               <modelVersion>4.0.0</modelVersion>
               <groupId>org.openrewrite.example</groupId>
@@ -165,7 +166,7 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest : MavenRecipeTest {
                 </profile>
               </profiles>
             </project>
-        """
+        """)
     )
 
 }

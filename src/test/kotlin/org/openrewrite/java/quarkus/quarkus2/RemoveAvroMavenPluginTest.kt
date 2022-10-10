@@ -17,15 +17,18 @@ package org.openrewrite.java.quarkus.quarkus2
 
 import org.junit.jupiter.api.Test
 import org.openrewrite.Recipe
-import org.openrewrite.maven.MavenRecipeTest
+import org.openrewrite.maven.Assertions.pomXml
+import org.openrewrite.test.RecipeSpec
+import org.openrewrite.test.RewriteTest
 
-class RemoveAvroMavenPluginTest : MavenRecipeTest {
-    override val recipe: Recipe
-        get() = RemoveAvroMavenPlugin()
+class RemoveAvroMavenPluginTest : RewriteTest {
+    override fun defaults(spec: RecipeSpec) {
+        spec.recipe(RemoveAvroMavenPlugin())
+    }
 
     @Test
-    fun ignoreAvroMavenPluginIfQuarkusMavenPluginNotPresent() = assertUnchanged(
-        before = """
+    fun ignoreAvroMavenPluginIfQuarkusMavenPluginNotPresent() = rewriteRun(
+        pomXml("""
             <project>
               <modelVersion>4.0.0</modelVersion>
               <groupId>org.openrewrite.example</groupId>
@@ -41,12 +44,12 @@ class RemoveAvroMavenPluginTest : MavenRecipeTest {
                 </plugins>
               </build>
             </project>
-        """
+        """)
     )
 
     @Test
-    fun removeAvroMavenPluginIfQuarkusMavenPluginPresent() = assertChanged(
-        before = """
+    fun removeAvroMavenPluginIfQuarkusMavenPluginPresent() = rewriteRun(
+        pomXml("""
             <project>
               <modelVersion>4.0.0</modelVersion>
               <groupId>org.openrewrite.example</groupId>
@@ -68,7 +71,7 @@ class RemoveAvroMavenPluginTest : MavenRecipeTest {
               </build>
             </project>
         """,
-        after = """
+        """
             <project>
               <modelVersion>4.0.0</modelVersion>
               <groupId>org.openrewrite.example</groupId>
@@ -84,7 +87,7 @@ class RemoveAvroMavenPluginTest : MavenRecipeTest {
                 </plugins>
               </build>
             </project>
-        """
+        """)
     )
 
 }
