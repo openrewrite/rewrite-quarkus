@@ -95,7 +95,7 @@ dependencies {
     implementation("org.openrewrite:rewrite-maven:${rewriteVersion}")
     implementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
 
-    runtimeOnly("org.openrewrite:rewrite-java-11:${rewriteVersion}")
+    runtimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
 
     // eliminates "unknown enum constant DeprecationLevel.WARNING" warnings from the build log
     // see https://github.com/gradle/kotlin-dsl-samples/issues/1301 for why (okhttp is leaking parts of kotlin stdlib)
@@ -121,8 +121,7 @@ dependencies {
     testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     testImplementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.0")
 
-    testRuntimeOnly("org.openrewrite:rewrite-java-11:${rewriteVersion}")
-    testRuntimeOnly("org.openrewrite:rewrite-java-8:${rewriteVersion}")
+    testRuntimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
 
     testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-qute:1.13.+")
