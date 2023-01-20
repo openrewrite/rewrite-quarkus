@@ -25,9 +25,9 @@ import static org.openrewrite.properties.Assertions.properties;
 class Quarkus1to2MigrationPropertiesTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.recipe(Environment.builder()
-          .scanRuntimeClasspath("org.openrewrite.java.quarkus.quarkus2")
+          .scanRuntimeClasspath("org.openrewrite.quarkus.quarkus2")
           .build()
-          .activateRecipes("org.openrewrite.java.quarkus.quarkus2.Quarkus1to2Migration")
+          .activateRecipes("org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration")
         );
     }
 

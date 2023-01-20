@@ -26,9 +26,9 @@ class Quarkus1to113MigrationPropertiesTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipe(Environment.builder()
-          .scanRuntimeClasspath("org.openrewrite.java.quarkus")
+          .scanRuntimeClasspath("org.openrewrite.quarkus")
           .build()
-          .activateRecipes("org.openrewrite.java.quarkus.Quarkus1to1_13Migration"));
+          .activateRecipes("org.openrewrite.quarkus.Quarkus1to1_13Migration"));
     }
 
     @Test

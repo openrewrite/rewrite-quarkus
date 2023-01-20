@@ -33,9 +33,9 @@ class Quarkus1to2MigrationTest implements RewriteTest {
               "quarkus-mongodb-client", "mongodb-driver-sync", "inject-api"
             ))
           .recipe(Environment.builder()
-            .scanRuntimeClasspath("org.openrewrite.java.quarkus.quarkus2")
+            .scanRuntimeClasspath("org.openrewrite.quarkus.quarkus2")
             .build()
-            .activateRecipes("org.openrewrite.java.quarkus.quarkus2.Quarkus1to2Migration")
+            .activateRecipes("org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration")
           );
     }
 
