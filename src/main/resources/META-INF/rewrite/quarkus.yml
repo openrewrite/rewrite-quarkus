@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.quarkus.Quarkus1to1_13Migration
+name: org.openrewrite.quarkus.Quarkus1to1_13Migration
 displayName: Quarkus 1.13 migration from Quarkus 1.11
 description: Migrates Quarkus 1.11 to 1.13.
 recipeList:
@@ -30,10 +30,10 @@ recipeList:
 #      groupId: io.quarkus
 #      artifactId: quarkus-maven-plugin
 #      newVersion: 1.13.x
-  - org.openrewrite.java.quarkus.ConfigPropertiesToConfigMapping
-  - org.openrewrite.java.quarkus.MultiTransformHotStreamToMultiHotStream
-  - org.openrewrite.java.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
-  - org.openrewrite.java.quarkus.ConfigureQuarkusMavenPluginWithReasonableDefaults
+  - org.openrewrite.quarkus.ConfigPropertiesToConfigMapping
+  - org.openrewrite.quarkus.MultiTransformHotStreamToMultiHotStream
+  - org.openrewrite.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
+  - org.openrewrite.quarkus.ConfigureQuarkusMavenPluginWithReasonableDefaults
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: quarkus.dev.instrumentation
       newPropertyKey: quarkus.live-reload.instrumentation
@@ -78,17 +78,17 @@ recipeList:
       newMethodName: transform
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.quarkus.quarkus2.Quarkus1to2Migration
+name: org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration
 displayName: Quarkus 2.x migration from Quarkus 1.x
 description: Migrates Quarkus 1.x to 2.x.
 recipeList:
-  - org.openrewrite.java.quarkus.Quarkus1to1_13Migration
-  - org.openrewrite.java.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
-  - org.openrewrite.java.quarkus.quarkus2.RemoveAvroMavenPlugin
-  - org.openrewrite.java.quarkus.quarkus2.UseIdentifierOnDefaultKafkaBroker
-  - org.openrewrite.java.quarkus.quarkus2.UsePanacheEntityBaseStaticMethods
-  - org.openrewrite.java.quarkus.quarkus2.UsePanacheEntityBaseUniT
-  - org.openrewrite.java.quarkus.quarkus2.UseReactivePanacheMongoEntityBaseUniT
+  - org.openrewrite.quarkus.Quarkus1to1_13Migration
+  - org.openrewrite.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
+  - org.openrewrite.quarkus.quarkus2.RemoveAvroMavenPlugin
+  - org.openrewrite.quarkus.quarkus2.UseIdentifierOnDefaultKafkaBroker
+  - org.openrewrite.quarkus.quarkus2.UsePanacheEntityBaseStaticMethods
+  - org.openrewrite.quarkus.quarkus2.UsePanacheEntityBaseUniT
+  - org.openrewrite.quarkus.quarkus2.UseReactivePanacheMongoEntityBaseUniT
   - org.openrewrite.properties.ChangePropertyKey:
       oldPropertyKey: smallrye.jwt.sign.key-location
       newPropertyKey: smallrye.jwt.sign.key.location
