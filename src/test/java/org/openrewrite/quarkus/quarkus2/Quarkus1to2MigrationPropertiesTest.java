@@ -20,7 +20,7 @@ import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
-import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.properties.Assertions.properties;
 
 class Quarkus1to2MigrationPropertiesTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
@@ -34,7 +34,7 @@ class Quarkus1to2MigrationPropertiesTest implements RewriteTest {
     @Test
     void smallryeJwt() {
         rewriteRun(
-          java(
+          properties(
             """
               smallrye.jwt.sign.key-location=/keys/signing
               smallrye.jwt.encrypt.key-location=/keys/encrypt
@@ -50,7 +50,7 @@ class Quarkus1to2MigrationPropertiesTest implements RewriteTest {
     @Test
     void quarkusQuartz() {
         rewriteRun(
-          java(
+          properties(
             """
               quarkus.quartz.force-start=true
               quarkus.quartz.store-type=db
@@ -66,7 +66,7 @@ class Quarkus1to2MigrationPropertiesTest implements RewriteTest {
     @Test
     void quarkusNeo4j() {
         rewriteRun(
-          java(
+          properties(
             """
               quarkus.neo4j.pool.metrics-enabled=true
               """,

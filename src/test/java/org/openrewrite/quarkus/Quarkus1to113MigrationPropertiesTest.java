@@ -20,7 +20,7 @@ import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
-import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.properties.Assertions.properties;
 
 class Quarkus1to113MigrationPropertiesTest implements RewriteTest {
     @Override
@@ -34,7 +34,7 @@ class Quarkus1to113MigrationPropertiesTest implements RewriteTest {
     @Test
     void quarkusDevInstrumentation() {
         rewriteRun(
-          java(
+          properties(
             """
               quarkus.dev.instrumentation=true
               """,
