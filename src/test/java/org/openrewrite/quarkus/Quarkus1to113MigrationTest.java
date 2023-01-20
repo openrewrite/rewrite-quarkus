@@ -97,6 +97,17 @@ class Quarkus1to113MigrationTest implements RewriteTest {
     @Nested
     class MutinyUniMultiApplyToTransform implements RewriteTest {
 
+        @Override
+        public void defaults(RecipeSpec spec) {
+            spec.parser(JavaParser.fromJavaVersion()
+                .logCompilationWarningsAndErrors(true)
+                .classpath("mutiny", "reactive-streams"))
+              .recipe(Environment.builder()
+                .scanRuntimeClasspath("org.openrewrite.quarkus")
+                .build()
+                .activateRecipes("org.openrewrite.quarkus.Quarkus1to1_13Migration"));
+        }
+
         @Test
         void uniOnFailure() {
             rewriteRun(
