@@ -89,6 +89,12 @@ val rewriteVersion = if(project.hasProperty("releasing")) {
 }
 
 dependencies {
+    constraints {
+        implementation("com.fasterxml.woodstox:woodstox-core:6.5.0") {
+            because("Versions <= 6.3.1 contain vulnerabilities")
+        }
+    }
+
     compileOnly("org.projectlombok:lombok:latest.release")
     annotationProcessor("org.projectlombok:lombok:latest.release")
 
