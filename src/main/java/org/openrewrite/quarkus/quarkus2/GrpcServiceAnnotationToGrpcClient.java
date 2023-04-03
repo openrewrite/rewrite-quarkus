@@ -49,7 +49,7 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
 
     @Override
     protected TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new UsesType<>(GRPC_SERVICE_ANNOTATION_FQN);
+        return new UsesType<>(GRPC_SERVICE_ANNOTATION_FQN, null);
     }
 
     @Override

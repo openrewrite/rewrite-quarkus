@@ -59,7 +59,7 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
 
     @Override
     protected TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new UsesType<>("javax.inject.Named");
+        return new UsesType<>("javax.inject.Named", null);
     }
 
     @Override

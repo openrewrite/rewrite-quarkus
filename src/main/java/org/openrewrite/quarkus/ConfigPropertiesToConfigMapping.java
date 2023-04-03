@@ -40,7 +40,7 @@ public class ConfigPropertiesToConfigMapping extends Recipe {
 
     @Override
     protected @Nullable TreeVisitor<?, ExecutionContext> getApplicableTest() {
-        return new UsesType<>("io.quarkus.arc.config.ConfigProperties");
+        return new UsesType<>("io.quarkus.arc.config.ConfigProperties", null);
     }
 
     @Override
