@@ -19,19 +19,18 @@
         <packageUrl regex="true">^pkg:maven/org\.codehaus\.woodstox/stax2\-api@.*$</packageUrl>
         <cve>CVE-2022-40152</cve>
     </suppress>
-    <suppress until="2023-04-09Z">
-        <notes><![CDATA[
-            file name: jackson-core-2.13.4.jar
-            This is not actionable, the latest version is 2.14.2 which still contains the vulnerability.
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-core@.*$</packageUrl>
-        <cve>CVE-2022-45688</cve>
-    </suppress>
-    <suppress until="2023-04-09Z">
+    <suppress until="2023-05-19Z">
         <notes><![CDATA[
             file name: javax.json-1.1.4.jar
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.glassfish/javax\.json@.*$</packageUrl>
         <cve>CVE-2022-45688</cve>
+    </suppress>
+    <suppress until="2023-05-19Z">
+        <notes><![CDATA[
+           file name: snakeyaml-2.0.jar
+         ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+        <cve>CVE-2021-4235</cve>
     </suppress>
 </suppressions>
