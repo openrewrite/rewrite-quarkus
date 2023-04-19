@@ -32,5 +32,7 @@
          ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
         <cve>CVE-2021-4235</cve>
+        <cpe>cpe:/a:snakeyaml_project:snakeyaml</cpe>
+        <cpe>cpe:/a:yaml_project:yaml</cpe>
     </suppress>
 </suppressions>
