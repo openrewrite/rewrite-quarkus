@@ -16,16 +16,14 @@
 package org.openrewrite.quarkus;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.ChangeType;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
-
-import java.time.Duration;
 
 public class ConfigPropertiesToConfigMapping extends Recipe {
     @Override
@@ -39,13 +37,8 @@ public class ConfigPropertiesToConfigMapping extends Recipe {
     }
 
     @Override
-    protected @Nullable TreeVisitor<?, ExecutionContext> getApplicableTest() {
-        return new UsesType<>("io.quarkus.arc.config.ConfigProperties", null);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new ConfigPropertiesToConfigMappingVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(new UsesType<>("io.quarkus.arc.config.ConfigProperties", null), new ConfigPropertiesToConfigMappingVisitor());
     }
 
     private static class ConfigPropertiesToConfigMappingVisitor extends JavaIsoVisitor<ExecutionContext> {
@@ -60,10 +53,5 @@ public class ConfigPropertiesToConfigMapping extends Recipe {
             }
             return cd;
         }
-    }
-
-    @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
     }
 }

@@ -16,6 +16,7 @@
 package org.openrewrite.quarkus.quarkus2;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.internal.lang.Nullable;
@@ -44,25 +45,11 @@ public class UsePanacheEntityBaseStaticMethods extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new JavaIsoVisitor<ExecutionContext>() {
-            @Override
-            public J.CompilationUnit visitCompilationUnit(J.CompilationUnit cu, ExecutionContext ctx) {
-                doAfterVisit(new UsesMethod<>(GET_ENTITY_MANAGER));
-                doAfterVisit(new UsesMethod<>(FLUSH));
-                return cu;
-            }
-        };
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new UsePanacheEntityBaseStaticMethodsVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(Preconditions.or(
+                new UsesMethod<>(GET_ENTITY_MANAGER),
+                new UsesMethod<>(FLUSH)
+        ), new UsePanacheEntityBaseStaticMethodsVisitor());
     }
 
     private static class UsePanacheEntityBaseStaticMethodsVisitor extends JavaIsoVisitor<ExecutionContext> {

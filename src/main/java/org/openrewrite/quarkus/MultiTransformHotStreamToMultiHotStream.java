@@ -16,15 +16,13 @@
 package org.openrewrite.quarkus;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.search.UsesMethod;
 import org.openrewrite.java.tree.J;
-
-import java.time.Duration;
 
 public class MultiTransformHotStreamToMultiHotStream extends Recipe {
     private static final MethodMatcher HOT_STREAM_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.groups.MultiTransform toHotStream()");
@@ -40,18 +38,8 @@ public class MultiTransformHotStreamToMultiHotStream extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected @Nullable TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new UsesMethod<>(HOT_STREAM_METHOD_MATCHER);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new MultiTransformHotStreamToMultiHotStreamVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(new UsesMethod<>(HOT_STREAM_METHOD_MATCHER), new MultiTransformHotStreamToMultiHotStreamVisitor());
     }
 
     private static class MultiTransformHotStreamToMultiHotStreamVisitor extends JavaIsoVisitor<ExecutionContext> {

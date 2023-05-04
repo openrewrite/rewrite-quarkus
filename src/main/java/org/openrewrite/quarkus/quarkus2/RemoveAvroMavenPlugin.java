@@ -16,15 +16,14 @@
 package org.openrewrite.quarkus.quarkus2;
 
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.lang.Nullable;
+import org.openrewrite.marker.SearchResult;
 import org.openrewrite.maven.MavenIsoVisitor;
 import org.openrewrite.maven.RemovePlugin;
 import org.openrewrite.maven.search.FindPlugin;
 import org.openrewrite.xml.tree.Xml;
-
-import java.time.Duration;
 
 public class RemoveAvroMavenPlugin extends Recipe {
     @Override
@@ -38,32 +37,21 @@ public class RemoveAvroMavenPlugin extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected @Nullable TreeVisitor<?, ExecutionContext> getApplicableTest() {
-        return new MavenIsoVisitor<ExecutionContext>() {
-
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(new MavenIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
                 if (!FindPlugin.find(document, "io.quarkus", "quarkus-maven-plugin").isEmpty()) {
-                    document = document.withMarkers(document.getMarkers().searchResult());
+                    document = SearchResult.found(document);
                 }
                 return super.visitDocument(document, ctx);
             }
-        };
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new MavenIsoVisitor<ExecutionContext>() {
+        }, new MavenIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
                 doAfterVisit(new RemovePlugin("org.apache.avro", "avro-maven-plugin"));
                 return document;
             }
-        };
+        });
     }
 }

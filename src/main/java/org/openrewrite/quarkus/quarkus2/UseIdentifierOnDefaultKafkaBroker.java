@@ -15,10 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Parser;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
+import org.openrewrite.*;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaParser;
@@ -30,17 +27,16 @@ import java.time.Duration;
 import java.util.Collections;
 
 public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
-    private static final ThreadLocal<JavaParser> JAVA_PARSER = ThreadLocal.withInitial(() ->
+    private static final JavaParser.Builder<?, ?> JAVA_PARSER =
             JavaParser.fromJavaVersion()
                     .dependsOn(Collections.singletonList(
-                            Parser.Input.fromString("package io.smallrye.common.annotation;\n" +
-                                    "public interface Identifier {\n" +
-                                    "    String value();\n" +
-                                    "}"
+                                    Parser.Input.fromString("package io.smallrye.common.annotation;\n" +
+                                            "public interface Identifier {\n" +
+                                            "    String value();\n" +
+                                            "}"
+                                    )
                             )
-                    ))
-                    .build()
-    );
+                    );
 
     @Override
     public String getDisplayName() {
@@ -53,18 +49,8 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new UsesType<>("javax.inject.Named", null);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new UseIdentifierOnDefaultKafkaBrokerVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(new UsesType<>("javax.inject.Named", null), new UseIdentifierOnDefaultKafkaBrokerVisitor());
     }
 
     private static class UseIdentifierOnDefaultKafkaBrokerVisitor extends JavaIsoVisitor<ExecutionContext> {
@@ -78,7 +64,7 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
                 maybeRemoveImport("javax.inject.Named");
                 a = a.withTemplate(
                         JavaTemplate.builder(this::getCursor, "@Identifier(\"default-kafka-broker\")")
-                                .javaParser(JAVA_PARSER::get)
+                                .javaParser(JAVA_PARSER)
                                 .imports("io.smallrye.common.annotation.Identifier")
                                 .build(),
                         a.getCoordinates().replace()

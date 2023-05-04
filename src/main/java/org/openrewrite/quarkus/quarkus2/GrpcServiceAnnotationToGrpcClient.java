@@ -15,10 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
-import org.openrewrite.Cursor;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
+import org.openrewrite.*;
 import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.ChangeType;
 import org.openrewrite.java.JavaIsoVisitor;
@@ -43,18 +40,8 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new UsesType<>(GRPC_SERVICE_ANNOTATION_FQN, null);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new GrpcServiceToGrpcClientAnnotationVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(new UsesType<>(GRPC_SERVICE_ANNOTATION_FQN, null), new GrpcServiceToGrpcClientAnnotationVisitor());
     }
 
     private static class GrpcServiceToGrpcClientAnnotationVisitor extends JavaIsoVisitor<ExecutionContext> {

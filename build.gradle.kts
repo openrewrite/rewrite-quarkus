@@ -33,7 +33,7 @@ plugins {
 apply(plugin = "nebula.publish-verification")
 
 rewrite {
-    activeRecipe("org.openrewrite.java.format.AutoFormat", "org.openrewrite.java.cleanup.Cleanup")
+    activeRecipe("org.openrewrite.java.format.AutoFormat", "org.openrewrite.staticanalysis.CodeCleanup")
 }
 
 configure<nebula.plugin.release.git.base.ReleasePluginExtension> {

@@ -26,7 +26,6 @@ import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.ChangeTagValueVisitor;
 import org.openrewrite.xml.tree.Xml;
 
-import java.time.Duration;
 import java.util.Optional;
 
 @Value
@@ -43,12 +42,7 @@ public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
         return new ConfigureQuarkusMavenPluginWithReasonableDefaultsVisitor();
     }
 
