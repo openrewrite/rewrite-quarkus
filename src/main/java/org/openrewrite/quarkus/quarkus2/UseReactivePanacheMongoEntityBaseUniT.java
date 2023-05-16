@@ -91,9 +91,10 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
             if (PERSIST_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persist().replaceWithVoid()")
+                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persist().replaceWithVoid()")
                                     .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
@@ -101,9 +102,10 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
             } else if (UPDATE_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.update().replaceWithVoid()")
+                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.update().replaceWithVoid()")
                                     .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
@@ -111,9 +113,10 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
             } else if (PERSIST_OR_UPDATE_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persistOrUpdate().replaceWithVoid()")
+                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persistOrUpdate().replaceWithVoid()")
                                     .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );

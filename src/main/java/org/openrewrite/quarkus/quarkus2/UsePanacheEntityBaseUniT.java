@@ -87,9 +87,10 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             if (PERSIST_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persist().replaceWithVoid()")
+                            JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persist().replaceWithVoid()")
                                     .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
@@ -97,9 +98,10 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             } else if (PERSIST_AND_FLUSH_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persistAndFlush().replaceWithVoid()")
+                            JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persistAndFlush().replaceWithVoid()")
                                     .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
