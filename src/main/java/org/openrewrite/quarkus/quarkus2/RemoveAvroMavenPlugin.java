@@ -49,7 +49,7 @@ public class RemoveAvroMavenPlugin extends Recipe {
         }, new MavenIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
-                doAfterVisit(new RemovePlugin("org.apache.avro", "avro-maven-plugin"));
+                doAfterVisit(new RemovePlugin("org.apache.avro", "avro-maven-plugin").getVisitor());
                 return document;
             }
         });

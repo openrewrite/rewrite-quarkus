@@ -28,8 +28,6 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
-import java.time.Duration;
-
 public class UsePanacheEntityBaseStaticMethods extends Recipe {
     private static final MethodMatcher GET_ENTITY_MANAGER = new MethodMatcher("io.quarkus.hibernate.orm.panache.PanacheEntityBase getEntityManager()");
     private static final MethodMatcher FLUSH = new MethodMatcher("io.quarkus.hibernate.orm.panache.PanacheEntityBase flush()");
@@ -68,12 +66,12 @@ public class UsePanacheEntityBaseStaticMethods extends Recipe {
             if (GET_ENTITY_MANAGER.matches(method)) {
                 String selectType = getSelectTypeFQ(method);
                 if (selectType != null) {
-                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase getEntityManager()", selectType, null, null));
+                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase getEntityManager()", selectType, null, null).getVisitor());
                 }
             } else if (FLUSH.matches(method)) {
                 String selectType = getSelectTypeFQ(method);
                 if (selectType != null) {
-                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase flush()", selectType, null, null));
+                    doAfterVisit(new ChangeMethodTargetToStatic("io.quarkus.hibernate.orm.panache.PanacheEntityBase flush()", selectType, null, null).getVisitor());
                 }
             }
 

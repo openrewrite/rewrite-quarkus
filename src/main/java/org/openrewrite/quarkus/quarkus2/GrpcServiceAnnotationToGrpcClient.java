@@ -23,8 +23,6 @@ import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
 
-import java.time.Duration;
-
 public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     private static final String GRPC_SERVICE_ANNOTATION_FQN = "io.quarkus.grpc.runtime.annotations.GrpcService";
     private static final String GRPC_CLIENT_ANNOTATION_FQN = "io.quarkus.grpc.GrpcClient";
@@ -53,7 +51,7 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
 
         @Override
         public J.CompilationUnit visitCompilationUnit(J.CompilationUnit cu, ExecutionContext ctx) {
-            doAfterVisit(new ChangeType(GRPC_SERVICE_ANNOTATION_FQN, GRPC_CLIENT_ANNOTATION_FQN, true));
+            doAfterVisit(new ChangeType(GRPC_SERVICE_ANNOTATION_FQN, GRPC_CLIENT_ANNOTATION_FQN, true).getVisitor());
             return super.visitCompilationUnit(cu, ctx);
         }
 
