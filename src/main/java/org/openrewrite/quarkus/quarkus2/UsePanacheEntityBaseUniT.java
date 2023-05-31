@@ -15,11 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Parser;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.lang.Nullable;
+import org.openrewrite.*;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.java.JavaTemplate;
@@ -29,7 +25,6 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,7 +32,7 @@ import java.util.stream.Stream;
 public class UsePanacheEntityBaseUniT extends Recipe {
     private static final MethodMatcher PERSIST_MATCHER = new MethodMatcher("io.quarkus.hibernate.reactive.panache.PanacheEntityBase persist()");
     private static final MethodMatcher PERSIST_AND_FLUSH_MATCHER = new MethodMatcher("io.quarkus.hibernate.reactive.panache.PanacheEntityBase persistAndFlush()");
-    private static final ThreadLocal<JavaParser> PARSER = ThreadLocal.withInitial(() ->
+    private static final JavaParser.Builder<?, ?> PARSER =
             JavaParser.fromJavaVersion().dependsOn(
                     Stream.of(
                             Parser.Input.fromString("" +
@@ -54,8 +49,7 @@ public class UsePanacheEntityBaseUniT extends Recipe {
                                     "    public <T extends PanacheEntityBase> Uni<T> persistAndFlush() {};" +
                                     "}"
                             )
-                    ).collect(Collectors.toList())
-            ).build());
+                    ).collect(Collectors.toList()));
 
     @Override
     public String getDisplayName() {
@@ -68,25 +62,11 @@ public class UsePanacheEntityBaseUniT extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected @Nullable TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new JavaIsoVisitor<ExecutionContext>() {
-            @Override
-            public J.CompilationUnit visitCompilationUnit(J.CompilationUnit cu, ExecutionContext ctx) {
-                doAfterVisit(new UsesMethod<>(PERSIST_MATCHER));
-                doAfterVisit(new UsesMethod<>(PERSIST_AND_FLUSH_MATCHER));
-                return cu;
-            }
-        };
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new UsePanacheEntityBaseUniTVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(Preconditions.or(
+                new UsesMethod<>(PERSIST_MATCHER),
+                new UsesMethod<>(PERSIST_AND_FLUSH_MATCHER)
+        ), new UsePanacheEntityBaseUniTVisitor());
     }
 
     private static class UsePanacheEntityBaseUniTVisitor extends JavaIsoVisitor<ExecutionContext> {
@@ -107,9 +87,10 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             if (PERSIST_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persist().replaceWithVoid()")
-                                    .javaParser(PARSER::get)
+                            JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persist().replaceWithVoid()")
+                                    .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
@@ -117,9 +98,10 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             } else if (PERSIST_AND_FLUSH_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persistAndFlush().replaceWithVoid()")
-                                    .javaParser(PARSER::get)
+                            JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persistAndFlush().replaceWithVoid()")
+                                    .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );

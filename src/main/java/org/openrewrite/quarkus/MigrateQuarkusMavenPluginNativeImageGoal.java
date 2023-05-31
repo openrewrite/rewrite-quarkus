@@ -19,14 +19,12 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.maven.MavenIsoVisitor;
-import org.openrewrite.maven.MavenVisitor;
 import org.openrewrite.maven.search.FindPlugin;
 import org.openrewrite.xml.AddToTagVisitor;
 import org.openrewrite.xml.RemoveContentVisitor;
 import org.openrewrite.xml.search.FindTags;
 import org.openrewrite.xml.tree.Xml;
 
-import java.time.Duration;
 import java.util.Optional;
 
 public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
@@ -43,7 +41,7 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
     }
 
     @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
         return new MavenIsoVisitor<ExecutionContext>() {
             @Override
             public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
@@ -94,11 +92,6 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
 
             return super.visitDocument(document, ctx);
         }
-    }
-
-    @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
     }
 
 }

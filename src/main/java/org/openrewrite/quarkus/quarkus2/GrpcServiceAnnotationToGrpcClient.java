@@ -15,18 +15,13 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
-import org.openrewrite.Cursor;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
+import org.openrewrite.*;
 import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.ChangeType;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
-
-import java.time.Duration;
 
 public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     private static final String GRPC_SERVICE_ANNOTATION_FQN = "io.quarkus.grpc.runtime.annotations.GrpcService";
@@ -43,18 +38,8 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     }
 
     @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new UsesType<>(GRPC_SERVICE_ANNOTATION_FQN, null);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new GrpcServiceToGrpcClientAnnotationVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(new UsesType<>(GRPC_SERVICE_ANNOTATION_FQN, null), new GrpcServiceToGrpcClientAnnotationVisitor());
     }
 
     private static class GrpcServiceToGrpcClientAnnotationVisitor extends JavaIsoVisitor<ExecutionContext> {
@@ -66,7 +51,7 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
 
         @Override
         public J.CompilationUnit visitCompilationUnit(J.CompilationUnit cu, ExecutionContext ctx) {
-            doAfterVisit(new ChangeType(GRPC_SERVICE_ANNOTATION_FQN, GRPC_CLIENT_ANNOTATION_FQN, true));
+            doAfterVisit(new ChangeType(GRPC_SERVICE_ANNOTATION_FQN, GRPC_CLIENT_ANNOTATION_FQN, true).getVisitor());
             return super.visitCompilationUnit(cu, ctx);
         }
 

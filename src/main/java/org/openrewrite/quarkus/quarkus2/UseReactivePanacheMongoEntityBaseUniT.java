@@ -15,11 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Parser;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.lang.Nullable;
+import org.openrewrite.*;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.java.JavaTemplate;
@@ -29,7 +25,6 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,7 +33,7 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
     private static final MethodMatcher PERSIST_MATCHER = new MethodMatcher("io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase persist()");
     private static final MethodMatcher UPDATE_MATCHER = new MethodMatcher("io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase update()");
     private static final MethodMatcher PERSIST_OR_UPDATE_MATCHER = new MethodMatcher("io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase persistOrUpdate()");
-    private static final ThreadLocal<JavaParser> PARSER = ThreadLocal.withInitial(() ->
+    private static final JavaParser.Builder<?, ?> PARSER =
             JavaParser.fromJavaVersion().dependsOn(
                     Stream.of(
                             Parser.Input.fromString("" +
@@ -57,7 +52,7 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
                                     "}"
                             )
                     ).collect(Collectors.toList())
-            ).build());
+            );
 
     @Override
     public String getDisplayName() {
@@ -70,26 +65,12 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
     }
 
     @Override
-    protected @Nullable TreeVisitor<?, ExecutionContext> getSingleSourceApplicableTest() {
-        return new JavaIsoVisitor<ExecutionContext>() {
-            @Override
-            public J.CompilationUnit visitCompilationUnit(J.CompilationUnit cu, ExecutionContext ctx) {
-                doAfterVisit(new UsesMethod<>(PERSIST_MATCHER));
-                doAfterVisit(new UsesMethod<>(UPDATE_MATCHER));
-                doAfterVisit(new UsesMethod<>(PERSIST_OR_UPDATE_MATCHER));
-                return cu;
-            }
-        };
-    }
-
-    @Override
-    public Duration getEstimatedEffortPerOccurrence() {
-        return Duration.ofMinutes(5);
-    }
-
-    @Override
-    protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new UseReactivePanacheMongoEntityBaseUniTVisitor();
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return Preconditions.check(Preconditions.or(
+                new UsesMethod<>(PERSIST_MATCHER),
+                new UsesMethod<>(UPDATE_MATCHER),
+                new UsesMethod<>(PERSIST_OR_UPDATE_MATCHER)
+        ), new UseReactivePanacheMongoEntityBaseUniTVisitor());
     }
 
     private static class UseReactivePanacheMongoEntityBaseUniTVisitor extends JavaIsoVisitor<ExecutionContext> {
@@ -110,9 +91,10 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
             if (PERSIST_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persist().replaceWithVoid()")
-                                    .javaParser(PARSER::get)
+                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persist().replaceWithVoid()")
+                                    .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
@@ -120,9 +102,10 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
             } else if (UPDATE_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.update().replaceWithVoid()")
-                                    .javaParser(PARSER::get)
+                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.update().replaceWithVoid()")
+                                    .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
@@ -130,9 +113,10 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
             } else if (PERSIST_OR_UPDATE_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = mi.withTemplate(
-                            JavaTemplate.builder(this::getCursor, "#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persistOrUpdate().replaceWithVoid()")
-                                    .javaParser(PARSER::get)
+                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persistOrUpdate().replaceWithVoid()")
+                                    .javaParser(PARSER)
                                     .build(),
+                            getCursor(),
                             mi.getCoordinates().replace(),
                             mi.getSelect()
                     );
