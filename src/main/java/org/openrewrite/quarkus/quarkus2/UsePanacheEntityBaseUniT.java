@@ -36,18 +36,18 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             JavaParser.fromJavaVersion().dependsOn(
                     Stream.of(
                             Parser.Input.fromString("" +
-                                    "package io.smallrye.mutiny;" +
-                                    "public interface Uni<T> {" +
-                                    "    Uni<Void> replaceWithVoid() {};" +
-                                    "}"
+                                                    "package io.smallrye.mutiny;" +
+                                                    "public interface Uni<T> {" +
+                                                    "    Uni<Void> replaceWithVoid() {};" +
+                                                    "}"
                             ),
                             Parser.Input.fromString("" +
-                                    "package io.quarkus.hibernate.reactive.panache;" +
-                                    "import io.smallrye.mutiny.Uni;" +
-                                    "public abstract class PanacheEntityBase {" +
-                                    "    public <T extends PanacheEntityBase> Uni<T> persist() {};" +
-                                    "    public <T extends PanacheEntityBase> Uni<T> persistAndFlush() {};" +
-                                    "}"
+                                                    "package io.quarkus.hibernate.reactive.panache;" +
+                                                    "import io.smallrye.mutiny.Uni;" +
+                                                    "public abstract class PanacheEntityBase {" +
+                                                    "    public <T extends PanacheEntityBase> Uni<T> persist() {};" +
+                                                    "    public <T extends PanacheEntityBase> Uni<T> persistAndFlush() {};" +
+                                                    "}"
                             )
                     ).collect(Collectors.toList()));
 
@@ -86,25 +86,19 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             J.MethodInvocation mi = super.visitMethodInvocation(method, ctx);
             if (PERSIST_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
-                    mi = mi.withTemplate(
-                            JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persist().replaceWithVoid()")
-                                    .javaParser(PARSER)
-                                    .build(),
-                            getCursor(),
-                            mi.getCoordinates().replace(),
-                            mi.getSelect()
-                    );
+                    mi = JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persist().replaceWithVoid()")
+                            .javaParser(PARSER)
+                            .build().apply(new Cursor(getCursor().getParent(), mi),
+                                    mi.getCoordinates().replace(),
+                                    mi.getSelect());
                 }
             } else if (PERSIST_AND_FLUSH_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
-                    mi = mi.withTemplate(
-                            JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persistAndFlush().replaceWithVoid()")
-                                    .javaParser(PARSER)
-                                    .build(),
-                            getCursor(),
-                            mi.getCoordinates().replace(),
-                            mi.getSelect()
-                    );
+                    mi = JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persistAndFlush().replaceWithVoid()")
+                            .javaParser(PARSER)
+                            .build().apply(new Cursor(getCursor().getParent(), mi),
+                                    mi.getCoordinates().replace(),
+                                    mi.getSelect());
                 }
             }
 

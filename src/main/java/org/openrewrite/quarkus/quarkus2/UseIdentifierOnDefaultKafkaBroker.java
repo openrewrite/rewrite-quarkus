@@ -61,14 +61,10 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
             if (MATCHER.matches(a)) {
                 maybeAddImport("io.smallrye.common.annotation.Identifier");
                 maybeRemoveImport("javax.inject.Named");
-                a = a.withTemplate(
-                        JavaTemplate.builder("@Identifier(\"default-kafka-broker\")")
-                                .javaParser(JAVA_PARSER)
-                                .imports("io.smallrye.common.annotation.Identifier")
-                                .build(),
-                        getCursor(),
-                        a.getCoordinates().replace()
-                );
+                a = JavaTemplate.builder("@Identifier(\"default-kafka-broker\")")
+                        .javaParser(JAVA_PARSER)
+                        .imports("io.smallrye.common.annotation.Identifier")
+                        .build().apply(getCursor(), a.getCoordinates().replace());
             }
             return a;
         }

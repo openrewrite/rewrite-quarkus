@@ -90,36 +90,27 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
             J.MethodInvocation mi = super.visitMethodInvocation(method, ctx);
             if (PERSIST_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
-                    mi = mi.withTemplate(
-                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persist().replaceWithVoid()")
-                                    .javaParser(PARSER)
-                                    .build(),
-                            getCursor(),
-                            mi.getCoordinates().replace(),
-                            mi.getSelect()
-                    );
+                    mi = JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persist().replaceWithVoid()")
+                            .javaParser(PARSER)
+                            .build().apply(new Cursor(getCursor().getParent(), mi),
+                                    mi.getCoordinates().replace(),
+                                    mi.getSelect());
                 }
             } else if (UPDATE_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
-                    mi = mi.withTemplate(
-                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.update().replaceWithVoid()")
-                                    .javaParser(PARSER)
-                                    .build(),
-                            getCursor(),
-                            mi.getCoordinates().replace(),
-                            mi.getSelect()
-                    );
+                    mi = JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.update().replaceWithVoid()")
+                            .javaParser(PARSER)
+                            .build().apply(new Cursor(getCursor().getParent(), mi),
+                                    mi.getCoordinates().replace(),
+                                    mi.getSelect());
                 }
             } else if (PERSIST_OR_UPDATE_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
-                    mi = mi.withTemplate(
-                            JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persistOrUpdate().replaceWithVoid()")
-                                    .javaParser(PARSER)
-                                    .build(),
-                            getCursor(),
-                            mi.getCoordinates().replace(),
-                            mi.getSelect()
-                    );
+                    mi = JavaTemplate.builder("#{any(io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase)}.persistOrUpdate().replaceWithVoid()")
+                            .javaParser(PARSER)
+                            .build().apply(new Cursor(getCursor().getParent(), mi),
+                                    mi.getCoordinates().replace(),
+                                    mi.getSelect());
                 }
             }
 
