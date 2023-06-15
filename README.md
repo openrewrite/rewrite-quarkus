@@ -9,3 +9,5 @@
 ### What is this?
 
 This project implements a [Rewrite module](https://github.com/openrewrite/rewrite) that applies best practices and migrations pertaining to the Quarkus web application &amp; microservice development platform.
+
+Browse [a selection of recipes available through this module in the recipe catalog](https://docs.openrewrite.org/recipes/quarkus).
