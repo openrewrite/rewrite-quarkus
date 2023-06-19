@@ -32,24 +32,26 @@ import java.util.stream.Stream;
 public class UsePanacheEntityBaseUniT extends Recipe {
     private static final MethodMatcher PERSIST_MATCHER = new MethodMatcher("io.quarkus.hibernate.reactive.panache.PanacheEntityBase persist()");
     private static final MethodMatcher PERSIST_AND_FLUSH_MATCHER = new MethodMatcher("io.quarkus.hibernate.reactive.panache.PanacheEntityBase persistAndFlush()");
-    private static final JavaParser.Builder<?, ?> PARSER =
-            JavaParser.fromJavaVersion().dependsOn(
-                    Stream.of(
-                            Parser.Input.fromString("" +
-                                                    "package io.smallrye.mutiny;" +
-                                                    "public interface Uni<T> {" +
-                                                    "    Uni<Void> replaceWithVoid() {};" +
-                                                    "}"
-                            ),
-                            Parser.Input.fromString("" +
-                                                    "package io.quarkus.hibernate.reactive.panache;" +
-                                                    "import io.smallrye.mutiny.Uni;" +
-                                                    "public abstract class PanacheEntityBase {" +
-                                                    "    public <T extends PanacheEntityBase> Uni<T> persist() {};" +
-                                                    "    public <T extends PanacheEntityBase> Uni<T> persistAndFlush() {};" +
-                                                    "}"
-                            )
-                    ).collect(Collectors.toList()));
+
+    private static JavaParser.Builder<?, ?> getParser() {
+        return JavaParser.fromJavaVersion().dependsOn(
+                Stream.of(
+                        Parser.Input.fromString("" +
+                                                "package io.smallrye.mutiny;" +
+                                                "public interface Uni<T> {" +
+                                                "    Uni<Void> replaceWithVoid() {};" +
+                                                "}"
+                        ),
+                        Parser.Input.fromString("" +
+                                                "package io.quarkus.hibernate.reactive.panache;" +
+                                                "import io.smallrye.mutiny.Uni;" +
+                                                "public abstract class PanacheEntityBase {" +
+                                                "    public <T extends PanacheEntityBase> Uni<T> persist() {};" +
+                                                "    public <T extends PanacheEntityBase> Uni<T> persistAndFlush() {};" +
+                                                "}"
+                        )
+                ).collect(Collectors.toList()));
+    }
 
     @Override
     public String getDisplayName() {
@@ -87,7 +89,7 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             if (PERSIST_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persist().replaceWithVoid()")
-                            .javaParser(PARSER)
+                            .javaParser(getParser())
                             .build().apply(new Cursor(getCursor().getParent(), mi),
                                     mi.getCoordinates().replace(),
                                     mi.getSelect());
@@ -95,7 +97,7 @@ public class UsePanacheEntityBaseUniT extends Recipe {
             } else if (PERSIST_AND_FLUSH_MATCHER.matches(mi)) {
                 if (hasVoidParameterization(mi)) {
                     mi = JavaTemplate.builder("#{any(io.quarkus.hibernate.reactive.panache.PanacheEntityBase)}.persistAndFlush().replaceWithVoid()")
-                            .javaParser(PARSER)
+                            .javaParser(getParser())
                             .build().apply(new Cursor(getCursor().getParent(), mi),
                                     mi.getCoordinates().replace(),
                                     mi.getSelect());
