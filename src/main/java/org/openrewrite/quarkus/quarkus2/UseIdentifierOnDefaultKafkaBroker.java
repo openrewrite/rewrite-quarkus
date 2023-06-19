@@ -23,19 +23,9 @@ import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 
-import java.util.Collections;
+import static java.util.Collections.singletonList;
 
 public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
-    private static final JavaParser.Builder<?, ?> JAVA_PARSER =
-            JavaParser.fromJavaVersion()
-                    .dependsOn(Collections.singletonList(
-                                    Parser.Input.fromString("package io.smallrye.common.annotation;\n" +
-                                            "public interface Identifier {\n" +
-                                            "    String value();\n" +
-                                            "}"
-                                    )
-                            )
-                    );
 
     @Override
     public String getDisplayName() {
@@ -62,7 +52,16 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
                 maybeAddImport("io.smallrye.common.annotation.Identifier");
                 maybeRemoveImport("javax.inject.Named");
                 a = JavaTemplate.builder("@Identifier(\"default-kafka-broker\")")
-                        .javaParser(JAVA_PARSER)
+                        .javaParser(JavaParser.fromJavaVersion()
+                                .dependsOn(singletonList(
+                                                Parser.Input.fromString(
+                                                        "package io.smallrye.common.annotation;\n" +
+                                                        "public interface Identifier {\n" +
+                                                        "    String value();\n" +
+                                                        "}"
+                                                )
+                                        )
+                                ))
                         .imports("io.smallrye.common.annotation.Identifier")
                         .build().apply(getCursor(), a.getCoordinates().replace());
             }
