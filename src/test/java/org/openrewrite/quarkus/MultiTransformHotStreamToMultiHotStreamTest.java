@@ -16,6 +16,7 @@
 package org.openrewrite.quarkus;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -32,6 +33,7 @@ class MultiTransformHotStreamToMultiHotStreamTest implements RewriteTest {
           .recipe(new MultiTransformHotStreamToMultiHotStream());
     }
 
+    @DocumentExample
     @Test
     void replaceTransform() {
         rewriteRun(

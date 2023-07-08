@@ -16,6 +16,7 @@
 package org.openrewrite.quarkus.quarkus2;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -32,6 +33,7 @@ public class UsePanacheEntityBaseUniTTest implements RewriteTest {
           .recipe(new UsePanacheEntityBaseUniT());
     }
 
+    @DocumentExample
     @Test
     void replaceWithVoid() {
         rewriteRun(
