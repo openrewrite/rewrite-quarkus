@@ -110,7 +110,6 @@ class Quarkus1to113MigrationTest implements RewriteTest {
                 .activateRecipes("org.openrewrite.quarkus.Quarkus1to1_13Migration"));
         }
 
-        @DocumentExample
         @Test
         void uniOnFailure() {
             rewriteRun(
