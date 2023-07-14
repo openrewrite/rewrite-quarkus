@@ -17,6 +17,7 @@ package org.openrewrite.quarkus;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.Issue;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
@@ -33,6 +34,7 @@ class ConfigPropertiesToConfigMappingTest implements RewriteTest {
           ).recipe(new ConfigPropertiesToConfigMapping());
     }
 
+    @DocumentExample
     @Test
     void migrateAnnotatedInterfaces() {
         rewriteRun(

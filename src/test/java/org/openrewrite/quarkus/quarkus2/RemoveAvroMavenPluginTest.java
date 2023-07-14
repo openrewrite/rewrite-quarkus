@@ -16,6 +16,7 @@
 package org.openrewrite.quarkus.quarkus2;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -52,6 +53,7 @@ class RemoveAvroMavenPluginTest implements RewriteTest {
         );
     }
 
+    @DocumentExample
     @Test
     void removeAvroMavenPluginIfQuarkusMavenPluginPresent() {
         rewriteRun(

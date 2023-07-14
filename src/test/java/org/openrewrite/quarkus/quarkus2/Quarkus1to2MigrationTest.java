@@ -16,6 +16,7 @@
 package org.openrewrite.quarkus.quarkus2;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
@@ -39,6 +40,7 @@ class Quarkus1to2MigrationTest implements RewriteTest {
           );
     }
 
+    @DocumentExample
     @Test
     void quteResourcePathToLocation() {
         rewriteRun(

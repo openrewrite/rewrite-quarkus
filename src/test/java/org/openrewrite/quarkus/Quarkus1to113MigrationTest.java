@@ -17,6 +17,7 @@ package org.openrewrite.quarkus;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
@@ -36,6 +37,7 @@ class Quarkus1to113MigrationTest implements RewriteTest {
             .activateRecipes("org.openrewrite.quarkus.Quarkus1to1_13Migration"));
     }
 
+    @DocumentExample
     @Test
     void changeMultiTransformAndByTakingFirst() {
         rewriteRun(
