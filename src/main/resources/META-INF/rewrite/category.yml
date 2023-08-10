@@ -16,7 +16,7 @@
 ---
 type: specs.openrewrite.org/v1beta/category
 name: Quarkus
-packageName: org.openrewrite.java.quarkus
+packageName: org.openrewrite.quarkus
 description: Recipes for upgrading and patching [Quarkus](https://quarkus.io/) applications.
 ---
 type: specs.openrewrite.org/v1beta/category
