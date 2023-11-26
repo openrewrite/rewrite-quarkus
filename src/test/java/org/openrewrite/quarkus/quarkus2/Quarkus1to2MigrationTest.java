@@ -141,7 +141,6 @@ class Quarkus1to2MigrationTest implements RewriteTest {
 
     @Test
     void upgradeQuarkusUniverseBom() {
-        // XXX Does not work yet when scope is import; needs a fix upstream
         rewriteRun(
           //language=XML
           pomXml(
@@ -151,13 +150,17 @@ class Quarkus1to2MigrationTest implements RewriteTest {
                 <groupId>org.openrewrite.example</groupId>
                 <artifactId>my-app</artifactId>
                 <version>1</version>
-                <dependencies>
-                  <dependency>
-                    <groupId>io.quarkus</groupId>
-                    <artifactId>quarkus-bom</artifactId>
-                    <version>1.13.7.Final</version>
-                  </dependency>
-                </dependencies>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>io.quarkus</groupId>
+                      <artifactId>quarkus-bom</artifactId>
+                      <version>1.13.7.Final</version>
+                      <type>pom</type>
+                      <scope>import</scope>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
               </project>
               """,
             """
@@ -166,13 +169,17 @@ class Quarkus1to2MigrationTest implements RewriteTest {
                 <groupId>org.openrewrite.example</groupId>
                 <artifactId>my-app</artifactId>
                 <version>1</version>
-                <dependencies>
-                  <dependency>
-                    <groupId>io.quarkus</groupId>
-                    <artifactId>quarkus-bom</artifactId>
-                    <version>2.16.12.Final</version>
-                  </dependency>
-                </dependencies>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>io.quarkus</groupId>
+                      <artifactId>quarkus-bom</artifactId>
+                      <version>2.16.12.Final</version>
+                      <type>pom</type>
+                      <scope>import</scope>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
               </project>
               """
           )
