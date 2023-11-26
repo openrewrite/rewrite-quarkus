@@ -117,11 +117,19 @@ recipeList:
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: io.quarkus.mongodb.runtime.MongoClientName
       newFullyQualifiedTypeName: io.quarkus.mongodb.MongoClientName
-  - org.openrewrite.maven.UpgradeDependencyVersion:
+  - org.openrewrite.maven.ChangeParentPom:
+      oldGroupId: io.quarkus
+      oldArtifactId: quarkus-universe-bom
+      newVersion: 2.x
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
       groupId: io.quarkus
       artifactId: quarkus-universe-bom
       newVersion: 2.x
-  - org.openrewrite.maven.UpgradeDependencyVersion:
+  - org.openrewrite.maven.ChangeParentPom:
+      oldGroupId: io.quarkus
+      oldArtifactId: quarkus-bom
+      newVersion: 2.x
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
       groupId: io.quarkus
       artifactId: quarkus-bom
       newVersion: 2.x

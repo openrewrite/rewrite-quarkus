@@ -25,11 +25,11 @@ dependencies {
     implementation("org.openrewrite:rewrite-maven:${rewriteVersion}")
     implementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
 
+    implementation("org.openrewrite.recipe:rewrite-java-dependencies:${rewriteVersion}")
+
     runtimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
 
     testImplementation("org.openrewrite:rewrite-test:${rewriteVersion}")
-    testImplementation("org.openrewrite:rewrite-maven:${rewriteVersion}")
-    testImplementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
     testImplementation("org.openrewrite:rewrite-java-tck:${rewriteVersion}")
 
     testImplementation("javax.xml.ws:jaxws-api:2.3.1")
