@@ -17,15 +17,15 @@ package org.openrewrite.quarkus.quarkus2;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
-import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.maven.Assertions.pomXml;
 
 class Quarkus1to2MigrationTest implements RewriteTest {
-
+    @Override
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
@@ -33,17 +33,14 @@ class Quarkus1to2MigrationTest implements RewriteTest {
               "quarkus-qute", "qute-core", "mongodb-driver-core",
               "quarkus-mongodb-client", "mongodb-driver-sync", "inject-api"
             ))
-          .recipe(Environment.builder()
-            .scanRuntimeClasspath("org.openrewrite.quarkus.quarkus2")
-            .build()
-            .activateRecipes("org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration")
-          );
+          .recipeFromResource("/META-INF/rewrite/quarkus.yml","org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration");
     }
 
     @DocumentExample
     @Test
     void quteResourcePathToLocation() {
         rewriteRun(
+          //language=java
           java(
             """
               import io.quarkus.qute.api.ResourcePath;
@@ -83,6 +80,7 @@ class Quarkus1to2MigrationTest implements RewriteTest {
     @Test
     void changeQuteCheckedTemplate() {
         rewriteRun(
+          //language=java
           java(
             """
               import io.quarkus.qute.TemplateInstance;
@@ -110,6 +108,7 @@ class Quarkus1to2MigrationTest implements RewriteTest {
     @Test
     void migrateQuarkusMongoClientName() {
         rewriteRun(
+          //language=java
           java(
             """
               import com.mongodb.client.MongoClient;
@@ -134,6 +133,90 @@ class Quarkus1to2MigrationTest implements RewriteTest {
                   @MongoClientName("clientName")
                   MongoClient mongoClient;
               }
+              """
+          )
+        );
+    }
+
+
+    @Test
+    void upgradeQuarkusUniverseBom() {
+        rewriteRun(
+          //language=XML
+          pomXml(
+            """
+              <project>
+                <modelVersion>4.0.0</modelVersion>
+                <groupId>org.openrewrite.example</groupId>
+                <artifactId>my-app</artifactId>
+                <version>1</version>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>io.quarkus</groupId>
+                      <artifactId>quarkus-bom</artifactId>
+                      <version>1.13.7.Final</version>
+                      <type>pom</type>
+                      <scope>import</scope>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
+              </project>
+              """,
+            """
+              <project>
+                <modelVersion>4.0.0</modelVersion>
+                <groupId>org.openrewrite.example</groupId>
+                <artifactId>my-app</artifactId>
+                <version>1</version>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>io.quarkus</groupId>
+                      <artifactId>quarkus-bom</artifactId>
+                      <version>2.16.12.Final</version>
+                      <type>pom</type>
+                      <scope>import</scope>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
+              </project>
+              """
+          )
+        );
+    }
+    @Test
+    void upgradeQuarkusUniverseParent() {
+        rewriteRun(
+          //language=XML
+          pomXml(
+            """
+              <project>
+                <modelVersion>4.0.0</modelVersion>
+                <parent>
+                  <groupId>io.quarkus</groupId>
+                  <artifactId>quarkus-universe-bom</artifactId>
+                  <version>1.13.7.Final</version>
+                  <relativePath />
+                </parent>
+                <groupId>org.openrewrite.example</groupId>
+                <artifactId>my-app</artifactId>
+                <version>1</version>
+              </project>
+              """,
+            """
+              <project>
+                <modelVersion>4.0.0</modelVersion>
+                <parent>
+                  <groupId>io.quarkus</groupId>
+                  <artifactId>quarkus-universe-bom</artifactId>
+                  <version>2.16.12.Final</version>
+                  <relativePath />
+                </parent>
+                <groupId>org.openrewrite.example</groupId>
+                <artifactId>my-app</artifactId>
+                <version>1</version>
+              </project>
               """
           )
         );
