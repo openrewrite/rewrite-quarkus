@@ -47,8 +47,8 @@ public class MultiTransformHotStreamToMultiHotStream extends Recipe {
         private static final MethodMatcher SELECT_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.Multi select()");
 
         @Override
-        public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext executionContext) {
-            J.MethodInvocation mi = super.visitMethodInvocation(method, executionContext);
+        public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+            J.MethodInvocation mi = super.visitMethodInvocation(method, ctx);
             if (HOT_STREAM_METHOD_MATCHER.matches(mi)) {
                 if (mi.getSelect() != null && mi.getSelect() instanceof J.MethodInvocation) {
                     J.MethodInvocation mSelect = (J.MethodInvocation) mi.getSelect();

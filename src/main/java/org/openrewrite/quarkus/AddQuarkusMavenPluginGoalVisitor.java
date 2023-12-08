@@ -39,7 +39,7 @@ public class AddQuarkusMavenPluginGoalVisitor extends MavenIsoVisitor<ExecutionC
 
 
     @Override
-    public Xml.Document visitDocument(Xml.Document document, ExecutionContext executionContext) {
+    public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
         /*
          * There must be room for making this better. It feels like this shouldn't need so much ceremony around building up a path. Or what would
          * really be helpful is having this walk a configured (fully-defined) path, and try to add any new nodes if none exist.
@@ -81,6 +81,6 @@ public class AddQuarkusMavenPluginGoalVisitor extends MavenIsoVisitor<ExecutionC
                 }
             }
         });
-        return super.visitDocument(document, executionContext);
+        return super.visitDocument(document, ctx);
     }
 }

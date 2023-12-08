@@ -48,7 +48,7 @@ public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
 
     private static class ConfigureQuarkusMavenPluginWithReasonableDefaultsVisitor extends MavenIsoVisitor<ExecutionContext> {
         @Override
-        public Xml.Document visitDocument(Xml.Document document, ExecutionContext executionContext) {
+        public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("build"));
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code"));
             doAfterVisit(new AddQuarkusMavenPluginGoalVisitor("generate-code-tests"));
