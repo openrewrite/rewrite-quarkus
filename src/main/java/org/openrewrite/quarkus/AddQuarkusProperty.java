@@ -118,8 +118,7 @@ public class AddQuarkusProperty extends Recipe {
             return true;
         }
         for (String filePattern : expressions) {
-            PathMatcher pathMatcher = sourcePath.getFileSystem().getPathMatcher("glob:" + filePattern);
-            if (pathMatcher.matches(sourcePath)) {
+            if (PathUtils.matchesGlob(sourcePath, filePattern)) {
                 return true;
             }
         }
