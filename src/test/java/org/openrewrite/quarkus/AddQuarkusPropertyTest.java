@@ -180,7 +180,7 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void makeChangeToMatchingFiles() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", "This property was added", null, List.of("**/application.{properties,yml}"))),
+          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", "This property was added", null, List.of("**/application.properties", "**/application.yml"))),
           //language=properties
           properties(
             """
