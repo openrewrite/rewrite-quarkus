@@ -17,8 +17,12 @@ package org.openrewrite.quarkus;
 
 import org.openrewrite.DelegatingExecutionContext;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.PathUtils;
+import org.openrewrite.internal.lang.Nullable;
 
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class QuarkusExecutionContextView extends DelegatingExecutionContext {
@@ -60,5 +64,23 @@ public class QuarkusExecutionContextView extends DelegatingExecutionContext {
         return getMessage(DEFAULT_APPLICATION_CONFIGURATION_PATHS,
                 Arrays.asList("**/application.{properties,yaml,yml}", "**/META-INF/microprofile-config.properties")
         );
+    }
+
+    public boolean isQuarkusConfigFile(Path sourcePath, @Nullable List<String> pathExpressions) {
+        List<String> expressions = pathExpressions != null ? pathExpressions : Collections.emptyList();
+        if (expressions.isEmpty()) {
+            // If not defined, get reasonable defaults from the execution context.
+            expressions = getDefaultApplicationConfigurationPaths();
+        }
+        if (expressions.isEmpty()) {
+            return true;
+        }
+        for (String filePattern : expressions) {
+            if (PathUtils.matchesGlob(sourcePath, filePattern)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -17,7 +17,12 @@ package org.openrewrite.quarkus;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.*;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
+import org.openrewrite.Recipe;
+import org.openrewrite.SourceFile;
+import org.openrewrite.Tree;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.internal.StringUtils;
 import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.properties.AddProperty;
@@ -25,8 +30,6 @@ import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.yaml.MergeYaml;
 import org.openrewrite.yaml.tree.Yaml;
 
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -97,33 +100,16 @@ public class AddQuarkusProperty extends Recipe {
 
             @Override
             public @Nullable Tree visit(@Nullable Tree t, ExecutionContext ctx) {
-                if (t instanceof Yaml.Documents && sourcePathMatches(((SourceFile) t).getSourcePath(), ctx)) {
+                QuarkusExecutionContextView quarkusCtx = QuarkusExecutionContextView.view(ctx);
+                if (t instanceof Yaml.Documents && quarkusCtx.isQuarkusConfigFile(((SourceFile) t).getSourcePath(), pathExpressions)) {
                     t = createMergeYamlVisitor().getVisitor().visit(t, ctx);
-                } else if (t instanceof Properties.File && sourcePathMatches(((SourceFile) t).getSourcePath(), ctx)) {
+                } else if (t instanceof Properties.File && quarkusCtx.isQuarkusConfigFile(((SourceFile) t).getSourcePath(), pathExpressions)) {
                     t = new AddProperty(propertyName(property, profile), value, comment, null)
                             .getVisitor().visit(t, ctx);
                 }
                 return t;
             }
         };
-    }
-
-    private boolean sourcePathMatches(Path sourcePath, ExecutionContext ctx) {
-        List<String> expressions = pathExpressions;
-        if (expressions == null || pathExpressions.isEmpty()) {
-            // If not defined, get reasonable defaults from the execution context.
-            expressions = QuarkusExecutionContextView.view(ctx).getDefaultApplicationConfigurationPaths();
-        }
-        if (expressions.isEmpty()) {
-            return true;
-        }
-        for (String filePattern : expressions) {
-            if (PathUtils.matchesGlob(sourcePath, filePattern)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private MergeYaml createMergeYamlVisitor() {
