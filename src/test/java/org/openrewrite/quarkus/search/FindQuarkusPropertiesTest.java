@@ -59,7 +59,7 @@ class FindQuarkusPropertiesTest {
             rewriteRun(
               spec -> spec.recipe(new FindQuarkusProperties("quarkus.http.port", null, null)),
               //language=properties
-              properties(sourceProperties)
+              properties(sourceProperties, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
 
@@ -76,7 +76,7 @@ class FindQuarkusPropertiesTest {
                 quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
                 %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
-                """)
+                """, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
 
@@ -93,7 +93,7 @@ class FindQuarkusPropertiesTest {
                 quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
                 %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
                 %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
-                """)
+                """, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
 
@@ -110,7 +110,7 @@ class FindQuarkusPropertiesTest {
                 quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
-                """)
+                """, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
     }
@@ -156,7 +156,7 @@ class FindQuarkusPropertiesTest {
             rewriteRun(
               spec -> spec.recipe(new FindQuarkusProperties("quarkus.http.port", null, null)),
               //language=yaml
-              yaml(sourceYaml)
+              yaml(sourceYaml, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
 
@@ -195,7 +195,7 @@ class FindQuarkusPropertiesTest {
                         automatic-indexing:
                           synchronization:
                             strategy: test
-                """)
+                """, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
 
@@ -234,7 +234,7 @@ class FindQuarkusPropertiesTest {
                         automatic-indexing:
                           synchronization:
                             strategy: ~~>test
-                """)
+                """, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
 
@@ -273,7 +273,7 @@ class FindQuarkusPropertiesTest {
                         automatic-indexing:
                           synchronization:
                             strategy: ~~>test
-                """)
+                """, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
     }

@@ -17,10 +17,13 @@ package org.openrewrite.quarkus;
 
 import org.openrewrite.DelegatingExecutionContext;
 import org.openrewrite.ExecutionContext;
-import org.openrewrite.PathUtils;
+import org.openrewrite.SourceFile;
+import org.openrewrite.Tree;
 import org.openrewrite.internal.lang.Nullable;
+import org.openrewrite.properties.tree.Properties;
+import org.openrewrite.yaml.tree.Yaml;
 
-import java.nio.file.Path;
+import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +69,10 @@ public class QuarkusExecutionContextView extends DelegatingExecutionContext {
         );
     }
 
-    public boolean isQuarkusConfigFile(Path sourcePath, @Nullable List<String> pathExpressions) {
+    public boolean isQuarkusConfigFile(Tree tree, @Nullable List<String> pathExpressions) {
+        if (!(tree instanceof Properties.File || tree instanceof Yaml.Documents)) {
+            return false;
+        }
         List<String> expressions = pathExpressions != null ? pathExpressions : Collections.emptyList();
         if (expressions.isEmpty()) {
             // If not defined, get reasonable defaults from the execution context.
@@ -76,7 +82,7 @@ public class QuarkusExecutionContextView extends DelegatingExecutionContext {
             return true;
         }
         for (String filePattern : expressions) {
-            if (PathUtils.matchesGlob(sourcePath, filePattern)) {
+            if (FileSystems.getDefault().getPathMatcher("glob:" + filePattern).matches(((SourceFile)tree).getSourcePath())) {
                 return true;
             }
         }

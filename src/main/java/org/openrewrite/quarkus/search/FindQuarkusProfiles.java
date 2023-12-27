@@ -16,17 +16,15 @@
 package org.openrewrite.quarkus.search;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.Value;
 import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
-import org.openrewrite.InMemoryExecutionContext;
-import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.SourceFile;
 import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.internal.lang.Nullable;
+import org.openrewrite.marker.SearchResult;
 import org.openrewrite.properties.PropertiesIsoVisitor;
 import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.quarkus.QuarkusExecutionContextView;
@@ -57,57 +55,77 @@ public class FindQuarkusProfiles extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return Preconditions.check(
-                new TreeVisitor<Tree, ExecutionContext>() {
-                    @Override
-                    public boolean isAcceptable(SourceFile sourceFile, ExecutionContext executionContext) {
-                        QuarkusExecutionContextView quarkusCtx = QuarkusExecutionContextView.view(executionContext);
-                        return sourceFile instanceof Properties.File || sourceFile instanceof Yaml.Documents &&
-                                                                        quarkusCtx.isQuarkusConfigFile(sourceFile.getSourcePath(), null);
-                    }
-                },
-                new FindQuarkusProfilesVisitor()
-        );
-    }
-
-    private static class FindQuarkusProfilesVisitor extends TreeVisitor<Tree, ExecutionContext> {
-
-        @Getter
-        private final Set<String> profiles = new HashSet<>();
-
-        @Override
-        public @Nullable Tree visit(@Nullable Tree tree, ExecutionContext ctx) {
-            tree = super.visit(tree, ctx);
-            if (tree instanceof Properties.File) {
-                Properties.File propertiesFile = (Properties.File) tree;
-                new PropertiesIsoVisitor<Set<String>>() {
-                    @Override
-                    public Properties.Entry visitEntry(Properties.Entry entry, Set<String> ctx) {
-                        entry = super.visitEntry(entry, ctx);
-                        addProfile(entry.getKey(), ctx);
-                        return entry;
-                    }
-                }.reduce(propertiesFile, profiles);
-            } else if (tree instanceof Yaml.Documents) {
-                Yaml.Documents yamlDocuments = (Yaml.Documents) tree;
-                new YamlIsoVisitor<Set<String>>() {
-                    @Override
-                    public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<String> ctx) {
-                        entry = super.visitMappingEntry(entry, ctx);
-                        String prop = getProperty(getCursor());
-                        addProfile(prop, ctx);
-                        return entry;
-                    }
-                }.reduce(yamlDocuments, profiles);
+        return new TreeVisitor<Tree, ExecutionContext>() {
+            @Override
+            public boolean isAcceptable(SourceFile sourceFile, ExecutionContext ctx) {
+                QuarkusExecutionContextView quarkusCtx = QuarkusExecutionContextView.view(ctx);
+                return quarkusCtx.isQuarkusConfigFile(sourceFile, null);
             }
-            return tree;
-        }
+
+            @Override
+            public @Nullable Tree visit(@Nullable Tree tree, ExecutionContext ctx) {
+                tree = super.visit(tree, ctx);
+                if (tree instanceof Properties.File) {
+                    doAfterVisit(new PropertiesIsoVisitor<ExecutionContext>() {
+                        @Override
+                        public Properties.Entry visitEntry(Properties.Entry entry, ExecutionContext ctx) {
+                            entry = super.visitEntry(entry, ctx);
+                            entry = entry.withValue(entry.getValue().withMarkers(entry.getValue().getMarkers().computeByType(new SearchResult(Tree.randomId(), null), (s1, s2) -> s1 == null ? s2 : s1)));
+                            return super.visitEntry(entry, ctx);
+                        }
+                    });
+                } else if (tree instanceof Yaml.Documents) {
+                    doAfterVisit(new YamlIsoVisitor<ExecutionContext>() {
+                        @Override
+                        public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, ExecutionContext ctx) {
+                            entry = super.visitMappingEntry(entry, ctx);
+                            entry = entry.withValue(entry.getValue().withMarkers(entry.getValue().getMarkers().computeByType(new SearchResult(Tree.randomId(), null), (s1, s2) -> s1 == null ? s2 : s1)));
+                            return super.visitMappingEntry(entry, ctx);
+                        }
+                    });
+                }
+                return tree;
+            }
+        };
     }
 
+    /**
+     * Find Quarkus profiles in the given tree.
+     *
+     * @param tree The tree to search for Quarkus profiles.
+     * @return A set of Quarkus profiles.
+     */
     public static Set<String> find(Tree tree) {
-        FindQuarkusProfilesVisitor visitor = new FindQuarkusProfilesVisitor();
-        visitor.visit(tree, new InMemoryExecutionContext());
-        return visitor.getProfiles();
+        Set<String> profiles = new HashSet<>();
+        new TreeVisitor<Tree, Set<String>>() {
+            @Override
+            public @Nullable Tree visit(@Nullable Tree tree, Set<String> ctx) {
+                tree = super.visit(tree, ctx);
+                if (tree instanceof Properties.File) {
+                    Properties.File propertiesFile = (Properties.File) tree;
+                    new PropertiesIsoVisitor<Set<String>>() {
+                        @Override
+                        public Properties.Entry visitEntry(Properties.Entry entry, Set<String> ctx) {
+                            entry = super.visitEntry(entry, ctx);
+                            addProfile(entry.getKey(), ctx);
+                            return entry;
+                        }
+                    }.reduce(propertiesFile, profiles);
+                } else if (tree instanceof Yaml.Documents) {
+                    new YamlIsoVisitor<Set<String>>() {
+                        @Override
+                        public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<String> ctx) {
+                            entry = super.visitMappingEntry(entry, ctx);
+                            String prop = getProperty(getCursor());
+                            addProfile(prop, ctx);
+                            return entry;
+                        }
+                    }.reduce(tree, profiles);
+                }
+                return tree;
+            }
+        }.visit(tree, profiles);
+        return profiles;
     }
 
     private static void addProfile(String propertyKey, Set<String> profiles) {

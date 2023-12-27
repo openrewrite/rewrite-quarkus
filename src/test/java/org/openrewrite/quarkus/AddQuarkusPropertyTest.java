@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RewriteTest;
 
-import java.util.List;
-
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
 
@@ -30,7 +28,7 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void addNestedIntoExisting() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.port", "9090", null, null, List.of("*"))),
+          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.port", "9090", null, null, null)),
           //language=properties
           properties(
             """
@@ -39,7 +37,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
             """
               quarkus.http.root-path=/api
               quarkus.http.port=9090
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.properties")
           ),
           //language=yaml
           yaml(
@@ -53,7 +52,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
                 http:
                   root-path: /api
                   port: 9090
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.yaml")
           )
         );
     }
@@ -61,7 +61,7 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void addPropertyToRoot() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("fred", "fred", null, null, List.of("*"))),
+          spec -> spec.recipe(new AddQuarkusProperty("fred", "fred", null, null, null)),
           //language=properties
           properties(
             """
@@ -70,7 +70,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
             """
               quarkus.http.port=9090
               fred=fred
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.properties")
           ),
           //language=yaml
           yaml(
@@ -84,7 +85,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
                 http:
                   root-path: /api
               fred: fred
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.yaml")
           )
         );
     }
@@ -92,7 +94,7 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void addPropertyToRootWithProfile() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("fred", "fred", null, "dev", List.of("*"))),
+          spec -> spec.recipe(new AddQuarkusProperty("fred", "fred", null, "dev", null)),
           //language=properties
           properties(
             """
@@ -101,7 +103,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
             """
               quarkus.http.port=9090
               %dev.fred=fred
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.properties")
           ),
           //language=yaml
           yaml(
@@ -116,7 +119,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
                   root-path: /api
               "%dev":
                 fred: fred
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.yaml")
           )
         );
     }
@@ -124,13 +128,14 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void propertyAlreadyExists() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("fred", "fred", null, null, List.of("*"))),
+          spec -> spec.recipe(new AddQuarkusProperty("fred", "fred", null, null, null)),
           //language=properties
           properties(
             """
               quarkus.http.port=9090
               fred=doNotChangeThis
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.properties")
           ),
           //language=yaml
           yaml(
@@ -139,7 +144,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
                 http:
                   port: 9090
               fred: doNotChangeThis
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.yaml")
           )
         );
     }
@@ -147,7 +153,7 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void addPropertyWithComment() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", "This property was added", null, List.of("*"))),
+          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", "This property was added", null, null)),
           //language=properties
           properties(
             """
@@ -157,7 +163,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
               quarkus.http.port=9090
               # This property was added
               quarkus.http.root-path=/api
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.properties")
           ),
           //language=yaml
           yaml(
@@ -172,7 +179,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
                   port: 9090
                   # This property was added
                   root-path: /api
-              """
+              """,
+            spec -> spec.path("src/main/resources/application.yaml")
           )
         );
     }
@@ -180,7 +188,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void makeChangeToMatchingFiles() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", "This property was added", null, List.of("**/application.properties", "**/application.yml"))),
+          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", "This property was added", null, null)),
+          properties("# Sample empty properties file", s -> s.path("src/main/resources/test.properties")),
           //language=properties
           properties(
             """
@@ -215,7 +224,7 @@ class AddQuarkusPropertyTest implements RewriteTest {
     @Test
     void doNotChangeToFilesThatDoNotMatch() {
         rewriteRun(
-          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", null, null, List.of("**/application.properties", "**/application.yml"))),
+          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", null, null, null)),
           properties(
             //language=properties
             """

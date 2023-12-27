@@ -31,6 +31,7 @@ import org.openrewrite.marker.SearchResult;
 import org.openrewrite.properties.PropertiesIsoVisitor;
 import org.openrewrite.properties.PropertiesVisitor;
 import org.openrewrite.properties.tree.Properties;
+import org.openrewrite.quarkus.QuarkusExecutionContextView;
 import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 
@@ -149,7 +150,8 @@ public class FindQuarkusProperties extends Recipe {
         return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
             public boolean isAcceptable(SourceFile sourceFile, ExecutionContext ctx) {
-                return sourceFile instanceof Yaml.Documents || sourceFile instanceof Properties.File;
+                QuarkusExecutionContextView quarkusCtx = QuarkusExecutionContextView.view(ctx);
+                return quarkusCtx.isQuarkusConfigFile(sourceFile, null);
             }
 
             @Override
