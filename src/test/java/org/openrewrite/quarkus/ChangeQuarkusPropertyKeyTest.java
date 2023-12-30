@@ -245,15 +245,15 @@ class ChangeQuarkusPropertyKeyTest {
             String after = """
               quarkus:
                 hibernate-search-orm:
-                  indexing:
-                    plan:
-                      synchronization:
-                        strategy: test
                   unitname:
                     indexing:
                       plan:
                         synchronization:
                           strategy: test
+                  indexing:
+                    plan:
+                      synchronization:
+                        strategy: test
               '%dev':
                 quarkus:
                   hibernate-search-orm:

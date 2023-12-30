@@ -36,9 +36,11 @@ import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 import org.openrewrite.yaml.tree.YamlKey;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 @Value
@@ -109,7 +111,7 @@ public class FindQuarkusProperties extends Recipe {
             }
         };
 
-        Set<Properties.Entry> entries = new HashSet<>();
+        Set<Properties.Entry> entries = new TreeSet<>(Comparator.comparing(Properties.Entry::getKey));
         findVisitor.visit(p, entries);
         return entries;
     }
@@ -141,7 +143,12 @@ public class FindQuarkusProperties extends Recipe {
             }
         };
 
-        Set<Yaml.Mapping.Entry> entries = new HashSet<>();
+        Set<Yaml.Mapping.Entry> entries = new TreeSet<>((o1, o2) -> {
+            if (o1.getKey() instanceof Yaml.Scalar && o2.getKey() instanceof Yaml.Scalar) {
+                return o1.getKey().getValue().compareTo(o2.getKey().getValue());
+            }
+            return 0;
+        });
         findVisitor.visit(y, entries);
         return entries;
     }
