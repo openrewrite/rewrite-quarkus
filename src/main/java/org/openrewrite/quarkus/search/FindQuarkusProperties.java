@@ -34,13 +34,12 @@ import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.quarkus.QuarkusExecutionContextView;
 import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
+import org.openrewrite.yaml.tree.YamlKey;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import static org.openrewrite.Tree.randomId;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -110,9 +109,9 @@ public class FindQuarkusProperties extends Recipe {
             }
         };
 
-        Set<Properties.Entry> ps = new HashSet<>();
-        findVisitor.visit(p, ps);
-        return ps;
+        Set<Properties.Entry> entries = new HashSet<>();
+        findVisitor.visit(p, entries);
+        return entries;
     }
 
     /**
@@ -124,23 +123,27 @@ public class FindQuarkusProperties extends Recipe {
      * @param searchAllProfiles If set, the property will be searched on all available profiles.
      * @return The set of found properties matching the propertyKey.
      */
-    public static Set<Properties.Entry> find(Yaml.Documents y, String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
+    public static Set<Yaml.Mapping.Entry> find(Yaml.Documents y, String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
         final Pattern pattern = Pattern.compile(getSearchRegex(propertyKey, profile, searchAllProfiles));
-        YamlIsoVisitor<Set<Properties.Entry>> findVisitor = new YamlIsoVisitor<Set<Properties.Entry>>() {
+        YamlIsoVisitor<Set<Yaml.Mapping.Entry>> findVisitor = new YamlIsoVisitor<Set<Yaml.Mapping.Entry>>() {
             @Override
-            public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<Properties.Entry> entries) {
+            public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<Yaml.Mapping.Entry> entries) {
                 entry = super.visitMappingEntry(entry, entries);
-                if (pattern.matcher(entry.getKey().getValue()).find()) {
-                    entry = entry.withValue(entry.getValue().withMarkers(entry.getValue().getMarkers()
-                            .computeByType(new SearchResult(randomId(), null), (s1, s2) -> s1 == null ? s2 : s1)));
+                String prop = getProperty(getCursor());
+                if (pattern.matcher(prop).find()) {
+                    YamlKey newKey = entry.getKey().copyPaste();
+                    if (newKey instanceof Yaml.Scalar) {
+                        newKey = ((Yaml.Scalar) newKey).withValue(prop);
+                    }
+                    entries.add(entry.copyPaste().withKey(newKey));
                 }
                 return entry;
             }
         };
 
-        Set<Properties.Entry> ps = new HashSet<>();
-        findVisitor.visit(y, ps);
-        return ps;
+        Set<Yaml.Mapping.Entry> entries = new HashSet<>();
+        findVisitor.visit(y, entries);
+        return entries;
     }
 
     @Override
@@ -163,8 +166,7 @@ public class FindQuarkusProperties extends Recipe {
                             entry = super.visitMappingEntry(entry, ctx);
                             String prop = getProperty(getCursor());
                             if (pattern.matcher(prop).find()) {
-                                entry = entry.withValue(entry.getValue().withMarkers(entry.getValue().getMarkers()
-                                        .computeByType(new SearchResult(randomId(), null), (s1, s2) -> s1 == null ? s2 : s1)));
+                                entry = SearchResult.found(entry);
                             }
                             return entry;
                         }
@@ -174,8 +176,7 @@ public class FindQuarkusProperties extends Recipe {
                         @Override
                         public Properties visitEntry(Properties.Entry entry, ExecutionContext ctx) {
                             if (pattern.matcher(entry.getKey()).find()) {
-                                entry = entry.withValue(entry.getValue().withMarkers(entry.getValue().getMarkers()
-                                        .computeByType(new SearchResult(randomId(), null), (s1, s2) -> s1 == null ? s2 : s1)));
+                                entry = SearchResult.found(entry);
                             }
                             return super.visitEntry(entry, ctx);
                         }
@@ -187,7 +188,7 @@ public class FindQuarkusProperties extends Recipe {
     }
 
     private static String getSearchRegex(String propertyKey, String profile, Boolean searchAllProfiles) {
-        if (searchAllProfiles != null && searchAllProfiles) {
+        if (Boolean.TRUE.equals(searchAllProfiles)) {
             return "^(?:%[\\w\\-_,]+\\.)?" + propertyKey + "$";
         } else if (StringUtils.isNotEmpty(profile)) {
             return "^%[\\w\\-_,]*(?:" + profile + ")[\\w\\-_,]*\\." + propertyKey + "$";
