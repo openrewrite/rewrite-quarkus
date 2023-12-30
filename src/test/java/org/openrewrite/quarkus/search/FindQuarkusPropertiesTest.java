@@ -69,11 +69,11 @@ class FindQuarkusPropertiesTest {
               spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, null)),
               //language=properties
               properties(sourceProperties, """
-                quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=~~>test
+                ~~>quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
-                      
-                quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
+                
+                ~~>quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 """, spec -> spec.path("src/main/resources/application.properties"))
@@ -86,13 +86,13 @@ class FindQuarkusPropertiesTest {
               spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, true)),
               //language=properties
               properties(sourceProperties, """
-                quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=~~>test
-                %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=~~>test
-                %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=~~>test
-                      
-                quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
-                %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
-                %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
+                ~~>quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
+                ~~>%dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
+                ~~>%staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
+                
+                ~~>quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
+                ~~>%dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
+                ~~>%staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 """, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -105,11 +105,11 @@ class FindQuarkusPropertiesTest {
               properties(sourceProperties, """
                 quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
-                %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=~~>test
-                      
+                ~~>%staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
+                
                 quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
-                %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=~~>test
+                ~~>%staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 """, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -180,11 +180,11 @@ class FindQuarkusPropertiesTest {
                   hibernate-search-orm:
                     automatic-indexing:
                       synchronization:
-                        strategy: ~~>test
+                        ~~>strategy: test
                     unitname:
                       automatic-indexing:
                         synchronization:
-                          strategy: ~~>test
+                          ~~>strategy: test
                 '%staging,prod':
                   quarkus:
                     hibernate-search-orm:
@@ -210,30 +210,30 @@ class FindQuarkusPropertiesTest {
                     hibernate-search-orm:
                       automatic-indexing:
                         synchronization:
-                          strategy: ~~>test
+                          ~~>strategy: test
                       unitname:
                         automatic-indexing:
                           synchronization:
-                            strategy: ~~>test
+                            ~~>strategy: test
                 quarkus:
                   hibernate-search-orm:
                     automatic-indexing:
                       synchronization:
-                        strategy: ~~>test
+                        ~~>strategy: test
                     unitname:
                       automatic-indexing:
                         synchronization:
-                          strategy: ~~>test
+                          ~~>strategy: test
                 '%staging,prod':
                   quarkus:
                     hibernate-search-orm:
                       automatic-indexing:
                         synchronization:
-                          strategy: ~~>test
+                          ~~>strategy: test
                       unitname:
                         automatic-indexing:
                           synchronization:
-                            strategy: ~~>test
+                            ~~>strategy: test
                 """, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
@@ -268,11 +268,11 @@ class FindQuarkusPropertiesTest {
                     hibernate-search-orm:
                       automatic-indexing:
                         synchronization:
-                          strategy: ~~>test
+                          ~~>strategy: test
                       unitname:
                         automatic-indexing:
                           synchronization:
-                            strategy: ~~>test
+                            ~~>strategy: test
                 """, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
