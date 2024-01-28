@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * This recipe is used to find Quarkus properties.
+ * This recipe is used to find Quarkus profiles.
  */
 @Value
 @EqualsAndHashCode(callSuper = true)

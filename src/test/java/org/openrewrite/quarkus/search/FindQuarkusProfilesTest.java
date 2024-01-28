@@ -17,7 +17,6 @@ package org.openrewrite.quarkus.search;
 
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Test;
-import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.properties.PropertiesParser;
 import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.test.RecipeSpec;
@@ -31,7 +30,7 @@ class FindQuarkusProfilesTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new FindQuarkusProfiles()).executionContext(new InMemoryExecutionContext());
+        spec.recipe(new FindQuarkusProfiles());
     }
 
     @Test

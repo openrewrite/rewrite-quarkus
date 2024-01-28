@@ -282,7 +282,8 @@ class ChangeQuarkusPropertyKeyTest {
 
             Recipe recipe = new ChangeQuarkusPropertyKey("quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy", "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy", null, null, true, null);
 
-            rewriteRun(spec -> spec.recipe(recipe), yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml")));
+            rewriteRun(spec -> spec.recipe(recipe).expectedCyclesThatMakeChanges(2),
+              yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml")));
         }
     }
 }

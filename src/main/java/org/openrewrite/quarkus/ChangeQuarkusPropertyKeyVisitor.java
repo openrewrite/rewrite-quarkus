@@ -198,7 +198,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                     .append(System.lineSeparator());
             indent = indent + "  ";
         }
-        for (int i = 0; i < propertyParts.length; i++ ) {
+        for (int i = 0; i < propertyParts.length; i++) {
             String part = propertyParts[i];
             if (i > 0 && yaml.length() > 0) {
                 yaml.append(System.lineSeparator());
