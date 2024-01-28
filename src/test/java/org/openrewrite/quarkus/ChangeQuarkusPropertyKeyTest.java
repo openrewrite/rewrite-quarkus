@@ -16,7 +16,6 @@
 package org.openrewrite.quarkus;
 
 import org.intellij.lang.annotations.Language;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.Recipe;
@@ -280,10 +279,12 @@ class ChangeQuarkusPropertyKeyTest {
                             strategy: test
               """;
 
-            Recipe recipe = new ChangeQuarkusPropertyKey("quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy", "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy", null, null, true, null);
+            Recipe recipe = new ChangeQuarkusPropertyKey(
+              "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+              "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+              null, null, true, null);
 
-            rewriteRun(spec -> spec.recipe(recipe).expectedCyclesThatMakeChanges(2),
-              yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml")));
+            rewriteRun(spec -> spec.recipe(recipe), yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml")));
         }
     }
 }
