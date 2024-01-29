@@ -27,8 +27,8 @@ dependencies {
 
     implementation("org.openrewrite.recipe:rewrite-java-dependencies:${rewriteVersion}")
 
-    implementation("io.quarkus:quarkus-update-recipes:latest.version")
-    implementation("io.quarkus:quarkus-update-recipes:latest.version:core")
+    implementation("io.quarkus:quarkus-update-recipes:latest.release")
+    implementation("io.quarkus:quarkus-update-recipes:latest.release:core")
 
     runtimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
 
