@@ -22,3 +22,7 @@ description: Recipes for upgrading and patching [Quarkus](https://quarkus.io/) a
 type: specs.openrewrite.org/v1beta/category
 name: Quarkus 2.x
 packageName: org.openrewrite.quarkus.quarkus2
+---
+type: specs.openrewrite.org/v1beta/category
+name: Quarkus 3.x
+packageName: io.quarkus
