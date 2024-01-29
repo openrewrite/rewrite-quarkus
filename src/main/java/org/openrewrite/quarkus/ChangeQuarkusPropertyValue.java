@@ -26,23 +26,22 @@ import java.util.List;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class ChangeQuarkusPropertyKey extends Recipe {
+public class ChangeQuarkusPropertyValue extends Recipe {
 
-    @Option(displayName = "Old property key",
-            description = "The property key to rename. Supports regex.",
-            example = "quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy")
-    String oldPropertyKey;
-
-    @Option(displayName = "New property key",
-            description = "The new name for the property key. Supports regex.",
+    @Option(displayName = "Property key",
+            description = "The name of the property key whose value is to be changed. Supports regex.",
             example = "quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy")
-    String newPropertyKey;
+    String propertyKey;
 
-    @Option(displayName = "Except",
-            description = "Regex. If any of these property keys exist as direct children of `oldPropertyKey`, then they will not be moved to `newPropertyKey`.",
-            required = false)
+    @Option(displayName = "New value",
+            description = "The new value to be used for key specified by `propertyKey`.")
+    String newValue;
+
+    @Option(displayName = "Old value",
+            required = false,
+            description = "Only change the property value if it matches the configured `oldValue`.")
     @Nullable
-    List<String> except;
+    String oldValue;
 
     @Option(displayName = "Profile",
             description = "The profile where the property is defined. If not specified, the property will be changed on the default profile.",
@@ -71,8 +70,7 @@ public class ChangeQuarkusPropertyKey extends Recipe {
     @Override
     public Validated<Object> validate() {
         Validated<Object> validated = super.validate()
-                .and(Validated.notBlank("newPropertyKey", oldPropertyKey))
-                .and(Validated.notBlank("newPropertyKey", newPropertyKey));
+                .and(Validated.notBlank("propertyKey", propertyKey));
 
         if (StringUtils.isNotEmpty(profile)) {
             validated = validated.and(Validated
@@ -85,20 +83,19 @@ public class ChangeQuarkusPropertyKey extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Change Quarkus property key";
+        return "Change Quarkus Property value";
     }
 
     @Override
     public String getDescription() {
-        return "Change a Quarkus property key.";
+        return "Change the value of a property in a Quarkus configuration file.";
     }
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                new FindQuarkusProperties(oldPropertyKey, profile, changeAllProfiles).getVisitor(),
-                new ChangeQuarkusPropertyKeyVisitor(oldPropertyKey, newPropertyKey, except, profile, changeAllProfiles, pathExpressions)
+                new FindQuarkusProperties(propertyKey, profile, changeAllProfiles).getVisitor(),
+                new ChangeQuarkusPropertyValueVisitor(propertyKey, newValue, oldValue, profile, changeAllProfiles, pathExpressions)
         );
     }
 }
-

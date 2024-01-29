@@ -17,7 +17,12 @@ package org.openrewrite.quarkus;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.*;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
+import org.openrewrite.Preconditions;
+import org.openrewrite.Recipe;
+import org.openrewrite.TreeVisitor;
+import org.openrewrite.Validated;
 import org.openrewrite.internal.StringUtils;
 import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.quarkus.search.FindQuarkusProperties;
@@ -26,23 +31,18 @@ import java.util.List;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class ChangeQuarkusPropertyKey extends Recipe {
+public class DeleteQuarkusProperty extends Recipe {
 
-    @Option(displayName = "Old property key",
-            description = "The property key to rename. Supports regex.",
-            example = "quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy")
-    String oldPropertyKey;
-
-    @Option(displayName = "New property key",
-            description = "The new name for the property key. Supports regex.",
+    @Option(displayName = "Property key",
+            description = "The name of the property key whose value is to be changed.",
             example = "quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy")
-    String newPropertyKey;
+    String propertyKey;
 
-    @Option(displayName = "Except",
-            description = "Regex. If any of these property keys exist as direct children of `oldPropertyKey`, then they will not be moved to `newPropertyKey`.",
-            required = false)
+    @Option(displayName = "Old value",
+            required = false,
+            description = "Only delete the property value if it matches the configured `oldValue`.")
     @Nullable
-    List<String> except;
+    String oldValue;
 
     @Option(displayName = "Profile",
             description = "The profile where the property is defined. If not specified, the property will be changed on the default profile.",
@@ -56,7 +56,7 @@ public class ChangeQuarkusPropertyKey extends Recipe {
             required = false,
             example = "false")
     @Nullable
-    Boolean changeAllProfiles;
+    Boolean deleteOnAllProfiles;
 
     @Option(displayName = "Optional list of file path matcher",
             description = "Each value in this list represents a glob expression that is used to match which files will " +
@@ -71,12 +71,11 @@ public class ChangeQuarkusPropertyKey extends Recipe {
     @Override
     public Validated<Object> validate() {
         Validated<Object> validated = super.validate()
-                .and(Validated.notBlank("newPropertyKey", oldPropertyKey))
-                .and(Validated.notBlank("newPropertyKey", newPropertyKey));
+                .and(Validated.notBlank("propertyKey", propertyKey));
 
         if (StringUtils.isNotEmpty(profile)) {
             validated = validated.and(Validated
-                    .test("changeAllProfiles", "cannot be used together with profile", changeAllProfiles, x -> x == null || !x)
+                    .test("deleteOnAllProfiles", "cannot be used together with profile", deleteOnAllProfiles, x -> x == null || !x)
             );
         }
 
@@ -85,20 +84,19 @@ public class ChangeQuarkusPropertyKey extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Change Quarkus property key";
+        return "Delete Quarkus Property";
     }
 
     @Override
     public String getDescription() {
-        return "Change a Quarkus property key.";
+        return "Delete a property from a Quarkus configuration file.";
     }
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                new FindQuarkusProperties(oldPropertyKey, profile, changeAllProfiles).getVisitor(),
-                new ChangeQuarkusPropertyKeyVisitor(oldPropertyKey, newPropertyKey, except, profile, changeAllProfiles, pathExpressions)
+                new FindQuarkusProperties(propertyKey, profile, deleteOnAllProfiles).getVisitor(),
+                new DeleteQuarkusPropertyVisitor(propertyKey, oldValue, profile, deleteOnAllProfiles, pathExpressions)
         );
     }
 }
-

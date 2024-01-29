@@ -78,9 +78,6 @@ public class QuarkusExecutionContextView extends DelegatingExecutionContext {
             // If not defined, get reasonable defaults from the execution context.
             expressions = getDefaultApplicationConfigurationPaths();
         }
-        if (expressions.isEmpty()) {
-            return true;
-        }
         for (String filePattern : expressions) {
             if (FileSystems.getDefault().getPathMatcher("glob:" + filePattern).matches(((SourceFile)tree).getSourcePath())) {
                 return true;

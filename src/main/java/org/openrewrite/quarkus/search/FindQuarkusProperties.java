@@ -17,14 +17,7 @@ package org.openrewrite.quarkus.search;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.Cursor;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Option;
-import org.openrewrite.Recipe;
-import org.openrewrite.SourceFile;
-import org.openrewrite.Tree;
-import org.openrewrite.TreeVisitor;
-import org.openrewrite.Validated;
+import org.openrewrite.*;
 import org.openrewrite.internal.StringUtils;
 import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.marker.SearchResult;
@@ -37,7 +30,6 @@ import org.openrewrite.yaml.tree.Yaml;
 import org.openrewrite.yaml.tree.YamlKey;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -93,39 +85,39 @@ public class FindQuarkusProperties extends Recipe {
     /**
      * Find a set of matching {@link Properties}.
      *
-     * @param p                 The set of properties to search over.
+     * @param properties        The set of properties to search over.
      * @param propertyKey       The name of property key to look for.
-     * @param profile           The profile where the property is defined. If not specified, the property will be changed on the default profile.
+     * @param profile           The profile where the property is defined. If not specified, the property will be searched on the default profile.
      * @param searchAllProfiles If set, the property will be searched on all available profiles.
-     * @return The set of found properties matching the propertyKey.
+     * @return The set of found properties matching {@code propertyKey}.
      */
-    public static Set<Properties.Entry> find(Properties p, String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
+    public static Set<Properties.Entry> find(Properties properties, String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
         final Pattern pattern = Pattern.compile(getSearchRegex(propertyKey, profile, searchAllProfiles));
         PropertiesIsoVisitor<Set<Properties.Entry>> findVisitor = new PropertiesIsoVisitor<Set<Properties.Entry>>() {
             @Override
             public Properties.Entry visitEntry(Properties.Entry entry, Set<Properties.Entry> ps) {
                 if (pattern.matcher(entry.getKey()).find()) {
-                    ps.add(entry);
+                    ps.add(SearchResult.found(entry));
                 }
                 return super.visitEntry(entry, ps);
             }
         };
 
         Set<Properties.Entry> entries = new TreeSet<>(Comparator.comparing(Properties.Entry::getKey));
-        findVisitor.visit(p, entries);
+        findVisitor.visit(properties, entries);
         return entries;
     }
 
     /**
      * Find a set of matching {@link Properties}.
      *
-     * @param y                 The set of properties to search over.
+     * @param yaml              The set of properties to search over.
      * @param propertyKey       The name of property key to look for.
-     * @param profile           The profile where the property is defined. If not specified, the property will be changed on the default profile.
+     * @param profile           The profile where the property is defined. If not specified, the property will be searched on the default profile.
      * @param searchAllProfiles If set, the property will be searched on all available profiles.
-     * @return The set of found properties matching the propertyKey.
+     * @return The set of found properties matching {@code propertyKey}.
      */
-    public static Set<Yaml.Mapping.Entry> find(Yaml.Documents y, String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
+    public static Set<Yaml.Mapping.Entry> find(Yaml.Documents yaml, String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
         final Pattern pattern = Pattern.compile(getSearchRegex(propertyKey, profile, searchAllProfiles));
         YamlIsoVisitor<Set<Yaml.Mapping.Entry>> findVisitor = new YamlIsoVisitor<Set<Yaml.Mapping.Entry>>() {
             @Override
@@ -137,7 +129,7 @@ public class FindQuarkusProperties extends Recipe {
                     if (newKey instanceof Yaml.Scalar) {
                         newKey = ((Yaml.Scalar) newKey).withValue(prop);
                     }
-                    entries.add(entry.copyPaste().withKey(newKey));
+                    entries.add(SearchResult.found(entry.copyPaste().withKey(newKey)));
                 }
                 return entry;
             }
@@ -149,7 +141,7 @@ public class FindQuarkusProperties extends Recipe {
             }
             return 0;
         });
-        findVisitor.visit(y, entries);
+        findVisitor.visit(yaml, entries);
         return entries;
     }
 
@@ -203,7 +195,7 @@ public class FindQuarkusProperties extends Recipe {
         return "^" + propertyKey + "$";
     }
 
-    private static String getProperty(Cursor cursor) {
+    static String getProperty(Cursor cursor) {
         StringBuilder asProperty = new StringBuilder();
         Iterator<Object> path = cursor.getPath();
         int i = 0;

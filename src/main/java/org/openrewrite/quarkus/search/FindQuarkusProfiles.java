@@ -17,12 +17,7 @@ package org.openrewrite.quarkus.search;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.Cursor;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Recipe;
-import org.openrewrite.SourceFile;
-import org.openrewrite.Tree;
-import org.openrewrite.TreeVisitor;
+import org.openrewrite.*;
 import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.marker.SearchResult;
 import org.openrewrite.properties.PropertiesIsoVisitor;
@@ -33,7 +28,6 @@ import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -92,8 +86,8 @@ public class FindQuarkusProfiles extends Recipe {
     /**
      * Find Quarkus profiles in the given tree.
      *
-     * @param tree The tree to search for Quarkus profiles.
-     * @return A set of Quarkus profiles.
+     * @param tree The {@link Properties} or {@link Yaml.Documents} tree to search for Quarkus profiles.
+     * @return The Quarkus profiles in use on the tree.
      */
     public static Set<String> find(Tree tree) {
         Set<String> profiles = new HashSet<>();
@@ -116,7 +110,7 @@ public class FindQuarkusProfiles extends Recipe {
                         @Override
                         public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<String> ctx) {
                             entry = super.visitMappingEntry(entry, ctx);
-                            String prop = getProperty(getCursor());
+                            String prop = FindQuarkusProperties.getProperty(getCursor());
                             addProfile(prop, ctx);
                             return entry;
                         }
@@ -138,22 +132,5 @@ public class FindQuarkusProfiles extends Recipe {
         }
         String temp = propertyKey.substring(1, index);
         profiles.addAll(Arrays.asList(temp.split(",")));
-    }
-
-    private static String getProperty(Cursor cursor) {
-        StringBuilder asProperty = new StringBuilder();
-        Iterator<Object> path = cursor.getPath();
-        int i = 0;
-        while (path.hasNext()) {
-            Object next = path.next();
-            if (next instanceof Yaml.Mapping.Entry) {
-                Yaml.Mapping.Entry entry = (Yaml.Mapping.Entry) next;
-                if (i++ > 0) {
-                    asProperty.insert(0, '.');
-                }
-                asProperty.insert(0, entry.getKey().getValue());
-            }
-        }
-        return asProperty.toString();
     }
 }
