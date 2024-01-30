@@ -51,12 +51,12 @@ public class DeleteQuarkusProperty extends Recipe {
     @Nullable
     String profile;
 
-    @Option(displayName = "Change for all Profiles",
-            description = "If set, thr property will be changed on all available profiles.",
+    @Option(displayName = "Delete from all Profiles",
+            description = "If set to true, the property will be removed from all available profiles. Defaults to `true`.",
             required = false,
             example = "false")
     @Nullable
-    Boolean deleteOnAllProfiles;
+    Boolean deleteFromAllProfiles;
 
     @Option(displayName = "Optional list of file path matcher",
             description = "Each value in this list represents a glob expression that is used to match which files will " +
@@ -75,7 +75,7 @@ public class DeleteQuarkusProperty extends Recipe {
 
         if (StringUtils.isNotEmpty(profile)) {
             validated = validated.and(Validated
-                    .test("deleteOnAllProfiles", "cannot be used together with profile", deleteOnAllProfiles, x -> x == null || !x)
+                    .test("deleteOnAllProfiles", "cannot be used together with profile", deleteFromAllProfiles, x -> x == null || !x)
             );
         }
 
@@ -95,8 +95,8 @@ public class DeleteQuarkusProperty extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                new FindQuarkusProperties(propertyKey, profile, deleteOnAllProfiles).getVisitor(),
-                new DeleteQuarkusPropertyVisitor(propertyKey, oldValue, profile, deleteOnAllProfiles, pathExpressions)
+                new FindQuarkusProperties(propertyKey, profile, deleteFromAllProfiles).getVisitor(),
+                new DeleteQuarkusPropertyVisitor(propertyKey, oldValue, profile, deleteFromAllProfiles, pathExpressions)
         );
     }
 }

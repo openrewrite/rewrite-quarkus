@@ -65,7 +65,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
             rewriteRun(
               spec -> spec.recipe(new DeleteQuarkusProperty(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-                null, null, null, null)),
+                null, null, false, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -160,8 +160,10 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
 
         @Test
         void deleteValueOnDefaultProfileOnly() {
+            // intentional 2 blank lines because the compiler will remove the first one
             @Language("yml")
             String after = """
+
 
               '%dev':
                 quarkus:
@@ -188,7 +190,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
             rewriteRun(
               spec -> spec.recipe(new DeleteQuarkusProperty(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-                null, null, null, null)),
+                null, null, false, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }

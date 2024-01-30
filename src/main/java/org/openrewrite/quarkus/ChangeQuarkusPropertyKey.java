@@ -45,7 +45,7 @@ public class ChangeQuarkusPropertyKey extends Recipe {
     List<String> except;
 
     @Option(displayName = "Profile",
-            description = "The profile where the property is defined. If not specified, the property will be changed on the default profile.",
+            description = "The profile where the property is defined. If not specified, the property will be changed on all profiles. Defaults to `true`.",
             required = false,
             example = "dev")
     @Nullable

@@ -66,7 +66,7 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyNoProfile() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, null)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false)),
               //language=properties
               properties(sourceProperties, """
                 ~~>quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
@@ -163,7 +163,7 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyNoProfile() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, null)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false)),
               //language=yaml
               yaml(sourceYaml, """
                 '%dev':

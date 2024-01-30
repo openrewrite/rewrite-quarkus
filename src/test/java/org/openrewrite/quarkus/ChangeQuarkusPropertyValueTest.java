@@ -18,7 +18,6 @@ package org.openrewrite.quarkus;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.openrewrite.Recipe;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.properties.Assertions.properties;
@@ -67,7 +66,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyValue(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "write-sync",
-                null, null, null, null)),
+                null, null, false, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -204,7 +203,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyValue(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "write-sync",
-                null, null, null, null)),
+                null, null, false, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }

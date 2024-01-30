@@ -68,7 +68,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
             if (oldValue == null || oldValue.equals(entry.getValue().getText())) {
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(entry.getKey());
 
-                if (profiles.length == 0 || Boolean.TRUE.equals(changeAllProfiles)) {
+                if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
                     tree = new org.openrewrite.properties.ChangePropertyValue(entry.getKey(), newValue, oldValue, false, false)
                             .getVisitor()
                             .visit(tree, ctx);
@@ -123,7 +123,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
 
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(key);
 
-                if (profiles.length == 0 || Boolean.TRUE.equals(changeAllProfiles)) {
+                if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
                     tree = new org.openrewrite.yaml.ChangePropertyValue(key, newValue, oldValue, false, null)
                             .getVisitor()
                             .visit(tree, ctx);

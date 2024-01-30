@@ -23,7 +23,6 @@ import org.openrewrite.quarkus.search.FindQuarkusProperties;
 import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -71,12 +70,17 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
             String transformedKey = replaceRegex(oldPropertyKey, newPropertyKey, keyWithoutProfile);
             String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(entry.getKey());
 
-            if (profiles.length == 0 || Boolean.TRUE.equals(changeAllProfiles)) {
+            if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
                 String newKey = profiles.length == 0 ? transformedKey : "%" + String.join(",", profiles) + "." + transformedKey;
                 tree = new org.openrewrite.properties.ChangePropertyKey(entry.getKey(), newKey, false, false)
                         .getVisitor()
                         .visit(tree, ctx);
             } else {
+                // Remove the old property containing the original key with multiple profiles
+                tree = new org.openrewrite.properties.DeleteProperty(entry.getKey(), false)
+                        .getVisitor()
+                        .visit(tree, ctx);
+
                 List<String> remainingProfiles = new ArrayList<>(existingProperties.size());
                 for (String profile : profiles) {
                     if (!profile.equals(this.profile)) {
@@ -84,17 +88,12 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                     }
                 }
 
-                // Remove the old property containing the original key with multiple profiles
-                tree = new org.openrewrite.properties.DeleteProperty(entry.getKey(), false)
-                        .getVisitor()
-                        .visit(tree, ctx);
 
                 // Add a new property for the matched profile with the transformed key
                 String key = "%" + profile + "." + transformedKey;
-                String value1 = entry.getValue().getText();
                 tree = new org.openrewrite.properties.AddProperty(
                         key,
-                        value1,
+                        entry.getValue().getText(),
                         null,
                         null
                 ).getVisitor().visit(tree, ctx);
@@ -102,10 +101,9 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                 if (!remainingProfiles.isEmpty()) {
                     // Add a property containing the value for the remaining unmatched profiles with the original key
                     key = "%" + String.join(",", remainingProfiles) + "." + keyWithoutProfile;
-                    String value = entry.getValue().getText();
                     tree = new org.openrewrite.properties.AddProperty(
                             key,
-                            value,
+                            entry.getValue().getText(),
                             null,
                             null
                     ).getVisitor().visit(tree, ctx);
@@ -120,39 +118,34 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         Set<Yaml.Mapping.Entry> existingProperties = FindQuarkusProperties.find((Yaml.Documents) tree, oldPropertyKey, profile, changeAllProfiles);
         for (Yaml.Mapping.Entry entry : existingProperties) {
             String originalEntryValue = ((Yaml.Scalar) entry.getValue()).getValue();
-            String key = entry.getKey().getValue();
-            String keyWithoutProfile = QuarkusProfileUtils.getKeyWithoutProfile(key);
+            String originalKey = entry.getKey().getValue();
+            String keyWithoutProfile = QuarkusProfileUtils.getKeyWithoutProfile(originalKey);
             String transformedKey = replaceRegex(oldPropertyKey, newPropertyKey, keyWithoutProfile);
-            String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(key);
-            List<String> remainingProfiles = new ArrayList<>(existingProperties.size());
-            for (String profile : profiles) {
-                if (!profile.equals(this.profile)) {
-                    remainingProfiles.add(profile);
+            String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(originalKey);
+
+            if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profiles);
+            } else {
+                List<String> remainingProfiles = new ArrayList<>(existingProperties.size());
+                for (String profile : profiles) {
+                    if (!profile.equals(this.profile)) {
+                        remainingProfiles.add(profile);
+                    }
+                }
+
+                // Remove the old property containing the original key with multiple profiles
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profile != null ? new String[]{profile} : new String[0]);
+
+                if (!remainingProfiles.isEmpty()) {
+                    // Add a new property for the matched profile with the transformed key
+                    tree = new org.openrewrite.yaml.MergeYaml(
+                            "$",
+                            QuarkusProfileUtils.formatKey(keyWithoutProfile, originalEntryValue, String.join(",", remainingProfiles)),
+                            false,
+                            null
+                    ).getVisitor().visit(tree, ctx);
                 }
             }
-
-            // Remove the old property containing the original key with multiple profiles
-            tree = new org.openrewrite.yaml.DeleteProperty(key, false, false)
-                    .getVisitor()
-                    .visit(tree, ctx);
-
-            StringBuilder newProperties = new StringBuilder();
-
-            // Add a new property for the named profile with the changed key
-            QuarkusProfileUtils.formatKey(newProperties, transformedKey, originalEntryValue, profile != null ? Collections.singletonList(profile) : Collections.emptyList());
-
-            // Add a property containing the value for the unmatched profiles with the original value
-            if (!remainingProfiles.isEmpty()) {
-                QuarkusProfileUtils.formatKey(newProperties, keyWithoutProfile, originalEntryValue, remainingProfiles);
-            }
-
-            // Merge the new property with the existing properties
-            tree = new org.openrewrite.yaml.MergeYaml(
-                    "$",
-                    newProperties.toString(),
-                    true,
-                    null
-            ).getVisitor().visit(tree, ctx);
         }
 
         return tree;
@@ -169,5 +162,21 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
             return result.toString();
         }
         return input;
+    }
+
+    @Nullable
+    private static Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, String value, String[] profiles) {
+        if (tree == null) {
+            return null;
+        }
+        Tree t = new org.openrewrite.yaml.DeleteProperty(oldKey, false, null)
+                .getVisitor()
+                .visit(tree, ctx);
+        return new org.openrewrite.yaml.MergeYaml(
+                "$",
+                QuarkusProfileUtils.formatKey(newKey, value, String.join(",", profiles)),
+                false,
+                null
+        ).getVisitor().visit(t, ctx);
     }
 }

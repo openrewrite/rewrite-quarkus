@@ -18,7 +18,6 @@ package org.openrewrite.quarkus;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.openrewrite.Recipe;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.properties.Assertions.properties;
@@ -41,13 +40,11 @@ class ChangeQuarkusPropertyKeyTest {
 
         @Test
         void noChangesIfKeyNotFound() {
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.foo",
-              "quarkus\\.bar",
-              null, null, null, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.foo",
+                "quarkus\\.bar",
+                null, null, null, null)),
               properties(sourceProperties, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -65,13 +62,11 @@ class ChangeQuarkusPropertyKeyTest {
               %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
               """;
 
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-              "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-              null, null, null, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, null, false, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -91,13 +86,11 @@ class ChangeQuarkusPropertyKeyTest {
               %staging.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
               """;
 
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-              "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-              null, "prod", false, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, "prod", false, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -115,13 +108,11 @@ class ChangeQuarkusPropertyKeyTest {
               %staging,prod.quarkus.hibernate-search-orm."unitname".indexing.plan.synchronization.strategy=async
               """;
 
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-              "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-              null, null, true, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, null, true, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -164,13 +155,11 @@ class ChangeQuarkusPropertyKeyTest {
 
         @Test
         void noChangesIfKeyNotFound() {
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.foo",
-              "quarkus\\.bar",
-              null, null, null, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.foo",
+                "quarkus\\.bar",
+                null, null, null, null)),
               yaml(sourceYaml, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
@@ -212,13 +201,11 @@ class ChangeQuarkusPropertyKeyTest {
                           strategy: async
               """;
 
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-              "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-              null, null, null, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, null, false, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
@@ -269,13 +256,11 @@ class ChangeQuarkusPropertyKeyTest {
                           strategy: async
               """;
 
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-              "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-              null, "prod", false, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, "prod", false, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
@@ -286,30 +271,46 @@ class ChangeQuarkusPropertyKeyTest {
             String after = """
               quarkus:
                 hibernate-search-orm:
-                    unitname:
-                        indexing.plan.synchronization.strategy: read-sync
-                    indexing.plan.synchronization.strategy: read-sync
+                  indexing:
+                    plan:
+                      synchronization:
+                        strategy: read-sync
+                  unitname:
+                    indexing:
+                      plan:
+                        synchronization:
+                          strategy: read-sync
               '%dev':
                 quarkus:
                   hibernate-search-orm:
-                      unitname:
-                          indexing.plan.synchronization.strategy: sync
-                      indexing.plan.synchronization.strategy: sync
+                    indexing:
+                      plan:
+                        synchronization:
+                          strategy: sync
+                    unitname:
+                      indexing:
+                        plan:
+                          synchronization:
+                            strategy: sync
               '%staging,prod':
                 quarkus:
                   hibernate-search-orm:
-                      unitname:
-                          indexing.plan.synchronization.strategy: async
-                      indexing.plan.synchronization.strategy: async
+                    indexing:
+                      plan:
+                        synchronization:
+                          strategy: async
+                    unitname:
+                      indexing:
+                        plan:
+                          synchronization:
+                            strategy: async
               """;
 
-            Recipe recipe = new ChangeQuarkusPropertyKey(
-              "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
-              "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-              null, null, true, null);
-
             rewriteRun(
-              spec -> spec.recipe(recipe).expectedCyclesThatMakeChanges(2),
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, null, true, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }

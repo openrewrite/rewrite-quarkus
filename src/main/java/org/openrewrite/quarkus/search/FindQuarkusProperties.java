@@ -55,14 +55,14 @@ public class FindQuarkusProperties extends Recipe {
     String propertyKey;
 
     @Option(displayName = "Profile",
-            description = "The profile where the property is defined. If not specified, the property will be changed on the default profile.",
+            description = "The profile where the property is defined. If not specified, the property will be searched on all profiles.",
             required = false,
             example = "dev")
     @Nullable
     String profile;
 
     @Option(displayName = "Search on all Profiles",
-            description = "If set, the property will be searched on all available profiles.",
+            description = "If set, the property will be searched on all available profiles. Defaults to `true`.",
             required = false,
             example = "false")
     @Nullable
@@ -187,7 +187,7 @@ public class FindQuarkusProperties extends Recipe {
     }
 
     private static String getSearchRegex(String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
-        if (Boolean.TRUE.equals(searchAllProfiles)) {
+        if (!Boolean.FALSE.equals(searchAllProfiles)) {
             return "^(?:%[\\w\\-_,]+\\.)?" + propertyKey + "$";
         } else if (StringUtils.isNotEmpty(profile)) {
             return "^%[\\w\\-_,]*(?:" + profile + ")[\\w\\-_,]*\\." + propertyKey + "$";

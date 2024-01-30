@@ -51,7 +51,7 @@ public class ChangeQuarkusPropertyValue extends Recipe {
     String profile;
 
     @Option(displayName = "Change for all Profiles",
-            description = "If set, thr property will be changed on all available profiles.",
+            description = "If set to true, the property value will be changed on all available profiles. Defaults to `true`.",
             required = false,
             example = "false")
     @Nullable
