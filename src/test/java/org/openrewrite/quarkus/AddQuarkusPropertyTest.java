@@ -35,8 +35,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
               quarkus.http.root-path=/api
               """,
             """
-              quarkus.http.root-path=/api
               quarkus.http.port=9090
+              quarkus.http.root-path=/api
               """,
             spec -> spec.path("src/main/resources/application.properties")
           ),
@@ -68,8 +68,8 @@ class AddQuarkusPropertyTest implements RewriteTest {
               quarkus.http.port=9090
               """,
             """
-              quarkus.http.port=9090
               fred=fred
+              quarkus.http.port=9090
               """,
             spec -> spec.path("src/main/resources/application.properties")
           ),
@@ -99,9 +99,11 @@ class AddQuarkusPropertyTest implements RewriteTest {
           properties(
             """
               quarkus.http.port=9090
+              %dev.foo=bar
               """,
             """
               quarkus.http.port=9090
+              %dev.foo=bar
               %dev.fred=fred
               """,
             spec -> spec.path("src/main/resources/application.properties")

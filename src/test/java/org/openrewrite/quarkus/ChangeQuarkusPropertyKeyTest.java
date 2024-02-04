@@ -77,13 +77,13 @@ class ChangeQuarkusPropertyKeyTest {
             String after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
-                            
+              %prod.quarkus.hibernate-search-orm."unitname".indexing.plan.synchronization.strategy=async
+              %prod.quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=async
+              %staging.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
+              %staging.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
+              
               quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
-              %prod.quarkus.hibernate-search-orm."unitname".indexing.plan.synchronization.strategy=async
-              %staging.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
-              %prod.quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=async
-              %staging.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
               """;
 
             rewriteRun(
