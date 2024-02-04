@@ -17,7 +17,12 @@ package org.openrewrite.quarkus;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.*;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
+import org.openrewrite.Recipe;
+import org.openrewrite.SourceFile;
+import org.openrewrite.Tree;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.internal.StringUtils;
 import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.properties.AddProperty;
@@ -25,8 +30,6 @@ import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.yaml.MergeYaml;
 import org.openrewrite.yaml.tree.Yaml;
 
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -34,10 +37,10 @@ import java.util.regex.Pattern;
  * A recipe to uniformly add a property to Quarkus configuration file. This recipe supports adding properties to
  * "application.properties" and "application.yaml" files. This recipe will only add the property if it does not already
  * exist within the configuration file.
- * <P>
+ * <p>
  * NOTE: Because an application may have a large collection of yaml files (some of which may not even be related to
- *       Quarkus configuration), this recipe will only make changes to files that match one of the pathExpressions. If
- *       the recipe is configured without pathExpressions, it will query the execution context for reasonable defaults.
+ * Quarkus configuration), this recipe will only make changes to files that match one of the pathExpressions. If
+ * the recipe is configured without pathExpressions, it will query the execution context for reasonable defaults.
  */
 @Value
 @EqualsAndHashCode(callSuper = false)
@@ -92,38 +95,21 @@ public class AddQuarkusProperty extends Recipe {
         return new TreeVisitor<Tree, ExecutionContext>() {
             @Override
             public boolean isAcceptable(SourceFile sourceFile, ExecutionContext ctx) {
-                return sourceFile instanceof Yaml.Documents || sourceFile instanceof Properties.File;
+                QuarkusExecutionContextView quarkusCtx = QuarkusExecutionContextView.view(ctx);
+                return quarkusCtx.isQuarkusConfigFile(sourceFile, null);
             }
 
             @Override
             public @Nullable Tree visit(@Nullable Tree t, ExecutionContext ctx) {
-                if (t instanceof Yaml.Documents && sourcePathMatches(((SourceFile) t).getSourcePath(), ctx)) {
+                if (t instanceof Yaml.Documents) {
                     t = createMergeYamlVisitor().getVisitor().visit(t, ctx);
-                } else if (t instanceof Properties.File && sourcePathMatches(((SourceFile) t).getSourcePath(), ctx)) {
+                } else if (t instanceof Properties.File) {
                     t = new AddProperty(propertyName(property, profile), value, comment, null)
                             .getVisitor().visit(t, ctx);
                 }
                 return t;
             }
         };
-    }
-
-    private boolean sourcePathMatches(Path sourcePath, ExecutionContext ctx) {
-        List<String> expressions = pathExpressions;
-        if (expressions == null || pathExpressions.isEmpty()) {
-            // If not defined, get reasonable defaults from the execution context.
-            expressions = QuarkusExecutionContextView.view(ctx).getDefaultApplicationConfigurationPaths();
-        }
-        if (expressions.isEmpty()) {
-            return true;
-        }
-        for (String filePattern : expressions) {
-            if (PathUtils.matchesGlob(sourcePath, filePattern)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private MergeYaml createMergeYamlVisitor() {
@@ -154,15 +140,16 @@ public class AddQuarkusProperty extends Recipe {
     }
 
     private static final Pattern scalarNeedsAQuote = Pattern.compile("[^a-zA-Z\\d\\s]+");
+
     private boolean quoteValue(String value) {
         return scalarNeedsAQuote.matcher(value).matches();
     }
 
-    private static String propertyName(String name, @Nullable String profile)  {
+    private static String propertyName(String name, @Nullable String profile) {
         return profile == null ? name : "%" + profile + "." + name;
     }
 
-    private static String yamlPropertyName(String name, @Nullable String profile)  {
+    private static String yamlPropertyName(String name, @Nullable String profile) {
         return profile == null ? name : "\"%" + profile + "\"." + name;
     }
 }
