@@ -38,12 +38,6 @@ public class ChangeQuarkusPropertyKey extends Recipe {
             example = "quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy")
     String newPropertyKey;
 
-    @Option(displayName = "Except",
-            description = "Regex. If any of these property keys exist as direct children of `oldPropertyKey`, then they will not be moved to `newPropertyKey`.",
-            required = false)
-    @Nullable
-    List<String> except;
-
     @Option(displayName = "Profile",
             description = "The profile where the property is defined. If not specified, the property will be changed on all profiles. Defaults to `true`.",
             required = false,
@@ -97,7 +91,7 @@ public class ChangeQuarkusPropertyKey extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 new FindQuarkusProperties(oldPropertyKey, profile, changeAllProfiles).getVisitor(),
-                new ChangeQuarkusPropertyKeyVisitor(oldPropertyKey, newPropertyKey, except, profile, changeAllProfiles, pathExpressions)
+                new ChangeQuarkusPropertyKeyVisitor(oldPropertyKey, newPropertyKey, profile, changeAllProfiles, pathExpressions)
         );
     }
 }
