@@ -44,7 +44,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.foo",
                 "quarkus\\.bar",
-                null, null, null, null)),
+                null, null, null)),
               properties(sourceProperties, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -66,7 +66,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-                null, null, false, null)),
+                null, false, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -90,7 +90,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-                null, "prod", false, null)),
+                "prod", false, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -112,7 +112,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-                null, null, true, null)),
+                null, true, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -159,7 +159,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.foo",
                 "quarkus\\.bar",
-                null, null, null, null)),
+                null, null, null)),
               yaml(sourceYaml, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
@@ -205,7 +205,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-                null, null, false, null)),
+                null, false, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
@@ -260,7 +260,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-                null, "prod", false, null)),
+                "prod", false, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
@@ -310,7 +310,7 @@ class ChangeQuarkusPropertyKeyTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
-                null, null, true, null)),
+                null, true, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }

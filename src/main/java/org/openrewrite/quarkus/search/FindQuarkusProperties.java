@@ -36,7 +36,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class FindQuarkusProperties extends Recipe {
 
     @Override

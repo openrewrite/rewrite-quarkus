@@ -34,7 +34,7 @@ import java.util.Set;
  * This recipe is used to find Quarkus profiles.
  */
 @Value
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class FindQuarkusProfiles extends Recipe {
 
     @Override

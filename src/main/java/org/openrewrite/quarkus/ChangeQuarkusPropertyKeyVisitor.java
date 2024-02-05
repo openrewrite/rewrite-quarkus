@@ -39,9 +39,6 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
     final String newPropertyKey;
 
     @Nullable
-    final List<String> except;
-
-    @Nullable
     final String profile;
 
     @Nullable
