@@ -16,6 +16,7 @@
 package org.openrewrite.quarkus.quarkus2;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -27,6 +28,7 @@ class JavaEEtoQuarkus2MigrationTest implements RewriteTest {
         spec.recipeFromResources("org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2Migration");
     }
 
+    @DocumentExample
     @Test
     void convertJavaEEToQuarkus() {
         rewriteRun(
