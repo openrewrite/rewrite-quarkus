@@ -17,12 +17,7 @@ package org.openrewrite.quarkus;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Option;
-import org.openrewrite.Preconditions;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
-import org.openrewrite.Validated;
+import org.openrewrite.*;
 import org.openrewrite.internal.StringUtils;
 import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.quarkus.search.FindQuarkusProperties;
@@ -30,7 +25,7 @@ import org.openrewrite.quarkus.search.FindQuarkusProperties;
 import java.util.List;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class DeleteQuarkusProperty extends Recipe {
 
     @Option(displayName = "Property key",
