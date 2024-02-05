@@ -35,7 +35,8 @@ public class DeleteQuarkusProperty extends Recipe {
 
     @Option(displayName = "Old value",
             required = false,
-            description = "Only delete the property value if it matches the configured `oldValue`.")
+            description = "Only delete the property value if it matches the configured `oldValue`.",
+            example = "read-sync")
     @Nullable
     String oldValue;
 
