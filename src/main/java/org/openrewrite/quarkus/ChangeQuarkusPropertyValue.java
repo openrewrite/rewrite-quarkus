@@ -25,7 +25,7 @@ import org.openrewrite.quarkus.search.FindQuarkusProperties;
 import java.util.List;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class ChangeQuarkusPropertyValue extends Recipe {
 
     @Option(displayName = "Property key",
@@ -34,12 +34,14 @@ public class ChangeQuarkusPropertyValue extends Recipe {
     String propertyKey;
 
     @Option(displayName = "New value",
-            description = "The new value to be used for key specified by `propertyKey`.")
+            description = "The new value to be used for key specified by `propertyKey`.",
+            example = "read-sync")
     String newValue;
 
     @Option(displayName = "Old value",
             required = false,
-            description = "Only change the property value if it matches the configured `oldValue`.")
+            description = "Only change the property value if it matches the configured `oldValue`.",
+            example = "read-sync")
     @Nullable
     String oldValue;
 
