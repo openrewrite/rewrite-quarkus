@@ -39,6 +39,8 @@ dependencies {
     testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     testImplementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.0")
 
+    testImplementation("javax:javaee-api:7.0")
+
     testRuntimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
 
     testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
