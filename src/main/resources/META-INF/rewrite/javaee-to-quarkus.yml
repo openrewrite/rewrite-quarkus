@@ -22,3 +22,160 @@ recipeList:
   - org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2MavenDependencyMigration
   # Migrate Code
   - org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2CodeMigration
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2MavenDependencyMigration
+displayName: Migrate JavaEE Maven and Gradle Dependencies to Quarkus 2
+description: Upgrade Standard JavaEE dependencies to Quarkus 2 dependencies.
+recipeList:
+  # Add Quarkus BOM
+  - org.openrewrite.maven.AddManagedDependency:
+      groupId: io.quarkus.platform
+      artifactId: quarkus-bom
+      version: '2.x'
+      type: pom
+      scope: import
+
+  # Add Basic Quarkus Extensions
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.quarkus
+      artifactId: quarkus-arc
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.quarkus
+      artifactId: quarkus-resteasy
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.quarkus
+      artifactId: quarkus-resteasy-jackson
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.quarkus
+      artifactId: quarkus-undertow
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.quarkus
+      artifactId: quarkus-hibernate-orm
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.quarkus
+      artifactId: quarkus-jdbc-h2
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.quarkus
+      artifactId: quarkus-junit5
+      scope: test
+  - org.openrewrite.java.dependencies.AddDependency:
+      groupId: io.rest-assured
+      artifactId: rest-assured
+      scope: test
+
+  # Add Maven Plugins
+  - org.openrewrite.maven.AddPlugin:
+      groupId: io.quarkus.platform
+      artifactId: quarkus-maven-plugin
+      version: '2.16.12.Final'
+      executions: <executions><execution><goals><goal>build</goal><goal>generate-code</goal><goal>generate-code-tests</goal></goals></execution></executions>
+  - org.openrewrite.maven.AddPlugin:
+      groupId: org.apache.maven.plugins
+      artifactId: maven-compiler-plugin
+      version: '3.10.1'
+      configuration: <configuration><compilerArgs><arg>-parameters</arg></compilerArgs></configuration>
+  - org.openrewrite.maven.AddPlugin:
+      groupId: org.apache.maven.plugins
+      artifactId: maven-surefire-plugin
+      version: '3.0.0-M7'
+      configuration: <configuration><systemPropertyVariables><java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager><maven.home>${maven.home}</maven.home></systemPropertyVariables></configuration>
+  - org.openrewrite.maven.AddPlugin:
+      groupId: org.apache.maven.plugins
+      artifactId: maven-failsafe-plugin
+      version: '3.0.0-M7'
+      executions: <executions><execution><goals><goal>integration-test</goal><goal>verify</goal></goals></execution></executions>
+      configuration: <configuration><systemPropertyVariables><native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path><java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager><maven.home>${maven.home}</maven.home></systemPropertyVariables></configuration>
+  - org.openrewrite.maven.AddProfile:
+      id: native
+      activation: <activation><property><name>native</name></property></activation>
+      properties: <properties><skipITs>false</skipITs><quarkus.package.type>native</quarkus.package.type></properties>
+  - org.openrewrite.quarkus.ConfigureQuarkusMavenPluginWithReasonableDefaults
+  - org.openrewrite.maven.BestPractices
+
+  # Remove JavaEE dependencies
+  - org.openrewrite.java.dependencies.RemoveDependency:
+      groupId: javax*
+      artifactId: javaee-api
+  - org.openrewrite.java.dependencies.RemoveDependency:
+      groupId: javax*
+      artifactId: cdi-api
+  - org.openrewrite.java.dependencies.RemoveDependency:
+      groupId: javax*
+      artifactId: javax*
+
+  # Prep for Java 11 upgrade
+  - org.openrewrite.maven.AddProperty:
+      key: maven.compiler.source
+      value: 11
+  - org.openrewrite.maven.AddProperty:
+      key: maven.compiler.target
+      value: 11
+  - org.openrewrite.maven.ChangePackaging:
+      groupId: '*'
+      artifactId: '*'
+      packaging: jar
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2CodeMigration
+displayName: Migrate JavaEE Code to Quarkus 2
+description: Migrate Standard JavaEE Code to Quarkus 2
+recipeList:
+  # Convert some EJB annotations to CDI
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.ejb.Stateless
+      newFullyQualifiedTypeName: javax.enterprise.context.Dependent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.ejb.Stateful
+      newFullyQualifiedTypeName: javax.enterprise.context.SessionScoped
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.ejb.Singleton
+      newFullyQualifiedTypeName: javax.enterprise.context.ApplicationScoped
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.ejb.EJB
+      attributeName: name
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.ejb.EJB
+      attributeName: description
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.ejb.EJB
+      attributeName: beanName
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.ejb.EJB
+      attributeName: beanInterface
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.ejb.EJB
+      attributeName: mappedName
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.ejb.EJB
+      attributeName: lookup
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.ejb.EJB
+      newFullyQualifiedTypeName: javax.inject.Inject
+  - org.openrewrite.java.RemoveAnnotation:
+      annotationPattern: '@javax.ejb.Local'
+
+  # Convert JPA annotations
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.persistence.PersistenceContext
+      attributeName: name
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.persistence.PersistenceContext
+      attributeName: unitName
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.persistence.PersistenceContext
+      attributeName: type
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.persistence.PersistenceContext
+      attributeName: synchronization
+  - org.openrewrite.java.RemoveAnnotationAttribute:
+      annotationType: javax.persistence.PersistenceContext
+      attributeName: properties
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.persistence.PersistenceContext
+      newFullyQualifiedTypeName: javax.inject.Inject
+
+  # Migrate to Java 11
+  - org.openrewrite.java.migrate.Java8toJava11
