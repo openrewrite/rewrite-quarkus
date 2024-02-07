@@ -18,15 +18,16 @@ name: org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2Migration
 displayName: Migrate JavaEE to Quarkus 2
 description: These recipes help with the migration of a JavaEE application using EJBs and Hibernate to Quarkus 2. Additional transformations like JSF, JMS, Quarkus Tests may be necessary.
 recipeList:
-  # Migrate Dependencies
+  # Migrate Maven Dependencies
   - org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2MavenDependencyMigration
+  # TODO Migrate Gradle Dependencies
   # Migrate Code
   - org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2CodeMigration
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.quarkus.quarkus2.JavaEEtoQuarkus2MavenDependencyMigration
-displayName: Migrate JavaEE Maven and Gradle Dependencies to Quarkus 2
+displayName: Migrate JavaEE Maven Dependencies to Quarkus 2
 description: Upgrade Standard JavaEE dependencies to Quarkus 2 dependencies.
 recipeList:
   # Add Quarkus BOM
