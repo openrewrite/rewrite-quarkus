@@ -20,7 +20,7 @@ import org.openrewrite.internal.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
-class QuarkusProfileUtils {
+final class QuarkusProfileUtils {
 
     private QuarkusProfileUtils() {
     }
