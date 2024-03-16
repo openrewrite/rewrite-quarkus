@@ -39,14 +39,14 @@ public class ChangeQuarkusPropertyKey extends Recipe {
     String newPropertyKey;
 
     @Option(displayName = "Profile",
-            description = "The profile where the property is defined. If not specified, the property will be changed on all profiles. Defaults to `true`.",
+            description = "The profile where the property is defined. If not specified, the property will be changed on all profiles by default.",
             required = false,
             example = "dev")
     @Nullable
     String profile;
 
-    @Option(displayName = "Change for all Profiles",
-            description = "If set, thr property will be changed on all available profiles.",
+    @Option(displayName = "Change for all profiles",
+            description = "If set to true, the property will be changed on all available profiles. Defaults to `true` if a profile is not defined.",
             required = false,
             example = "false")
     @Nullable
@@ -79,12 +79,12 @@ public class ChangeQuarkusPropertyKey extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Change Quarkus property key";
+        return "Change Quarkus configuration property key";
     }
 
     @Override
     public String getDescription() {
-        return "Change a Quarkus property key.";
+        return "Change the key of a property in Quarkus configuration files.";
     }
 
     @Override

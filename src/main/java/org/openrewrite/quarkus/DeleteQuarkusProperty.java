@@ -29,7 +29,7 @@ import java.util.List;
 public class DeleteQuarkusProperty extends Recipe {
 
     @Option(displayName = "Property key",
-            description = "The name of the property key whose value is to be changed.",
+            description = "The name of the property key whose value is to be deleted.",
             example = "quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy")
     String propertyKey;
 
@@ -41,13 +41,13 @@ public class DeleteQuarkusProperty extends Recipe {
     String oldValue;
 
     @Option(displayName = "Profile",
-            description = "The profile where the property is defined. If not specified, the property will be changed on the default profile.",
+            description = "The profile where the property should be deleted. If not specified, the property will be deleted from all profiles by default.",
             required = false,
             example = "dev")
     @Nullable
     String profile;
 
-    @Option(displayName = "Delete from all Profiles",
+    @Option(displayName = "Delete from all profiles",
             description = "If set to true, the property will be removed from all available profiles. Defaults to `true`.",
             required = false,
             example = "false")
@@ -71,7 +71,7 @@ public class DeleteQuarkusProperty extends Recipe {
 
         if (StringUtils.isNotEmpty(profile)) {
             validated = validated.and(Validated
-                    .test("deleteOnAllProfiles", "cannot be used together with profile", deleteFromAllProfiles, x -> x == null || !x)
+                    .test("deleteFromAllProfiles", "cannot be used together with profile", deleteFromAllProfiles, x -> x == null || !x)
             );
         }
 
@@ -80,12 +80,12 @@ public class DeleteQuarkusProperty extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Delete Quarkus Property";
+        return "Delete Quarkus configuration property";
     }
 
     @Override
     public String getDescription() {
-        return "Delete a property from a Quarkus configuration file.";
+        return "Delete a property from Quarkus configuration files.";
     }
 
     @Override
