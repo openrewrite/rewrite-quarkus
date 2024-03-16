@@ -32,7 +32,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
           quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=read-sync
           %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
           %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
-                    
+
           quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=read-sync
           %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
           %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
@@ -56,7 +56,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
-                            
+
               quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
@@ -81,7 +81,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               %prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
               %staging.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
               %staging.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
-                            
+
               quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
               """;
@@ -102,7 +102,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
-                            
+
               quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
               %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
@@ -113,6 +113,28 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "write-sync",
                 null, null, true, null)),
+              properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
+            );
+        }
+
+        @Test
+        void changeValueAllProfilesBecauseDefault() {
+            @Language("properties")
+            String after = """
+              quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
+              %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
+              %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
+
+              quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
+              %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
+              %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
+              """;
+
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyValue(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "write-sync",
+                null, null, null, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
