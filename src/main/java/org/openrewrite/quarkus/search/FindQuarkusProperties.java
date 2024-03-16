@@ -62,7 +62,7 @@ public class FindQuarkusProperties extends Recipe {
     String profile;
 
     @Option(displayName = "Search on all Profiles",
-            description = "If set, the property will be searched on all available profiles. Defaults to `true`.",
+            description = "If set, the property will be searched on all available profiles. Defaults to `true` if the profile is not defined.",
             required = false,
             example = "false")
     @Nullable
