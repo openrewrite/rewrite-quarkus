@@ -32,7 +32,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
           quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=read-sync
           %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
           %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
-                    
+
           quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=read-sync
           %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
           %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
@@ -78,7 +78,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
               %prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
-              
+
               quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
               """;
@@ -97,6 +97,16 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
               spec -> spec.recipe(new DeleteQuarkusProperty(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 null, null, true, null)),
+              properties(sourceProperties, "", spec -> spec.path("src/main/resources/application.properties"))
+            );
+        }
+
+        @Test
+        void deleteValueAllProfilesBecauseDefault() {
+            rewriteRun(
+              spec -> spec.recipe(new DeleteQuarkusProperty(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                null, null, null, null)),
               properties(sourceProperties, "", spec -> spec.path("src/main/resources/application.properties"))
             );
         }
