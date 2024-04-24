@@ -46,14 +46,14 @@ public class ChangeQuarkusPropertyValue extends Recipe {
     String oldValue;
 
     @Option(displayName = "Profile",
-            description = "The profile where the property is defined. If not specified, the property will be changed on the default profile.",
+            description = "The profile where the property is defined. If not specified, the property will be changed on all profiles by default.",
             required = false,
             example = "dev")
     @Nullable
     String profile;
 
-    @Option(displayName = "Change for all Profiles",
-            description = "If set to true, the property value will be changed on all available profiles. Defaults to `true`.",
+    @Option(displayName = "Change for all profiles",
+            description = "If set to true, the property value will be changed on all available profiles. Defaults to `true` if a profile is not defined.",
             required = false,
             example = "false")
     @Nullable
@@ -85,12 +85,12 @@ public class ChangeQuarkusPropertyValue extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Change Quarkus Property value";
+        return "Change Quarkus configuration property value";
     }
 
     @Override
     public String getDescription() {
-        return "Change the value of a property in a Quarkus configuration file.";
+        return "Change the value of a property in Quarkus configuration files.";
     }
 
     @Override
