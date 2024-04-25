@@ -95,4 +95,3 @@ public class ChangeQuarkusPropertyKey extends Recipe {
         );
     }
 }
-
