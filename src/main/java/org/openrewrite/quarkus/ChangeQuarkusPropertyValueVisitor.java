@@ -161,7 +161,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                             newProperties.toString(),
                             false,
                             null
-                    ).getVisitor().visit(tree, ctx);
+                    , null).getVisitor().visit(tree, ctx);
                 }
             }
         }
