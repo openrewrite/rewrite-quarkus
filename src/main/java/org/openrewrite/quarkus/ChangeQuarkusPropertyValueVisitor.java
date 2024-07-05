@@ -139,7 +139,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                     }
 
                     // Remove the old property containing the original key with multiple profiles
-                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, false)
+                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, false, null)
                             .getVisitor()
                             .visit(tree, ctx);
 

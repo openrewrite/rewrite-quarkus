@@ -115,12 +115,12 @@ public class DeleteQuarkusPropertyVisitor extends TreeVisitor<Tree, ExecutionCon
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(key);
 
                 if (profiles.length == 0 || !Boolean.FALSE.equals(searchAllProfiles)) {
-                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, null)
+                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, null, null)
                             .getVisitor()
                             .visit(tree, ctx);
                 } else {
                     // Remove the old property containing the original key with multiple profiles
-                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, false)
+                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, false, null)
                             .getVisitor()
                             .visit(tree, ctx);
 
