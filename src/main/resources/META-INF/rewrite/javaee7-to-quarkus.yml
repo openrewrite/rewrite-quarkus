@@ -18,26 +18,19 @@ name: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2Migration
 displayName: Migrate JavaEE to Quarkus 2
 description: These recipes help with the migration of a JavaEE application using EJBs and Hibernate to Quarkus 2. Additional transformations like JSF, JMS, Quarkus Tests may be necessary.
 recipeList:
-  # Migrate Maven Dependencies
-  - org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2MavenDependencyMigration
-  # TODO Migrate Gradle Dependencies
-  # Migrate Code
+  - org.openrewrite.quarkus.migrate.javaee.AddQuarkus2MavenPlugins
+  - org.openrewrite.quarkus.migrate.javaee.AddQuarkus2Dependencies
+  - org.openrewrite.quarkus.migrate.javaee.RemoveJavaEEDependencies
+
   - org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
+  - org.openrewrite.java.migrate.Java8toJava11
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2MavenDependencyMigration
-displayName: Migrate JavaEE Maven Dependencies to Quarkus 2
-description: Upgrade Standard JavaEE dependencies to Quarkus 2 dependencies.
+name: org.openrewrite.quarkus.migrate.javaee.AddQuarkus2Dependencies
+displayName: Add Quarkus 2 dependencies
+description: Add Quarkus 2 dependencies to the project.
 recipeList:
-  # Add Quarkus BOM
-  - org.openrewrite.maven.AddManagedDependency:
-      groupId: io.quarkus.platform
-      artifactId: quarkus-bom
-      version: '2.x'
-      type: pom
-      scope: import
-
   # Add Basic Quarkus Extensions
   - org.openrewrite.java.dependencies.AddDependency:
       groupId: io.quarkus
@@ -65,6 +58,37 @@ recipeList:
       groupId: io.rest-assured
       artifactId: rest-assured
       scope: test
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.quarkus.migrate.javaee.RemoveJavaEEDependencies
+displayName: Remove JavaEE dependencies
+description: Remove JavaEE dependencies from the project.
+recipeList:
+  # Remove JavaEE dependencies
+  - org.openrewrite.java.dependencies.RemoveDependency:
+      groupId: javax*
+      artifactId: javaee-api
+  - org.openrewrite.java.dependencies.RemoveDependency:
+      groupId: javax*
+      artifactId: cdi-api
+  - org.openrewrite.java.dependencies.RemoveDependency:
+      groupId: javax*
+      artifactId: javax*
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.quarkus.migrate.javaee.AddQuarkus2MavenPlugins
+displayName: Migrate JavaEE Maven Dependencies to Quarkus 2
+description: Upgrade Standard JavaEE dependencies to Quarkus 2 dependencies.
+recipeList:
+  # Add Quarkus BOM
+  - org.openrewrite.maven.AddManagedDependency:
+      groupId: io.quarkus.platform
+      artifactId: quarkus-bom
+      version: '2.x'
+      type: pom
+      scope: import
 
   # Add Maven Plugins
   - org.openrewrite.maven.AddPlugin:
@@ -95,17 +119,6 @@ recipeList:
   - org.openrewrite.quarkus.ConfigureQuarkusMavenPluginWithReasonableDefaults
   - org.openrewrite.maven.BestPractices
 
-  # Remove JavaEE dependencies
-  - org.openrewrite.java.dependencies.RemoveDependency:
-      groupId: javax*
-      artifactId: javaee-api
-  - org.openrewrite.java.dependencies.RemoveDependency:
-      groupId: javax*
-      artifactId: cdi-api
-  - org.openrewrite.java.dependencies.RemoveDependency:
-      groupId: javax*
-      artifactId: javax*
-
   # Prep for Java 11 upgrade
   - org.openrewrite.maven.AddProperty:
       key: maven.compiler.source
@@ -117,6 +130,10 @@ recipeList:
       groupId: '*'
       artifactId: '*'
       packaging: jar
+
+  - org.openrewrite.maven.RemovePlugin:
+      groupId: org.apache.maven.plugins
+      artifactId: maven-war-plugin
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -177,6 +194,3 @@ recipeList:
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: javax.persistence.PersistenceContext
       newFullyQualifiedTypeName: javax.inject.Inject
-
-  # Migrate to Java 11
-  - org.openrewrite.java.migrate.Java8toJava11

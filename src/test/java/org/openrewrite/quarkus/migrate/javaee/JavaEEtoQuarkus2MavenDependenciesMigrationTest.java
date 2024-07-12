@@ -25,7 +25,7 @@ import static org.openrewrite.maven.Assertions.pomXml;
 class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipeFromResources("org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2MavenDependencyMigration");
+        spec.recipeFromResources("org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2Migration");
     }
 
     @Test
@@ -294,7 +294,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
             """
               <?xml version="1.0" encoding="UTF-8" ?>
               <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+                  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
                 <modelVersion>4.0.0</modelVersion>
                 <groupId>com.dummyapp</groupId>
                 <artifactId>oms-winter</artifactId>
@@ -321,7 +321,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                   <dependency>
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-lang3</artifactId>
-                    <version>3.12.0</version>
                   </dependency>
                   <dependency>
                     <groupId>commons-beanutils</groupId>
@@ -355,7 +354,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                   <dependency>
                     <groupId>org.projectlombok</groupId>
                     <artifactId>lombok</artifactId>
-                    <version>1.18.30</version>
+                    <version>1.18.34</version>
                     <scope>provided</scope>
                   </dependency>
                   <dependency>
@@ -393,16 +392,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                       <artifactId>maven-compiler-plugin</artifactId>
                       <version>3.13.0</version>
                       <configuration>
-                        <source>8</source>
-                        <target>8</target>
-                      </configuration>
-                    </plugin>
-                    <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-war-plugin</artifactId>
-                      <version>3.2.3</version>
-                      <configuration>
-                        <failOnMissingWebXml>false</failOnMissingWebXml>
+                        <release>11</release>
                       </configuration>
                     </plugin>
                     <plugin>
