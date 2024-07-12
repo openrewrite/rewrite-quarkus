@@ -127,7 +127,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(key);
 
                 if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
-                    tree = new org.openrewrite.yaml.ChangePropertyValue(key, newValue, oldValue, false, null)
+                    tree = new org.openrewrite.yaml.ChangePropertyValue(key, newValue, oldValue, false, null, null)
                             .getVisitor()
                             .visit(tree, ctx);
                 } else {
@@ -139,7 +139,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                     }
 
                     // Remove the old property containing the original key with multiple profiles
-                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, false)
+                    tree = new org.openrewrite.yaml.DeleteProperty(key, false, false, null)
                             .getVisitor()
                             .visit(tree, ctx);
 
@@ -161,7 +161,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                             newProperties.toString(),
                             false,
                             null
-                    ).getVisitor().visit(tree, ctx);
+                    , null).getVisitor().visit(tree, ctx);
                 }
             }
         }

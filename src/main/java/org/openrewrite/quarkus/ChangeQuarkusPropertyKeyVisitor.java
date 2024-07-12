@@ -143,7 +143,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                             QuarkusProfileUtils.formatKey(keyWithoutProfile, originalEntryValue, String.join(",", remainingProfiles)),
                             false,
                             null
-                    ).getVisitor().visit(tree, ctx);
+                    , null).getVisitor().visit(tree, ctx);
                 }
             }
         }
@@ -169,7 +169,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         if (tree == null) {
             return null;
         }
-        Tree t = new org.openrewrite.yaml.DeleteProperty(oldKey, false, null)
+        Tree t = new org.openrewrite.yaml.DeleteProperty(oldKey, false, null, null)
                 .getVisitor()
                 .visit(tree, ctx);
         return new org.openrewrite.yaml.MergeYaml(
@@ -177,6 +177,6 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                 QuarkusProfileUtils.formatKey(newKey, value, String.join(",", profiles)),
                 false,
                 null
-        ).getVisitor().visit(t, ctx);
+        , null).getVisitor().visit(t, ctx);
     }
 }

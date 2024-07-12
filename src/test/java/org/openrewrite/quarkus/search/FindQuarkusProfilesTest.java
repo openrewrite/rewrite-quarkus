@@ -24,7 +24,7 @@ import org.openrewrite.test.RewriteTest;
 import org.openrewrite.yaml.YamlParser;
 import org.openrewrite.yaml.tree.Yaml;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FindQuarkusProfilesTest implements RewriteTest {
 
