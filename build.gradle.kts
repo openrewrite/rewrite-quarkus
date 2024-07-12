@@ -26,6 +26,7 @@ dependencies {
     implementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
 
     implementation("org.openrewrite.recipe:rewrite-java-dependencies:${rewriteVersion}")
+    implementation("org.openrewrite.recipe:rewrite-migrate-java:${rewriteVersion}")
 
     runtimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
 
@@ -37,6 +38,8 @@ dependencies {
 
     testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     testImplementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.0")
+
+    testImplementation("javax:javaee-api:7.0")
 
     testRuntimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
 
