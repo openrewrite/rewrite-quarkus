@@ -104,12 +104,12 @@ recipeList:
   - org.openrewrite.maven.AddPlugin:
       groupId: org.apache.maven.plugins
       artifactId: maven-surefire-plugin
-      version: '3.2.5'
+      version: '3.3.1'
       configuration: <configuration><systemPropertyVariables><java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager><maven.home>${maven.home}</maven.home></systemPropertyVariables></configuration>
   - org.openrewrite.maven.AddPlugin:
       groupId: org.apache.maven.plugins
       artifactId: maven-failsafe-plugin
-      version: '3.2.5'
+      version: '3.3.1'
       executions: <executions><execution><goals><goal>integration-test</goal><goal>verify</goal></goals></execution></executions>
       configuration: <configuration><systemPropertyVariables><native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path><java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager><maven.home>${maven.home}</maven.home></systemPropertyVariables></configuration>
   - org.openrewrite.maven.AddProfile:

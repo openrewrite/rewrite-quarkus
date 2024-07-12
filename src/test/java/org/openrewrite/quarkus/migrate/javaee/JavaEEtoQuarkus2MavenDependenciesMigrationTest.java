@@ -160,7 +160,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                     <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-surefire-plugin</artifactId>
-                      <version>3.2.5</version>
+                      <version>3.3.1</version>
                       <configuration>
                         <systemPropertyVariables>
                           <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
@@ -171,7 +171,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                     <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-failsafe-plugin</artifactId>
-                      <version>3.2.5</version>
+                      <version>3.3.1</version>
                       <executions>
                         <execution>
                           <goals>
@@ -412,7 +412,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                     <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-surefire-plugin</artifactId>
-                      <version>3.2.5</version>
+                      <version>3.3.1</version>
                       <configuration>
                         <systemPropertyVariables>
                           <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
@@ -423,7 +423,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                     <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-failsafe-plugin</artifactId>
-                      <version>3.2.5</version>
+                      <version>3.3.1</version>
                       <executions>
                         <execution>
                           <goals>
