@@ -164,8 +164,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         return input;
     }
 
-    @Nullable
-    private static Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, String value, String[] profiles) {
+    private static @Nullable Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, String value, String[] profiles) {
         if (tree == null) {
             return null;
         }
