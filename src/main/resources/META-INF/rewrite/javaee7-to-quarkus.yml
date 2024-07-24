@@ -139,7 +139,7 @@ recipeList:
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
 displayName: Migrate JavaEE Code to Quarkus 2
-description: Migrate Standard JavaEE Code to Quarkus 2
+description: Migrate Standard JavaEE Code to Quarkus 2.
 recipeList:
   # Convert some EJB annotations to CDI
   - org.openrewrite.java.ChangeType:
