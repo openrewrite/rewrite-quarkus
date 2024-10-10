@@ -32,6 +32,7 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest implements RewriteTest {
     @Test
     void removeQuarkusMavenPluginNativeImageGoalTest() {
         rewriteRun(
+          //language=xml
           pomXml(
             """
               <project>
@@ -96,6 +97,7 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest implements RewriteTest {
     @Test
     void addPropertyToNativeProfile() {
         rewriteRun(
+          //language=xml
           pomXml(
             """
               <project>

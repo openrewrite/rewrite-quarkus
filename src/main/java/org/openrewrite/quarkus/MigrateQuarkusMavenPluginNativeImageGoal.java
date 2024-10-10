@@ -50,7 +50,7 @@ public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
                             if (goal.getContent() != null && goal.getContent().size() == 1 && goal.getContent().get(0) instanceof Xml.CharData) {
                                 Xml.CharData existingValue = (Xml.CharData) goal.getContent().get(0);
                                 if ("native-image".equalsIgnoreCase(existingValue.getText())) {
-                                    doAfterVisit(new RemoveContentVisitor<>(goal, true));
+                                    doAfterVisit(new RemoveContentVisitor<>(goal, true, true));
                                     doAfterVisit(new AddQuarkusPackageTypePropertyToNativeProfile());
                                 }
                             }
