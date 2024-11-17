@@ -354,7 +354,7 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                   <dependency>
                     <groupId>org.projectlombok</groupId>
                     <artifactId>lombok</artifactId>
-                    <version>1.18.34</version>
+                    <version>1.18.36</version>
                     <scope>provided</scope>
                   </dependency>
                   <dependency>
