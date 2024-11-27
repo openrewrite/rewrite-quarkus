@@ -21,17 +21,18 @@ dependencies {
     compileOnly("org.projectlombok:lombok:latest.release")
     annotationProcessor("org.projectlombok:lombok:latest.release")
 
-    implementation("org.openrewrite:rewrite-java:${rewriteVersion}")
-    implementation("org.openrewrite:rewrite-maven:${rewriteVersion}")
-    implementation("org.openrewrite:rewrite-properties:${rewriteVersion}")
+    implementation(platform("org.openrewrite:rewrite-bom:${rewriteVersion}"))
+    implementation("org.openrewrite:rewrite-java")
+    implementation("org.openrewrite:rewrite-maven")
+    implementation("org.openrewrite:rewrite-properties")
 
     implementation("org.openrewrite.recipe:rewrite-java-dependencies:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-migrate-java:${rewriteVersion}")
 
-    runtimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
+    runtimeOnly("org.openrewrite:rewrite-java-17")
 
-    testImplementation("org.openrewrite:rewrite-test:${rewriteVersion}")
-    testImplementation("org.openrewrite:rewrite-java-tck:${rewriteVersion}")
+    testImplementation("org.openrewrite:rewrite-test")
+    testImplementation("org.openrewrite:rewrite-java-tck")
 
     testImplementation("javax.xml.ws:jaxws-api:2.3.1")
     testImplementation("jakarta.xml.ws:jakarta.xml.ws-api:3.0.0")
@@ -41,7 +42,7 @@ dependencies {
 
     testImplementation("javax:javaee-api:7.0")
 
-    testRuntimeOnly("org.openrewrite:rewrite-java-17:${rewriteVersion}")
+    testRuntimeOnly("org.openrewrite:rewrite-java-17")
 
     testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-qute:1.13.+")
