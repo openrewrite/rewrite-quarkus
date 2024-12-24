@@ -48,7 +48,7 @@ public class ConfigPropertiesToConfigMapping extends Recipe {
         public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
             J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
             if (cd.getLeadingAnnotations().stream().anyMatch(CONFIG_PROPERTIES_ANNOTATION_MATCHER::matches) &&
-                    cd.getKind().equals(J.ClassDeclaration.Kind.Type.Interface)) {
+                    cd.getKind() == J.ClassDeclaration.Kind.Type.Interface) {
                 doAfterVisit(new ChangeType("io.quarkus.arc.config.ConfigProperties", "io.smallrye.config.ConfigMapping", true).getVisitor());
             }
             return cd;
