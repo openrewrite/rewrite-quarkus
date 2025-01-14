@@ -91,7 +91,7 @@ public class DeleteQuarkusProperty extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                new FindQuarkusProperties(propertyKey, profile, deleteFromAllProfiles).getVisitor(),
+                new FindQuarkusProperties(propertyKey, profile, deleteFromAllProfiles, pathExpressions).getVisitor(),
                 new DeleteQuarkusPropertyVisitor(propertyKey, oldValue, profile, deleteFromAllProfiles, pathExpressions)
         );
     }

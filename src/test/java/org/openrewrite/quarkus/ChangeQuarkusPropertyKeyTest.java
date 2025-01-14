@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.test.RewriteTest;
 
+import java.util.List;
+
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
 
@@ -136,6 +138,28 @@ class ChangeQuarkusPropertyKeyTest {
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
                 null, null, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
+            );
+        }
+
+        @Test
+        void changeKeyOnCustomPath() {
+            @Language("properties")
+            String after = """
+              quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=read-sync
+              %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
+              %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
+
+              quarkus.hibernate-search-orm."unitname".indexing.plan.synchronization.strategy=read-sync
+              %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
+              %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
+              """;
+
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, false, List.of("**/custom.{properties,yaml,yml}"))),
+              properties(sourceProperties, after, spec -> spec.path("src/main/resources/custom.properties"))
             );
         }
     }
@@ -334,6 +358,56 @@ class ChangeQuarkusPropertyKeyTest {
                 "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
                 null, true, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
+            );
+        }
+
+        @Test
+        void changeKeyOnCustomPath() {
+            @Language("yml")
+            String after = """
+              quarkus:
+                hibernate-search-orm:
+                  indexing:
+                    plan:
+                      synchronization:
+                        strategy: read-sync
+                  unitname:
+                    indexing:
+                      plan:
+                        synchronization:
+                          strategy: read-sync
+              '%dev':
+                quarkus:
+                  hibernate-search-orm:
+                    indexing:
+                      plan:
+                        synchronization:
+                          strategy: sync
+                    unitname:
+                      indexing:
+                        plan:
+                          synchronization:
+                            strategy: sync
+              '%staging,prod':
+                quarkus:
+                  hibernate-search-orm:
+                    indexing:
+                      plan:
+                        synchronization:
+                          strategy: async
+                    unitname:
+                      indexing:
+                        plan:
+                          synchronization:
+                            strategy: async
+              """;
+
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                "quarkus.hibernate-search-orm$1.indexing.plan.synchronization.strategy",
+                null, true, List.of("**/custom.{properties,yaml,yml}"))),
+              yaml(sourceYaml, after, spec -> spec.path("src/main/resources/custom.yaml"))
             );
         }
     }

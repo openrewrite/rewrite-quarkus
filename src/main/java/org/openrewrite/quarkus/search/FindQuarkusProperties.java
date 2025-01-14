@@ -29,10 +29,7 @@ import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 import org.openrewrite.yaml.tree.YamlKey;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Value
@@ -67,6 +64,16 @@ public class FindQuarkusProperties extends Recipe {
             example = "false")
     @Nullable
     Boolean searchAllProfiles;
+
+    @Option(displayName = "Optional list of file path matcher",
+            description = "Each value in this list represents a glob expression that is used to match which files will " +
+                    "be modified. If this value is not present, this recipe will query the execution context for " +
+                    "reasonable defaults. (\"**/application.yml\", \"**/application.yaml\", " +
+                    "\"**/application.properties\" and \"**/META-INF/microprofile-config.properties\".",
+            required = false,
+            example = "[\"**/application.yaml\"]")
+    @Nullable
+    List<String> pathExpressions;
 
     @Override
     public Validated<Object> validate() {
@@ -153,7 +160,7 @@ public class FindQuarkusProperties extends Recipe {
             @Override
             public boolean isAcceptable(SourceFile sourceFile, ExecutionContext ctx) {
                 QuarkusExecutionContextView quarkusCtx = QuarkusExecutionContextView.view(ctx);
-                return quarkusCtx.isQuarkusConfigFile(sourceFile, null);
+                return quarkusCtx.isQuarkusConfigFile(sourceFile, pathExpressions);
             }
 
             @Override
