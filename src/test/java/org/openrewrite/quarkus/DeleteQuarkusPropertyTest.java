@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.test.RewriteTest;
 
+import java.util.List;
+
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
 
@@ -108,6 +110,16 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 null, null, null, null)),
               properties(sourceProperties, "", spec -> spec.path("src/main/resources/application.properties"))
+            );
+        }
+
+        @Test
+        void deleteValueOnCustomPath() {
+            rewriteRun(
+              spec -> spec.recipe(new DeleteQuarkusProperty(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                null, null, true, List.of("**/custom.{properties,yaml,yml}"))),
+              properties(sourceProperties, "", spec -> spec.path("src/main/resources/custom.properties"))
             );
         }
     }
@@ -254,6 +266,16 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 null, null, true, null)),
               yaml(sourceYaml, "", spec -> spec.path("src/main/resources/application.yaml"))
+            );
+        }
+
+        @Test
+        void deleteValueOnCustomPath() {
+            rewriteRun(
+              spec -> spec.recipe(new DeleteQuarkusProperty(
+                "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
+                null, null, true, List.of("**/custom.{properties,yaml,yml}"))),
+              yaml(sourceYaml, "", spec -> spec.path("src/main/resources/custom.yaml"))
             );
         }
     }

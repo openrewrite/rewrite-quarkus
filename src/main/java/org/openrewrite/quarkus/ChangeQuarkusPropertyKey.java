@@ -90,7 +90,7 @@ public class ChangeQuarkusPropertyKey extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                new FindQuarkusProperties(oldPropertyKey, profile, changeAllProfiles).getVisitor(),
+                new FindQuarkusProperties(oldPropertyKey, profile, changeAllProfiles, pathExpressions).getVisitor(),
                 new ChangeQuarkusPropertyKeyVisitor(oldPropertyKey, newPropertyKey, profile, changeAllProfiles, pathExpressions)
         );
     }

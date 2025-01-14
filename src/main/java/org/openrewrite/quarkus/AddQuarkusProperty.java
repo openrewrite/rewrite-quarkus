@@ -91,7 +91,7 @@ public class AddQuarkusProperty extends Recipe {
             @Override
             public boolean isAcceptable(SourceFile sourceFile, ExecutionContext ctx) {
                 QuarkusExecutionContextView quarkusCtx = QuarkusExecutionContextView.view(ctx);
-                return quarkusCtx.isQuarkusConfigFile(sourceFile, null);
+                return quarkusCtx.isQuarkusConfigFile(sourceFile, pathExpressions);
             }
 
             @Override

@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.test.RewriteTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
@@ -30,13 +32,13 @@ class FindQuarkusPropertiesTest {
 
     @Test
     void validationOptions() {
-        FindQuarkusProperties recipe = new FindQuarkusProperties("quarkus.http.port", null, null);
+        FindQuarkusProperties recipe = new FindQuarkusProperties("quarkus.http.port", null, null, null);
         assertThat(recipe.validate().isValid()).isTrue();
 
-        recipe = new FindQuarkusProperties("quarkus.http.port", "dev", null);
+        recipe = new FindQuarkusProperties("quarkus.http.port", "dev", null, null);
         assertThat(recipe.validate().isValid()).isTrue();
 
-        recipe = new FindQuarkusProperties("quarkus.http.port", "dev", true);
+        recipe = new FindQuarkusProperties("quarkus.http.port", "dev", true, null);
         assertThat(recipe.validate().isValid()).isFalse();
     }
 
@@ -48,7 +50,7 @@ class FindQuarkusPropertiesTest {
           quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
           %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
           %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
-                
+
           quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
           %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
           %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
@@ -57,7 +59,7 @@ class FindQuarkusPropertiesTest {
         @Test
         void nonExistingProperty() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties("quarkus.http.port", null, null)),
+              spec -> spec.recipe(new FindQuarkusProperties("quarkus.http.port", null, null, null)),
               //language=properties
               properties(sourceProperties, spec -> spec.path("src/main/resources/application.properties"))
             );
@@ -66,13 +68,13 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyNoProfile() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false, null)),
               //language=properties
               properties(sourceProperties, """
                 ~~>quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
-                
+
                 ~~>quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
@@ -83,13 +85,13 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyAllProfiles() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, true)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, true, null)),
               //language=properties
               properties(sourceProperties, """
                 ~~>quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 ~~>%dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 ~~>%staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
-                
+
                 ~~>quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 ~~>%dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 ~~>%staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
@@ -100,17 +102,34 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyNamedProfile() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, "staging", false)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, "staging", false, null)),
               //language=properties
               properties(sourceProperties, """
                 quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
                 ~~>%staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
-                
+
                 quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 ~~>%staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
                 """, spec -> spec.path("src/main/resources/application.properties"))
+            );
+        }
+
+        @Test
+        void existingPropertyCustomPath() {
+            rewriteRun(
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false, List.of("**/custom.{properties,yaml,yml}"))),
+              //language=properties
+              properties(sourceProperties, """
+                ~~>quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
+                %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
+                %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=test
+
+                ~~>quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
+                %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
+                %staging,prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=test
+                """, spec -> spec.path("src/main/resources/custom.properties"))
             );
         }
     }
@@ -154,7 +173,7 @@ class FindQuarkusPropertiesTest {
         @Test
         void nonExistingProperty() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties("quarkus.http.port", null, null)),
+              spec -> spec.recipe(new FindQuarkusProperties("quarkus.http.port", null, null, null)),
               //language=yaml
               yaml(sourceYaml, spec -> spec.path("src/main/resources/application.yaml"))
             );
@@ -163,7 +182,7 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyNoProfile() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false, null)),
               //language=yaml
               yaml(sourceYaml, """
                 '%dev':
@@ -202,7 +221,7 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyAllProfiles() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, true)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, true, null)),
               //language=yaml
               yaml(sourceYaml, """
                 '%dev':
@@ -241,7 +260,7 @@ class FindQuarkusPropertiesTest {
         @Test
         void existingPropertyNamedProfile() {
             rewriteRun(
-              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, "staging", false)),
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, "staging", false, null)),
               //language=yaml
               yaml(sourceYaml, """
                 '%dev':
@@ -274,6 +293,45 @@ class FindQuarkusPropertiesTest {
                           synchronization:
                             ~~>strategy: test
                 """, spec -> spec.path("src/main/resources/application.yaml"))
+            );
+        }
+
+        @Test
+        void existingPropertyCustomPath() {
+            rewriteRun(
+              spec -> spec.recipe(new FindQuarkusProperties(propertyKey, null, false, List.of("**/custom.{properties,yaml,yml}"))),
+              //language=yaml
+              yaml(sourceYaml, """
+                '%dev':
+                  quarkus:
+                    hibernate-search-orm:
+                      automatic-indexing:
+                        synchronization:
+                          strategy: test
+                      unitname:
+                        automatic-indexing:
+                          synchronization:
+                            strategy: test
+                quarkus:
+                  hibernate-search-orm:
+                    automatic-indexing:
+                      synchronization:
+                        ~~>strategy: test
+                    unitname:
+                      automatic-indexing:
+                        synchronization:
+                          ~~>strategy: test
+                '%staging,prod':
+                  quarkus:
+                    hibernate-search-orm:
+                      automatic-indexing:
+                        synchronization:
+                          strategy: test
+                      unitname:
+                        automatic-indexing:
+                          synchronization:
+                            strategy: test
+                """, spec -> spec.path("src/main/resources/custom.yaml"))
             );
         }
     }

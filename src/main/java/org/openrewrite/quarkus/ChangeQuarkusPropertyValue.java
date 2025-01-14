@@ -96,7 +96,7 @@ public class ChangeQuarkusPropertyValue extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                new FindQuarkusProperties(propertyKey, profile, changeAllProfiles).getVisitor(),
+                new FindQuarkusProperties(propertyKey, profile, changeAllProfiles, pathExpressions).getVisitor(),
                 new ChangeQuarkusPropertyValueVisitor(propertyKey, newValue, oldValue, profile, changeAllProfiles, pathExpressions)
         );
     }

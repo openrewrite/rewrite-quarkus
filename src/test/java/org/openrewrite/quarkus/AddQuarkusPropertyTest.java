@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RewriteTest;
 
+import java.util.List;
+
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
 
@@ -242,6 +244,42 @@ class AddQuarkusPropertyTest implements RewriteTest {
                   port: 9090
               """,
             s -> s.path("src/main/resources/application-dev.yml")
+          )
+        );
+    }
+
+    @Test
+    void makeChangeToMatchingFilesWithCustomPathExpression() {
+        rewriteRun(
+          spec -> spec.recipe(new AddQuarkusProperty("quarkus.http.root-path", "/api", "This property was added", null, List.of("**/custom.{properties,yaml,yml}"))),
+          properties("# Sample empty properties file", s -> s.path("src/main/resources/test.properties")),
+          //language=properties
+          properties(
+            """
+              quarkus.http.port=9090
+              """,
+            """
+              quarkus.http.port=9090
+              # This property was added
+              quarkus.http.root-path=/api
+              """,
+            s -> s.path("src/main/resources/custom.properties")
+          ),
+          //language=yaml
+          yaml(
+            """
+              quarkus:
+                http:
+                  port: 9090
+              """,
+            """
+              quarkus:
+                http:
+                  port: 9090
+                  # This property was added
+                  root-path: /api
+              """,
+            s -> s.path("src/main/resources/custom.yml")
           )
         );
     }
