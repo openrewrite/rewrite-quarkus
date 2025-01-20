@@ -27,7 +27,6 @@ dependencies {
     implementation("org.openrewrite:rewrite-properties")
 
     implementation("org.openrewrite.recipe:rewrite-java-dependencies:${rewriteVersion}")
-    implementation("org.openrewrite.recipe:rewrite-migrate-java:${rewriteVersion}")
 
     runtimeOnly("org.openrewrite:rewrite-java-17")
 
