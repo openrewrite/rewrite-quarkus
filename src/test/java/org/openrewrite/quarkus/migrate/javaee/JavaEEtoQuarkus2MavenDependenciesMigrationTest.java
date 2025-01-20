@@ -232,14 +232,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                   <plugins>
                     <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-compiler-plugin</artifactId>
-                      <configuration>
-                        <source>8</source>
-                        <target>8</target>
-                      </configuration>
-                    </plugin>
-                    <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-war-plugin</artifactId>
                       <version>3.2.3</version>
                       <configuration>
@@ -264,12 +256,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                     <groupId>commons-beanutils</groupId>
                     <artifactId>commons-beanutils</artifactId>
                     <version>1.9.4</version>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok</artifactId>
-                    <version>1.18.30</version>
-                    <scope>provided</scope>
                   </dependency>
                   <dependency>
                     <groupId>com.fasterxml.jackson.jaxrs</groupId>
@@ -352,12 +338,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                     <artifactId>quarkus-undertow</artifactId>
                   </dependency>
                   <dependency>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok</artifactId>
-                    <version>1.18.36</version>
-                    <scope>provided</scope>
-                  </dependency>
-                  <dependency>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-junit5</artifactId>
                     <scope>test</scope>
@@ -387,14 +367,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                 </dependencies>
                 <build>
                   <plugins>
-                    <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-compiler-plugin</artifactId>
-                      <version>3.13.0</version>
-                      <configuration>
-                        <release>11</release>
-                      </configuration>
-                    </plugin>
                     <plugin>
                       <groupId>io.quarkus.platform</groupId>
                       <artifactId>quarkus-maven-plugin</artifactId>

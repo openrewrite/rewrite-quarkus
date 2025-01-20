@@ -23,7 +23,6 @@ recipeList:
   - org.openrewrite.quarkus.migrate.javaee.RemoveJavaEEDependencies
 
   - org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
-  - org.openrewrite.java.migrate.Java8toJava11
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
