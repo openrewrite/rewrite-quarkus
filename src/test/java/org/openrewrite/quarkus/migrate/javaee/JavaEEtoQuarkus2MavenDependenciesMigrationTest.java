@@ -305,6 +305,16 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
 
                 <dependencies>
                   <dependency>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-junit5</artifactId>
+                    <scope>test</scope>
+                  </dependency>
+                  <dependency>
+                    <groupId>io.rest-assured</groupId>
+                    <artifactId>rest-assured</artifactId>
+                    <scope>test</scope>
+                  </dependency>
+                  <dependency>
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-lang3</artifactId>
                   </dependency>
@@ -336,16 +346,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                   <dependency>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-undertow</artifactId>
-                  </dependency>
-                  <dependency>
-                    <groupId>io.quarkus</groupId>
-                    <artifactId>quarkus-junit5</artifactId>
-                    <scope>test</scope>
-                  </dependency>
-                  <dependency>
-                    <groupId>io.rest-assured</groupId>
-                    <artifactId>rest-assured</artifactId>
-                    <scope>test</scope>
                   </dependency>
                   <dependency>
                     <groupId>com.fasterxml.jackson.jaxrs</groupId>
@@ -380,6 +380,16 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                           </goals>
                         </execution>
                       </executions>
+                    </plugin>
+                    <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-compiler-plugin</artifactId>
+                      <version>3.13.0</version>
+                      <configuration>
+                        <compilerArgs>
+                          <arg>-parameters</arg>
+                        </compilerArgs>
+                      </configuration>
                     </plugin>
                     <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
