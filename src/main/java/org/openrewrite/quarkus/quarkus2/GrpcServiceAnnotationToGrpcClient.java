@@ -51,7 +51,7 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
 
         @Override
         public J.CompilationUnit visitCompilationUnit(J.CompilationUnit cu, ExecutionContext ctx) {
-            doAfterVisit(new ChangeType(GRPC_SERVICE_ANNOTATION_FQN, GRPC_CLIENT_ANNOTATION_FQN, true, null).getVisitor());
+            doAfterVisit(new ChangeType(GRPC_SERVICE_ANNOTATION_FQN, GRPC_CLIENT_ANNOTATION_FQN, true).getVisitor());
             return super.visitCompilationUnit(cu, ctx);
         }
 
