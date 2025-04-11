@@ -31,7 +31,6 @@ dependencies {
     runtimeOnly("org.openrewrite:rewrite-java-17")
 
     testImplementation("org.openrewrite:rewrite-test")
-    testImplementation("org.openrewrite:rewrite-java-tck")
 
     testImplementation("javax.xml.ws:jaxws-api:2.3.1")
     testImplementation("jakarta.xml.ws:jakarta.xml.ws-api:3.0.0")
