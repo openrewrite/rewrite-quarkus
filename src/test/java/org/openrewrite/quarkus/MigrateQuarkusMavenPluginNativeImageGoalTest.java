@@ -90,7 +90,8 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest implements RewriteTest {
                   </plugins>
                 </build>
               </project>
-              """)
+              """
+          )
         );
     }
 
@@ -178,7 +179,8 @@ class MigrateQuarkusMavenPluginNativeImageGoalTest implements RewriteTest {
                   </profile>
                 </profiles>
               </project>
-              """)
+              """
+          )
         );
     }
 }
