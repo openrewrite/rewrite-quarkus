@@ -1,0 +1,831 @@
+# Copyright 2025 the original author or authors.
+# <p>
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# <p>
+# https://www.apache.org/licenses/LICENSE-2.0
+# <p>
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.AddQuarkusProperty
+examples:
+- description: ''
+  parameters:
+  - quarkus.http.port
+  - '9090'
+  - 'null'
+  - 'null'
+  - 'null'
+  sources:
+  - before: |
+      quarkus.http.root-path=/api
+    after: |
+      quarkus.http.port=9090
+      quarkus.http.root-path=/api
+    language: properties
+  - before: |
+      quarkus:
+        http:
+          root-path: /api
+    after: |
+      quarkus:
+        http:
+          root-path: /api
+          port: 9090
+    language: yaml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.ConfigPropertiesToConfigMapping
+examples:
+- description: ''
+  sources:
+  - before: |
+      import io.quarkus.arc.config.ConfigProperties;
+
+      @ConfigProperties(prefix = "greeting")
+      interface MyConfiguration {
+          String message();
+
+          String name();
+      }
+    after: |
+      import io.smallrye.config.ConfigMapping;
+
+      @ConfigMapping(prefix = "greeting")
+      interface MyConfiguration {
+          String message();
+
+          String name();
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.ConfigureQuarkusMavenPluginWithReasonableDefaults
+examples:
+- description: ''
+  sources:
+  - before: |
+      <project>
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.example</groupId>
+        <artifactId>my-app</artifactId>
+        <version>1</version>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.quarkus</groupId>
+              <artifactId>quarkus-maven-plugin</artifactId>
+              <version>1.13.5.Final</version>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>build</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </project>
+    after: |
+      <project>
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.example</groupId>
+        <artifactId>my-app</artifactId>
+        <version>1</version>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.quarkus</groupId>
+              <artifactId>quarkus-maven-plugin</artifactId>
+              <version>1.13.5.Final</version>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>build</goal>
+                    <goal>generate-code</goal>
+                    <goal>generate-code-tests</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <extensions>true</extensions>
+            </plugin>
+          </plugins>
+        </build>
+      </project>
+    path: pom.xml
+    language: xml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
+examples:
+- description: ''
+  sources:
+  - before: |
+      <project>
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.example</groupId>
+        <artifactId>my-app</artifactId>
+        <version>1</version>
+        <properties>
+          <quarkus-plugin.version>1.13.5.Final</quarkus-plugin.version>
+        </properties>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.quarkus</groupId>
+              <artifactId>quarkus-maven-plugin</artifactId>
+              <version>${"$"}{quarkus-plugin.version}</version>
+              <extensions>true</extensions>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>build</goal>
+                    <goal>native-image</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </project>
+    after: |
+      <project>
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.example</groupId>
+        <artifactId>my-app</artifactId>
+        <version>1</version>
+        <properties>
+          <quarkus-plugin.version>1.13.5.Final</quarkus-plugin.version>
+        </properties>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.quarkus</groupId>
+              <artifactId>quarkus-maven-plugin</artifactId>
+              <version>${"$"}{quarkus-plugin.version}</version>
+              <extensions>true</extensions>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>build</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </project>
+    path: pom.xml
+    language: xml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.MultiTransformHotStreamToMultiHotStream
+examples:
+- description: ''
+  sources:
+  - before: |
+      import io.smallrye.mutiny.Multi;
+      import io.smallrye.mutiny.groups.MultiCollect;
+
+      import java.time.Duration;
+
+      class Test {
+          public static MultiCollect<Long> hotStreamGreetings(int count, String name) {
+              return Multi.createFrom().ticks().every(Duration.ofMillis(1))
+                      .transform()
+                      .toHotStream()
+                      .collect();
+          }
+      }
+    after: |
+      import io.smallrye.mutiny.Multi;
+      import io.smallrye.mutiny.groups.MultiCollect;
+
+      import java.time.Duration;
+
+      class Test {
+          public static MultiCollect<Long> hotStreamGreetings(int count, String name) {
+              return Multi.createFrom().ticks().every(Duration.ofMillis(1))
+                      .toHotStream()
+                      .collect();
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.Quarkus1to1_13Migration
+examples:
+- description: ''
+  sources:
+  - before: |
+      quarkus.dev.instrumentation=true
+    after: |
+      quarkus.live-reload.instrumentation=true
+    language: properties
+- description: ''
+  sources:
+  - before: |
+      import io.smallrye.mutiny.Multi;
+      import io.smallrye.mutiny.Uni;
+
+      import java.util.List;
+      import java.time.Duration;
+
+      class Test {
+          public static Multi<String> greetings(int count, String name) {
+              return Multi.createFrom().ticks().every(Duration.ofMillis(1))
+                      .onItem()
+                      .transform(n -> "hello " + name + " -" + n)
+                      .transform()
+                      .byTakingFirstItems(count);
+          }
+
+          public static Uni<List<String>> collectItems(int count, String name) {
+              Multi<String> multi = greetings(count, name);
+              Uni<List<String>> uni = multi
+                      .collectItems()
+                      .asList();
+              return uni;
+          }
+      }
+    after: |
+      import io.smallrye.mutiny.Multi;
+      import io.smallrye.mutiny.Uni;
+
+      import java.util.List;
+      import java.time.Duration;
+
+      class Test {
+          public static Multi<String> greetings(int count, String name) {
+              return Multi.createFrom().ticks().every(Duration.ofMillis(1))
+                      .onItem()
+                      .transform(n -> "hello " + name + " -" + n)
+                      .select()
+                      .first(count);
+          }
+
+          public static Uni<List<String>> collectItems(int count, String name) {
+              Multi<String> multi = greetings(count, name);
+              Uni<List<String>> uni = multi
+                      .collect()
+                      .asList();
+              return uni;
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
+examples:
+- description: ''
+  sources:
+  - before: |
+      package org.acme;
+
+      import javax.ejb.EJB;
+      import javax.ejb.Local;
+      import javax.ejb.SessionContext;
+      import javax.ejb.Singleton;
+      import javax.ejb.Stateful;
+      import javax.ejb.Stateless;
+
+      import javax.annotation.Resource;
+      import javax.persistence.EntityManager;
+      import javax.persistence.PersistenceContext;
+
+      @Stateless
+      public class PingEJBSLS {
+
+          @PersistenceContext
+          private EntityManager entityManager;
+
+          @Resource
+          private SessionContext context;
+
+          @EJB
+          private PingEJBLocal pingEJBLocal;
+
+          @EJB(lookup = "java:global/PingEJBSingleton")
+          private PingEJBSingleton pingEJBSingleton;
+
+          public String getMsg() {
+              return "PingEJBSLS: " + pingEJBLocal.getMsg() + " " + pingEJBSingleton.getMsg();
+          }
+
+      }
+
+      @Stateful
+      @Local
+      public class PingEJBLocal {
+
+          private static int hitCount;
+
+          public String getMsg() {
+              return "PingEJBLocal: " + hitCount++;
+          }
+
+      }
+
+      @Singleton
+      public class PingEJBSingleton {
+
+            private static int hitCount;
+
+            @PersistenceContext
+            private EntityManager entityManager;
+
+            public String getMsg() {
+                 return "PingEJBSingleton: " + hitCount++;
+            }
+      }
+    after: |
+      package org.acme;
+
+      import javax.ejb.SessionContext;
+      import javax.enterprise.context.ApplicationScoped;
+      import javax.enterprise.context.Dependent;
+      import javax.enterprise.context.SessionScoped;
+      import javax.inject.Inject;
+      import javax.annotation.Resource;
+      import javax.persistence.EntityManager;
+
+      @Dependent
+      public class PingEJBSLS {
+
+          @Inject
+          private EntityManager entityManager;
+
+          @Resource
+          private SessionContext context;
+
+          @Inject
+          private PingEJBLocal pingEJBLocal;
+
+          @Inject
+          private PingEJBSingleton pingEJBSingleton;
+
+          public String getMsg() {
+              return "PingEJBSLS: " + pingEJBLocal.getMsg() + " " + pingEJBSingleton.getMsg();
+          }
+
+      }
+
+      @SessionScoped
+      public class PingEJBLocal {
+
+          private static int hitCount;
+
+          public String getMsg() {
+              return "PingEJBLocal: " + hitCount++;
+          }
+
+      }
+
+      @ApplicationScoped
+      public class PingEJBSingleton {
+
+            private static int hitCount;
+
+            @Inject
+            private EntityManager entityManager;
+
+            public String getMsg() {
+                 return "PingEJBSingleton: " + hitCount++;
+            }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2Migration
+examples:
+- description: ''
+  sources:
+  - before: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.sample</groupId>
+        <name>Sample Java EE7 EJB Module</name>
+        <artifactId>ee7-ejb</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <packaging>war</packaging>
+
+        <properties>
+          <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+          <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+          <maven.compiler.source>1.8</maven.compiler.source>
+          <maven.compiler.target>1.8</maven.compiler.target>
+        </properties>
+
+        <dependencies>
+          <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+          </dependency>
+          <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+            <scope>provided</scope>
+          </dependency>
+        </dependencies>
+      </project>
+    after: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.sample</groupId>
+        <artifactId>ee7-ejb</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <name>Sample Java EE7 EJB Module</name>
+
+        <properties>
+          <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+          <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+          <maven.compiler.source>11</maven.compiler.source>
+          <maven.compiler.target>11</maven.compiler.target>
+        </properties>
+        <dependencyManagement>
+          <dependencies>
+            <dependency>
+              <groupId>io.quarkus.platform</groupId>
+              <artifactId>quarkus-bom</artifactId>
+              <version>2.16.12.Final</version>
+              <type>pom</type>
+              <scope>import</scope>
+            </dependency>
+          </dependencies>
+        </dependencyManagement>
+
+        <dependencies>
+          <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jackson</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-undertow</artifactId>
+          </dependency>
+          <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.quarkus.platform</groupId>
+              <artifactId>quarkus-maven-plugin</artifactId>
+              <version>2.16.12.Final</version>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>build</goal>
+                    <goal>generate-code</goal>
+                    <goal>generate-code-tests</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.13.0</version>
+              <configuration>
+                <compilerArgs>
+                  <arg>-parameters</arg>
+                </compilerArgs>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>3.3.1</version>
+              <configuration>
+                <systemPropertyVariables>
+                  <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                  <maven.home>${maven.home}</maven.home>
+                </systemPropertyVariables>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>3.3.1</version>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <systemPropertyVariables>
+                  <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+                  <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                  <maven.home>${maven.home}</maven.home>
+                </systemPropertyVariables>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+        <profiles>
+          <profile>
+            <id>native</id>
+            <activation>
+              <property>
+                <name>native</name>
+              </property>
+            </activation>
+            <properties>
+              <skipITs>false</skipITs>
+              <quarkus.package.type>native</quarkus.package.type>
+            </properties>
+          </profile>
+        </profiles>
+      </project>
+    path: pom.xml
+    language: xml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
+examples:
+- description: ''
+  sources:
+  - before: |
+      package org.openrewrite.example;
+
+      import io.quarkus.grpc.runtime.annotations.GrpcService;
+
+      import javax.inject.Inject;
+
+      class ExampleResource {
+          @Inject
+          @GrpcService("client")
+          GreeterGrpc.GreeterBlockingStub client;
+      }
+    after: |
+      package org.openrewrite.example;
+
+      import io.quarkus.grpc.GrpcClient;
+
+      import javax.inject.Inject;
+
+      class ExampleResource {
+          @Inject
+          @GrpcClient
+          GreeterGrpc.GreeterBlockingStub client;
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration
+examples:
+- description: ''
+  sources:
+  - before: |
+      smallrye.jwt.sign.key-location=/keys/signing
+      smallrye.jwt.encrypt.key-location=/keys/encrypt
+    after: |
+      smallrye.jwt.sign.key.location=/keys/signing
+      smallrye.jwt.encrypt.key.location=/keys/encrypt
+    language: properties
+- description: ''
+  sources:
+  - before: |
+      import io.quarkus.qute.api.ResourcePath;
+      import io.quarkus.qute.Template;
+
+      class ReportGenerator {
+          @ResourcePath("reports/v1/report_01")
+          Template report;
+
+          void generate() {
+              String result = report
+                      .data("samples", new Object())
+                      .render();
+          }
+      }
+    after: |
+      import io.quarkus.qute.Location;
+      import io.quarkus.qute.Template;
+
+      class ReportGenerator {
+          @Location("reports/v1/report_01")
+          Template report;
+
+          void generate() {
+              String result = report
+                      .data("samples", new Object())
+                      .render();
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.quarkus2.RemoveAvroMavenPlugin
+examples:
+- description: ''
+  sources:
+  - before: |
+      <project>
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.example</groupId>
+        <artifactId>my-app</artifactId>
+        <version>1</version>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.quarkus</groupId>
+              <artifactId>quarkus-maven-plugin</artifactId>
+              <version>1.13.5.Final</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.avro</groupId>
+              <artifactId>avro-maven-plugin</artifactId>
+              <version>1.10.0</version>
+            </plugin>
+          </plugins>
+        </build>
+      </project>
+    after: |
+      <project>
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.openrewrite.example</groupId>
+        <artifactId>my-app</artifactId>
+        <version>1</version>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.quarkus</groupId>
+              <artifactId>quarkus-maven-plugin</artifactId>
+              <version>1.13.5.Final</version>
+            </plugin>
+          </plugins>
+        </build>
+      </project>
+    path: pom.xml
+    language: xml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.quarkus2.UseIdentifierOnDefaultKafkaBroker
+examples:
+- description: ''
+  sources:
+  - before: |
+      package org.openrewrite.example;
+
+      import javax.inject.Inject;
+      import javax.inject.Named;
+      import java.util.Map;
+
+      class KafkaProviders {
+          @Inject
+          @Named("default-kafka-broker")
+          Map<String, Object> config;
+      }
+    after: |
+      package org.openrewrite.example;
+
+      import io.smallrye.common.annotation.Identifier;
+
+      import javax.inject.Inject;
+      import java.util.Map;
+
+      class KafkaProviders {
+          @Inject
+          @Identifier("default-kafka-broker")
+          Map<String, Object> config;
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.quarkus2.UsePanacheEntityBaseStaticMethods
+examples:
+- description: ''
+  sources:
+  - before: |
+      package org.openrewrite.example;
+
+      import org.openrewrite.example.Person;
+
+      class Test {
+          {
+              Person p = new Person();
+              p.getEntityManager();
+              p.flush();
+          }
+      }
+    after: |
+      package org.openrewrite.example;
+
+      import org.openrewrite.example.Person;
+
+      class Test {
+          {
+              Person p = new Person();
+              Person.getEntityManager();
+              Person.flush();
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.quarkus2.UsePanacheEntityBaseUniT
+examples:
+- description: ''
+  sources:
+  - before: |
+      package org.openrewrite.example;
+
+      import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+      import io.smallrye.mutiny.Uni;
+
+      class Test {
+          public static <T extends PanacheEntityBase> void method(T example) {
+              example.persist().await().indefinitely();
+              Uni<Void> e0 = example.persist();
+              Uni<Void> e1 = example.persistAndFlush();
+          }
+      }
+    after: |
+      package org.openrewrite.example;
+
+      import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+      import io.smallrye.mutiny.Uni;
+
+      class Test {
+          public static <T extends PanacheEntityBase> void method(T example) {
+              example.persist().replaceWithVoid().await().indefinitely();
+              Uni<Void> e0 = example.persist().replaceWithVoid();
+              Uni<Void> e1 = example.persistAndFlush().replaceWithVoid();
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.quarkus2.UseReactivePanacheMongoEntityBaseUniT
+examples:
+- description: ''
+  sources:
+  - before: |
+      package org.openrewrite.example;
+
+      import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase;
+      import io.smallrye.mutiny.Uni;
+
+      class Test {
+          public static <T extends ReactivePanacheMongoEntityBase> void method(T example) {
+              example.persist().await().indefinitely();
+              Uni<Void> e0 = example.persist();
+              Uni<Void> e1 = example.update();
+              Uni<Void> e2 = example.persistOrUpdate();
+          }
+      }
+    after: |
+      package org.openrewrite.example;
+
+      import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase;
+      import io.smallrye.mutiny.Uni;
+
+      class Test {
+          public static <T extends ReactivePanacheMongoEntityBase> void method(T example) {
+              example.persist().replaceWithVoid().await().indefinitely();
+              Uni<Void> e0 = example.persist().replaceWithVoid();
+              Uni<Void> e1 = example.update().replaceWithVoid();
+              Uni<Void> e2 = example.persistOrUpdate().replaceWithVoid();
+          }
+      }
+    language: java
