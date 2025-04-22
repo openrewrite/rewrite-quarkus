@@ -142,8 +142,8 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                             "$",
                             QuarkusProfileUtils.formatKey(keyWithoutProfile, originalEntryValue, String.join(",", remainingProfiles)),
                             false,
-                            null
-                    , null, null).getVisitor().visit(tree, ctx);
+                            null, null, null, null, null)
+                            .getVisitor().visit(tree, ctx);
                 }
             }
         }
@@ -175,7 +175,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                 "$",
                 QuarkusProfileUtils.formatKey(newKey, value, String.join(",", profiles)),
                 false,
-                null
-        , null, null).getVisitor().visit(t, ctx);
+                null, null, null, null, null)
+                .getVisitor().visit(t, ctx);
     }
 }

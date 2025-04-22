@@ -142,8 +142,8 @@ public class DeleteQuarkusPropertyVisitor extends TreeVisitor<Tree, ExecutionCon
                                 "$",
                                 newProperties.toString(),
                                 false,
-                                null
-                        , null, null).getVisitor().visit(tree, ctx);
+                                null, null, null, null, null)
+                                .getVisitor().visit(tree, ctx);
                     }
                 }
             }

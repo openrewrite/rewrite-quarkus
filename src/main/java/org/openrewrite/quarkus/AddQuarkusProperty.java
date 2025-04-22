@@ -131,7 +131,7 @@ public class AddQuarkusProperty extends Recipe {
         } else {
             yaml.append(" ").append(value);
         }
-        return new MergeYaml("$", yaml.toString(), true, null, null, null, null);
+        return new MergeYaml("$", yaml.toString(), true, null, null, null, null, null);
     }
 
     private static final Pattern scalarNeedsAQuote = Pattern.compile("[^a-zA-Z\\d\\s]+");
