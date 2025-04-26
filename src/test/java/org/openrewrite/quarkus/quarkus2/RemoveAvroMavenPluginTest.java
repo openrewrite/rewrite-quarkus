@@ -28,31 +28,6 @@ class RemoveAvroMavenPluginTest implements RewriteTest {
         spec.recipe(new RemoveAvroMavenPlugin());
     }
 
-    @Test
-    void ignoreAvroMavenPluginIfQuarkusMavenPluginNotPresent() {
-        rewriteRun(
-          pomXml(
-            """
-              <project>
-                <modelVersion>4.0.0</modelVersion>
-                <groupId>org.openrewrite.example</groupId>
-                <artifactId>my-app</artifactId>
-                <version>1</version>
-                <build>
-                  <plugins>
-                    <plugin>
-                      <groupId>org.apache.avro</groupId>
-                      <artifactId>avro-maven-plugin</artifactId>
-                      <version>1.10.0</version>
-                    </plugin>
-                  </plugins>
-                </build>
-              </project>
-              """
-          )
-        );
-    }
-
     @DocumentExample
     @Test
     void removeAvroMavenPluginIfQuarkusMavenPluginPresent() {
@@ -92,6 +67,31 @@ class RemoveAvroMavenPluginTest implements RewriteTest {
                       <groupId>io.quarkus</groupId>
                       <artifactId>quarkus-maven-plugin</artifactId>
                       <version>1.13.5.Final</version>
+                    </plugin>
+                  </plugins>
+                </build>
+              </project>
+              """
+          )
+        );
+    }
+
+    @Test
+    void ignoreAvroMavenPluginIfQuarkusMavenPluginNotPresent() {
+        rewriteRun(
+          pomXml(
+            """
+              <project>
+                <modelVersion>4.0.0</modelVersion>
+                <groupId>org.openrewrite.example</groupId>
+                <artifactId>my-app</artifactId>
+                <version>1</version>
+                <build>
+                  <plugins>
+                    <plugin>
+                      <groupId>org.apache.avro</groupId>
+                      <artifactId>avro-maven-plugin</artifactId>
+                      <version>1.10.0</version>
                     </plugin>
                   </plugins>
                 </build>
