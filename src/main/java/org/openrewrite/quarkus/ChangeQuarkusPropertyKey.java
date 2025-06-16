@@ -24,8 +24,8 @@ import org.openrewrite.quarkus.search.FindQuarkusProperties;
 
 import java.util.List;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class ChangeQuarkusPropertyKey extends Recipe {
 
     @Option(displayName = "Old property key",

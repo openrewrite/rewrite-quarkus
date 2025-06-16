@@ -24,8 +24,8 @@ import org.openrewrite.quarkus.search.FindQuarkusProperties;
 
 import java.util.List;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class DeleteQuarkusProperty extends Recipe {
 
     @Option(displayName = "Property key",

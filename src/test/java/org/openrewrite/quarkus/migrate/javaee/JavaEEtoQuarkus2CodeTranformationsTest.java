@@ -33,8 +33,8 @@ class JavaEEtoQuarkus2CodeTranformationsTest implements RewriteTest {
           .recipeFromResources("org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration");
     }
 
-    @Test
     @DocumentExample
+    @Test
     void javaEEtoQuarkus2CodeTransformationsTest() {
         rewriteRun(
           java(

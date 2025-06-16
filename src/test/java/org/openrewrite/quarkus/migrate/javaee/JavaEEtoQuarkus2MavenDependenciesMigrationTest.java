@@ -28,8 +28,8 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
         spec.recipeFromResources("org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2Migration");
     }
 
-    @Test
     @DocumentExample
+    @Test
     void convertJavaEEToQuarkusDependencies1() {
         rewriteRun(
           spec -> spec.expectedCyclesThatMakeChanges(2),

@@ -63,8 +63,8 @@ class ConfigPropertiesToConfigMappingTest implements RewriteTest {
         );
     }
 
-    @Issue("https://github.com/openrewrite/rewrite-quarkus/issues/24")
     @Disabled
+    @Issue("https://github.com/openrewrite/rewrite-quarkus/issues/24")
     @Test
     void changeConfigClassType() {
         rewriteRun(

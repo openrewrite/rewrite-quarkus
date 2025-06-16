@@ -28,8 +28,8 @@ import org.openrewrite.xml.tree.Xml;
 
 import java.util.Optional;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
     @Override
     public String getDisplayName() {

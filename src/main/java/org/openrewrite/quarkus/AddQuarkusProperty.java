@@ -37,8 +37,8 @@ import java.util.regex.Pattern;
  * Quarkus configuration), this recipe will only make changes to files that match one of the pathExpressions. If
  * the recipe is configured without pathExpressions, it will query the execution context for reasonable defaults.
  */
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class AddQuarkusProperty extends Recipe {
 
     @Option(displayName = "Property key",

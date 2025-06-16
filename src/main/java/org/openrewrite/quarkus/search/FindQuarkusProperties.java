@@ -32,8 +32,8 @@ import org.openrewrite.yaml.tree.YamlKey;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class FindQuarkusProperties extends Recipe {
 
     @Override
