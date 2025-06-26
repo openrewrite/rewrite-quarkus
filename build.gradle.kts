@@ -40,6 +40,8 @@ dependencies {
 
     testImplementation("javax:javaee-api:7.0")
 
+    testImplementation("jakarta.inject:jakarta.inject-api:2.0.1")
+
     testRuntimeOnly("org.openrewrite:rewrite-java-17")
 
     testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
