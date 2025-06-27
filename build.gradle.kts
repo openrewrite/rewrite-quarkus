@@ -40,7 +40,6 @@ dependencies {
 
     testImplementation("javax:javaee-api:7.0")
 
-
     testRuntimeOnly("org.openrewrite:rewrite-java-17")
 
     testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
