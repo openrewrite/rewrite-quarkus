@@ -23,11 +23,11 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class SLF4JToQuarkusLoggerTest implements RewriteTest {
+class Slf4JToQuarkusLoggerTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipes(new SLF4JToQuarkusLogger())
+        spec.recipes(new Slf4jToQuarkusLogger())
           .parser(JavaParser.fromJavaVersion().classpath(
             "jakarta.enterprise.cdi-api",
             "jakarta.inject",

@@ -30,7 +30,7 @@ import org.openrewrite.java.tree.TypeUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class SLF4JToQuarkusLogger extends Recipe {
+public class Slf4jToQuarkusLogger extends Recipe {
 
     private static final String ORG_SLF_4_J_LOGGER = "org.slf4j.Logger";
     private static final MethodMatcher LOGGER_TRACE = new MethodMatcher(ORG_SLF_4_J_LOGGER + " trace(String, ..)");
