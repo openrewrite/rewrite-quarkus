@@ -38,7 +38,8 @@ class Quarkus1to2MigrationTest implements RewriteTest {
                 package javax.inject;
                 public @interface Inject {
                 }
-                """)
+                """
+            )
           )
           .recipeFromResource("/META-INF/rewrite/quarkus.yml", "org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration");
     }
