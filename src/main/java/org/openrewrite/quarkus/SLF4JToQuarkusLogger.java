@@ -30,8 +30,6 @@ import org.openrewrite.java.tree.TypeUtils;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.stream.Collectors.joining;
-
 public class SLF4JToQuarkusLogger extends Recipe {
 
     private static final String ORG_SLF_4_J_LOGGER = "org.slf4j.Logger";
@@ -58,14 +56,16 @@ public class SLF4JToQuarkusLogger extends Recipe {
                 new JavaIsoVisitor<ExecutionContext>() {
                     @Override
                     public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
-                        J.ClassDeclaration classDeclaration = super.visitClassDeclaration(classDecl, ctx);
-                        doAfterVisit(new RemoveAnnotationVisitor(new AnnotationMatcher("@lombok.extern.slf4j.Slf4j")));
-                        return classDeclaration;
+                        J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
+                        if (cd != classDecl) {
+                            doAfterVisit(new RemoveAnnotationVisitor(new AnnotationMatcher("@lombok.extern.slf4j.Slf4j")));
+                        }
+                        return cd;
                     }
 
                     @Override
-                    public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
-                        J.MethodInvocation mi = super.visitMethodInvocation(method, ctx);
+                    public J.MethodInvocation visitMethodInvocation(J.MethodInvocation methodInvocation, ExecutionContext ctx) {
+                        J.MethodInvocation mi = super.visitMethodInvocation(methodInvocation, ctx);
                         if (!LOGGER_DEBUG.matches(mi) && !LOGGER_INFO.matches(mi) && !LOGGER_WARN.matches(mi) && !LOGGER_ERROR.matches(mi)) {
                             return mi;
                         }
@@ -73,22 +73,22 @@ public class SLF4JToQuarkusLogger extends Recipe {
                         maybeRemoveImport(ORG_SLF_4_J_LOGGER);
                         maybeAddImport("io.quarkus.logging.Log");
 
-                        List<Expression> args = ListUtils.map(method.getArguments(),arg -> {
-                                    if (arg instanceof J.Literal && ((J.Literal) arg).getValue() instanceof String) {
-                                        return ((J.Literal) arg)
-                                                .withValue(((String) ((J.Literal) arg).getValue()).replace("{}", "%s"))
-                                                .withValueSource((((J.Literal) arg).getValueSource()).replace("{}", "%s"));
-                                    } else {
-                                        return arg;
-                                    }
-                                });
+                        List<Expression> args = ListUtils.map(mi.getArguments(), arg -> {
+                            if (arg instanceof J.Literal && ((J.Literal) arg).getValue() instanceof String) {
+                                return ((J.Literal) arg)
+                                        .withValue(((String) ((J.Literal) arg).getValue()).replace("{}", "%s"))
+                                        .withValueSource((((J.Literal) arg).getValueSource()).replace("{}", "%s"));
+                            } else {
+                                return arg;
+                            }
+                        });
                         String placeholders = String.join(", ", Collections.nCopies(args.size(), "#{any()}"));
-                        String template = String.format("Log.%s%s(%s)", method.getSimpleName(), 1 < args.size() ? "f" : "", placeholders);
+                        String template = String.format("Log.%s%s(%s)", mi.getSimpleName(), 1 < args.size() ? "f" : "", placeholders);
                         return JavaTemplate.builder(template)
                                 .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx, "quarkus-core"))
                                 .imports("io.quarkus.logging.Log")
                                 .build()
-                                .apply(updateCursor(method), method.getCoordinates().replace(), args.toArray());
+                                .apply(updateCursor(mi), mi.getCoordinates().replace(), args.toArray());
                     }
 
                     @Override
