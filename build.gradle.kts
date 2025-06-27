@@ -55,3 +55,7 @@ dependencies {
     testRuntimeOnly("jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0")
     testRuntimeOnly("org.projectlombok:lombok:latest.release")
 }
+
+recipeDependencies {
+    parserClasspath("io.quarkus:quarkus-core:3.+")
+}

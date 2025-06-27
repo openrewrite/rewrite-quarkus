@@ -53,13 +53,7 @@ public class SLF4JToQuarkusLogger extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                Preconditions.or(
-                        new UsesType<>(ORG_SLF_4_J_LOGGER, false),
-                        new UsesMethod<>(LOGGER_INFO),
-                        new UsesMethod<>(LOGGER_DEBUG),
-                        new UsesMethod<>(LOGGER_WARN),
-                        new UsesMethod<>(LOGGER_ERROR)
-                ),
+                new UsesType<>(ORG_SLF_4_J_LOGGER, true),
                 new SLF4JToQuarkusLoggerVisitor()
         );
     }
@@ -74,11 +68,7 @@ public class SLF4JToQuarkusLogger extends Recipe {
         @Override
         public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
             J.ClassDeclaration classDeclaration = super.visitClassDeclaration(classDecl, ctx);
-            boolean foundSlf4jAnnotation = !FindAnnotations.find(classDeclaration, "@" + SLF4J_ANNOTATION).isEmpty();
-            if (foundSlf4jAnnotation) {
-                maybeRemoveImport(SLF4J_ANNOTATION);
-                doAfterVisit(new RemoveAnnotationVisitor(new AnnotationMatcher("@" + SLF4J_ANNOTATION)));
-            }
+            doAfterVisit(new RemoveAnnotationVisitor(new AnnotationMatcher("@" + SLF4J_ANNOTATION)));
             return classDeclaration;
         }
 
@@ -104,7 +94,10 @@ public class SLF4JToQuarkusLogger extends Recipe {
                     })
                     .collect(Collectors.toList());
             String placeholders = args.stream().map(a -> "#{any(String)}").collect(Collectors.joining(", "));
-            JavaTemplate template = JavaTemplate.builder(logMethod.get() + "(" + placeholders + ")").contextSensitive().build();
+            JavaTemplate template = JavaTemplate.builder(logMethod.get() + "(" + placeholders + ")")
+                    .imports("io.quarkus.logging.Log")
+                    .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx, "quarkus-core"))
+                    .build();
             return template.apply(updateCursor(method), method.getCoordinates().replace(), args.toArray());
         }
 
@@ -113,6 +106,7 @@ public class SLF4JToQuarkusLogger extends Recipe {
             J.VariableDeclarations variableDeclarations = super.visitVariableDeclarations(multiVariable, ctx);
             if (isInjectedOrFactoryLogger(variableDeclarations)) {
                 maybeRemoveImport(ORG_SLF_4_J_LOGGER);
+                maybeRemoveImport("org.slf4j.LoggerFactory");
                 maybeRemoveImport(JAVAX_INJECT_INJECT);
                 maybeRemoveImport(JAKARTA_INJECT_INJECT);
                 return null;
