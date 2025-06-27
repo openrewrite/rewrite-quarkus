@@ -73,15 +73,10 @@ public class SLF4JToQuarkusLogger extends Recipe {
                         maybeRemoveImport(ORG_SLF_4_J_LOGGER);
                         maybeAddImport("io.quarkus.logging.Log");
 
-                        List<Expression> args = ListUtils.map(mi.getArguments(), arg -> {
-                            if (arg instanceof J.Literal && ((J.Literal) arg).getValue() instanceof String) {
-                                return ((J.Literal) arg)
+                        List<Expression> args = ListUtils.mapFirst(mi.getArguments(), arg ->
+                                arg instanceof J.Literal && ((J.Literal) arg).getValue() instanceof String ? ((J.Literal) arg)
                                         .withValue(((String) ((J.Literal) arg).getValue()).replace("{}", "%s"))
-                                        .withValueSource((((J.Literal) arg).getValueSource()).replace("{}", "%s"));
-                            } else {
-                                return arg;
-                            }
-                        });
+                                        .withValueSource((((J.Literal) arg).getValueSource()).replace("{}", "%s")) : arg);
                         String placeholders = String.join(", ", Collections.nCopies(args.size(), "#{any()}"));
                         String template = String.format("Log.%s%s(%s)", mi.getSimpleName(), 1 < args.size() ? "f" : "", placeholders);
                         return JavaTemplate.builder(template)
