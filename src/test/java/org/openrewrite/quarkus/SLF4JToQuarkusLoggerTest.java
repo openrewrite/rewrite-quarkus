@@ -27,7 +27,7 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipes(new SLF4JToQuarkusLogger()).typeValidationOptions(TypeValidation.none());
+        spec.recipes(new SLF4JToQuarkusLogger());
     }
 
     @DocumentExample
