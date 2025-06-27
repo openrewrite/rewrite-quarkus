@@ -17,9 +17,9 @@ package org.openrewrite.quarkus;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
-import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
@@ -27,7 +27,14 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipes(new SLF4JToQuarkusLogger());
+        spec.recipes(new SLF4JToQuarkusLogger())
+          .parser(JavaParser.fromJavaVersion().classpath(
+            "jakarta.enterprise.cdi-api",
+            "jakarta.inject",
+            "lombok",
+            "quarkus-core",
+            "slf4j-api"
+          ));
     }
 
     @DocumentExample
@@ -37,38 +44,36 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
           java(
             //language=java
             """
-              package org.refactor.recipe;
               import jakarta.enterprise.event.Observes;
               import jakarta.inject.Inject;
               import org.slf4j.Logger;
 
-              public class AppInitializer {
+              class AppInitializer {
 
                   @Inject
                   Logger logger;
 
-                  public void startService(@Observes StartupEvent ev) {
+                  public void startService(@Observes Object ev) {
                       logger.info("My Quarkus App - Starting");
                   }
 
-                  public void stopService(@Observes ShutdownEvent ev) {
+                  public void stopService(@Observes Object ev) {
                       logger.info("My Quarkus App - Stopping");
                   }
               }
               """,
             //language=java
             """
-              package org.refactor.recipe;
               import io.quarkus.logging.Log;
               import jakarta.enterprise.event.Observes;
 
-              public class AppInitializer {
+              class AppInitializer {
 
-                  public void startService(@Observes StartupEvent ev) {
+                  public void startService(@Observes Object ev) {
                       Log.info("My Quarkus App - Starting");
                   }
 
-                  public void stopService(@Observes ShutdownEvent ev) {
+                  public void stopService(@Observes Object ev) {
                       Log.info("My Quarkus App - Stopping");
                   }
               }
@@ -83,29 +88,25 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
           java(
             //language=java
             """
-              package org.refactor.recipe;
-
               import org.slf4j.Logger;
-              import jakarta.annotation.security.RolesAllowed;
               import jakarta.enterprise.context.ApplicationScoped;
               import jakarta.inject.Inject;
-              import jakarta.transaction.Transactional;
               import java.util.*;
 
               @ApplicationScoped
-              public class MyServiceBean {
+              class MyServiceBean {
 
                   @Inject
                   private Logger logger;
 
                   @Inject
-                  private MyBusinessBean businessBean;
+                  private Object businessBean;
 
                   public void someMethod(String param0, String param1, Long param2) {
                       logger.info("log informations for params {} {} {}", param0, param1, param2);
                   }
 
-                  public AnimalDTO getAnimal(String param0, Long id) {
+                  public Object getAnimal(String param0, Long id) {
                       logger.debug("search animal id {} with param {}", id, param0);
                       try {
                           throw new RuntimeException("fail");
@@ -126,26 +127,22 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
               """,
             //language=java
             """
-              package org.refactor.recipe;
-
               import io.quarkus.logging.Log;
-              import jakarta.annotation.security.RolesAllowed;
               import jakarta.enterprise.context.ApplicationScoped;
               import jakarta.inject.Inject;
-              import jakarta.transaction.Transactional;
               import java.util.*;
 
               @ApplicationScoped
-              public class MyServiceBean {
+              class MyServiceBean {
 
                   @Inject
-                  private MyBusinessBean businessBean;
+                  private Object businessBean;
 
                   public void someMethod(String param0, String param1, Long param2) {
                       Log.infof("log informations for params %s %s %s", param0, param1, param2);
                   }
 
-                  public AnimalDTO getAnimal(String param0, Long id) {
+                  public Object getAnimal(String param0, Long id) {
                       Log.debugf("search animal id %s with param %s", id, param0);
                       try {
                           throw new RuntimeException("fail");
@@ -174,16 +171,13 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
           java(
             //language=java
             """
-              package org.refactor.recipe;
-
               import jakarta.inject.Inject;
               import org.slf4j.Logger;
-              import com.fasterxml.jackson.databind.ObjectMapper;
 
-              public class MyService {
+              class MyService {
 
                   @Inject
-                  ObjectMapper mapper;
+                  Object mapper;
 
                   @Inject
                   Logger logger;
@@ -195,15 +189,12 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
               """,
             //language=java
             """
-              package org.refactor.recipe;
-
               import jakarta.inject.Inject;
-              import com.fasterxml.jackson.databind.ObjectMapper;
 
-              public class MyService {
+              class MyService {
 
                   @Inject
-                  ObjectMapper mapper;
+                  Object mapper;
 
                   public void someMethod() {
                       // no logger usage
@@ -220,9 +211,7 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
           java(
             //language=java
             """
-              package org.refactor.recipe;
-
-              public class NoLoggerClass {
+              class NoLoggerClass {
                   public void someMethod() {
                       System.out.println("Hello");
                   }
@@ -238,36 +227,35 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
           java(
             //language=java
             """
-              package org.refactor.recipe;
               import jakarta.enterprise.event.Observes;
               import org.slf4j.Logger;
+              import org.slf4j.LoggerFactory;
 
-              public class AppInitializer {
+              class AppInitializer {
 
-                  private static final Logger log = LoggerFactory.getLogger(MyServiceClient.class);
+                  private static final Logger log = LoggerFactory.getLogger(AppInitializer.class);
 
-                  public void startService(@Observes StartupEvent ev) {
-                      Log.info("My Quarkus App - Starting");
+                  public void startService(@Observes Object ev) {
+                      log.info("My Quarkus App - Starting");
                   }
 
-                  public void stopService(@Observes ShutdownEvent ev) {
+                  public void stopService(@Observes Object ev) {
                       log.info("My Quarkus App - Stopping");
                   }
               }
               """,
             //language=java
             """
-              package org.refactor.recipe;
               import io.quarkus.logging.Log;
               import jakarta.enterprise.event.Observes;
 
-              public class AppInitializer {
+              class AppInitializer {
 
-                  public void startService(@Observes StartupEvent ev) {
+                  public void startService(@Observes Object ev) {
                       Log.info("My Quarkus App - Starting");
                   }
 
-                  public void stopService(@Observes ShutdownEvent ev) {
+                  public void stopService(@Observes Object ev) {
                       Log.info("My Quarkus App - Stopping");
                   }
               }
@@ -282,36 +270,34 @@ class SLF4JToQuarkusLoggerTest implements RewriteTest {
           java(
             //language=java
             """
-              package org.refactor.recipe;
               import jakarta.enterprise.event.Observes;
               import org.slf4j.Logger;
               import lombok.extern.slf4j.Slf4j;
 
               @Slf4j
-              public class AppInitializer {
+              class AppInitializer {
 
-                  public void startService(@Observes StartupEvent ev) {
+                  public void startService(@Observes Object ev) {
                       log.info("My Quarkus App - Starting");
                   }
 
-                  public void stopService(@Observes ShutdownEvent ev) {
+                  public void stopService(@Observes Object ev) {
                       log.info("My Quarkus App - Stopping");
                   }
               }
               """,
             //language=java
             """
-              package org.refactor.recipe;
               import io.quarkus.logging.Log;
               import jakarta.enterprise.event.Observes;
 
-              public class AppInitializer {
+              class AppInitializer {
 
-                  public void startService(@Observes StartupEvent ev) {
+                  public void startService(@Observes Object ev) {
                       Log.info("My Quarkus App - Starting");
                   }
 
-                  public void stopService(@Observes ShutdownEvent ev) {
+                  public void stopService(@Observes Object ev) {
                       Log.info("My Quarkus App - Stopping");
                   }
               }
