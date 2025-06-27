@@ -33,6 +33,7 @@ import java.util.List;
 public class SLF4JToQuarkusLogger extends Recipe {
 
     private static final String ORG_SLF_4_J_LOGGER = "org.slf4j.Logger";
+    private static final MethodMatcher LOGGER_TRACE = new MethodMatcher(ORG_SLF_4_J_LOGGER + " trace(String, ..)");
     private static final MethodMatcher LOGGER_DEBUG = new MethodMatcher(ORG_SLF_4_J_LOGGER + " debug(String, ..)");
     private static final MethodMatcher LOGGER_INFO = new MethodMatcher(ORG_SLF_4_J_LOGGER + " info(String, ..)");
     private static final MethodMatcher LOGGER_WARN = new MethodMatcher(ORG_SLF_4_J_LOGGER + " warn(String, ..)");
@@ -66,7 +67,11 @@ public class SLF4JToQuarkusLogger extends Recipe {
                     @Override
                     public J.MethodInvocation visitMethodInvocation(J.MethodInvocation methodInvocation, ExecutionContext ctx) {
                         J.MethodInvocation mi = super.visitMethodInvocation(methodInvocation, ctx);
-                        if (!LOGGER_DEBUG.matches(mi) && !LOGGER_INFO.matches(mi) && !LOGGER_WARN.matches(mi) && !LOGGER_ERROR.matches(mi)) {
+                        if (!LOGGER_TRACE.matches(mi) &&
+                                !LOGGER_DEBUG.matches(mi) &&
+                                !LOGGER_INFO.matches(mi) &&
+                                !LOGGER_WARN.matches(mi) &&
+                                !LOGGER_ERROR.matches(mi)) {
                             return mi;
                         }
 
