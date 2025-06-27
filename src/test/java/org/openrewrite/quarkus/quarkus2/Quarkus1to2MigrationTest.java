@@ -31,9 +31,17 @@ class Quarkus1to2MigrationTest implements RewriteTest {
             .logCompilationWarningsAndErrors(true)
             .classpath(
               "quarkus-qute", "qute-core", "mongodb-driver-core",
-              "quarkus-mongodb-client", "mongodb-driver-sync", "inject-api"
-            ))
-          .recipeFromResource("/META-INF/rewrite/quarkus.yml","org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration");
+              "quarkus-mongodb-client", "mongodb-driver-sync"
+            )
+            .dependsOn(
+              """
+                package javax.inject;
+                public @interface Inject {
+                }
+                """
+            )
+          )
+          .recipeFromResource("/META-INF/rewrite/quarkus.yml", "org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration");
     }
 
     @DocumentExample
@@ -185,6 +193,7 @@ class Quarkus1to2MigrationTest implements RewriteTest {
           )
         );
     }
+
     @Test
     void upgradeQuarkusUniverseParent() {
         rewriteRun(

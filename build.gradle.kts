@@ -49,4 +49,12 @@ dependencies {
     testRuntimeOnly("io.quarkus:quarkus-hibernate-orm-panache:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-hibernate-reactive-panache:1.13.+")
     testRuntimeOnly("io.smallrye.reactive:mutiny:0.12.+")
+
+    testRuntimeOnly("jakarta.inject:jakarta.inject-api:2.0.1")
+    testRuntimeOnly("jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0")
+    testRuntimeOnly("org.projectlombok:lombok:latest.release")
+}
+
+recipeDependencies {
+    parserClasspath("io.quarkus:quarkus-core:3.+")
 }

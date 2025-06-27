@@ -27,19 +27,24 @@ class GrpcServiceAnnotationToGrpcClientTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
-            .logCompilationWarningsAndErrors(true)
-            .classpath("quarkus-grpc", "inject-api")
-            .dependsOn(
-              """
-                package org.openrewrite.example;
+          .logCompilationWarningsAndErrors(true)
+          .classpath("quarkus-grpc")
+          .dependsOn(
+            """
+              package javax.inject;
+              public @interface Inject {
+              }
+              """,
+            """
+              package org.openrewrite.example;
 
-                final class GreeterGrpc {
-                    public static final class GreeterBlockingStub {
-                    }
-                }
-                """
-            )
-          ).recipe(new GrpcServiceAnnotationToGrpcClient());
+              final class GreeterGrpc {
+                  public static final class GreeterBlockingStub {
+                  }
+              }
+              """
+          )
+        ).recipe(new GrpcServiceAnnotationToGrpcClient());
     }
 
     @DocumentExample

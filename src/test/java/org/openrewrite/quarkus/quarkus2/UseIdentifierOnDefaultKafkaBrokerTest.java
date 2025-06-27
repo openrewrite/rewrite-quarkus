@@ -28,7 +28,20 @@ class UseIdentifierOnDefaultKafkaBrokerTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpath("inject-api", "smallrye-common-annotation")
+            .classpath("smallrye-common-annotation")
+            .dependsOn(
+              """
+                package javax.inject;
+                public @interface Inject {
+                }
+                """,
+              """
+                package javax.inject;
+                public @interface Named {
+                    String value();
+                }
+                """
+            )
           )
           .recipe(new UseIdentifierOnDefaultKafkaBroker());
     }
@@ -40,11 +53,11 @@ class UseIdentifierOnDefaultKafkaBrokerTest implements RewriteTest {
           java(
             """
               package org.openrewrite.example;
-                      
+
               import javax.inject.Inject;
               import javax.inject.Named;
               import java.util.Map;
-                      
+
               class KafkaProviders {
                   @Inject
                   @Named("default-kafka-broker")
