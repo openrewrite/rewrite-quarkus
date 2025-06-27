@@ -72,8 +72,8 @@ public class SLF4JToQuarkusLogger extends Recipe {
         private static final String SLF4J_ANNOTATION = "lombok.extern.slf4j.Slf4j";
 
         @Override
-        public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext executionContext) {
-            J.ClassDeclaration classDeclaration = super.visitClassDeclaration(classDecl, executionContext);
+        public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
+            J.ClassDeclaration classDeclaration = super.visitClassDeclaration(classDecl, ctx);
             boolean foundSlf4jAnnotation = !FindAnnotations.find(classDeclaration, "@" + SLF4J_ANNOTATION).isEmpty();
             if (foundSlf4jAnnotation) {
                 maybeRemoveImport(SLF4J_ANNOTATION);
@@ -109,8 +109,8 @@ public class SLF4JToQuarkusLogger extends Recipe {
         }
 
         @Override
-        public J.VariableDeclarations visitVariableDeclarations(J.VariableDeclarations multiVariable, ExecutionContext executionContext) {
-            J.VariableDeclarations variableDeclarations = super.visitVariableDeclarations(multiVariable, executionContext);
+        public  J.@Nullable VariableDeclarations visitVariableDeclarations(J.VariableDeclarations multiVariable, ExecutionContext ctx) {
+            J.VariableDeclarations variableDeclarations = super.visitVariableDeclarations(multiVariable, ctx);
             if (isInjectedOrFactoryLogger(variableDeclarations)) {
                 maybeRemoveImport(ORG_SLF_4_J_LOGGER);
                 maybeRemoveImport(JAVAX_INJECT_INJECT);
