@@ -109,7 +109,7 @@ public class SLF4JToQuarkusLogger extends Recipe {
         }
 
         @Override
-        public  J.@Nullable VariableDeclarations visitVariableDeclarations(J.VariableDeclarations multiVariable, ExecutionContext ctx) {
+        public J.@Nullable VariableDeclarations visitVariableDeclarations(J.VariableDeclarations multiVariable, ExecutionContext ctx) {
             J.VariableDeclarations variableDeclarations = super.visitVariableDeclarations(multiVariable, ctx);
             if (isInjectedOrFactoryLogger(variableDeclarations)) {
                 maybeRemoveImport(ORG_SLF_4_J_LOGGER);
