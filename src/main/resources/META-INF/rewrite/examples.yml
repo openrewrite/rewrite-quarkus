@@ -282,6 +282,45 @@ examples:
     language: java
 ---
 type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.quarkus.Slf4jToQuarkusLogger
+examples:
+- description: ''
+  sources:
+  - before: |
+      import jakarta.enterprise.event.Observes;
+      import jakarta.inject.Inject;
+      import org.slf4j.Logger;
+
+      class AppInitializer {
+
+          @Inject
+          Logger logger;
+
+          public void startService(@Observes Object ev) {
+              logger.info("My Quarkus App - Starting");
+          }
+
+          public void stopService(@Observes Object ev) {
+              logger.info("My Quarkus App - Stopping");
+          }
+      }
+    after: |
+      import io.quarkus.logging.Log;
+      import jakarta.enterprise.event.Observes;
+
+      class AppInitializer {
+
+          public void startService(@Observes Object ev) {
+              Log.info("My Quarkus App - Starting");
+          }
+
+          public void stopService(@Observes Object ev) {
+              Log.info("My Quarkus App - Stopping");
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
 examples:
 - description: ''
