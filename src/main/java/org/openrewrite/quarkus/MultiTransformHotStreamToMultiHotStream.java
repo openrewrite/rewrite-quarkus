@@ -50,7 +50,7 @@ public class MultiTransformHotStreamToMultiHotStream extends Recipe {
         public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
             J.MethodInvocation mi = super.visitMethodInvocation(method, ctx);
             if (HOT_STREAM_METHOD_MATCHER.matches(mi)) {
-                if (mi.getSelect() != null && mi.getSelect() instanceof J.MethodInvocation) {
+                if (mi.getSelect() instanceof J.MethodInvocation) {
                     J.MethodInvocation mSelect = (J.MethodInvocation) mi.getSelect();
                     if (TRANSFORM_METHOD_MATCHER.matches(mSelect) || SELECT_METHOD_MATCHER.matches(mSelect)) {
                         return mi.withSelect(mSelect.getSelect());
