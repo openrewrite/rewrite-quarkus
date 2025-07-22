@@ -196,7 +196,8 @@ public class FindQuarkusProperties extends Recipe {
     private static String getSearchRegex(String propertyKey, @Nullable String profile, @Nullable Boolean searchAllProfiles) {
         if (!Boolean.FALSE.equals(searchAllProfiles)) {
             return "^(?:%[\\w\\-_,]+\\.)?" + propertyKey + "$";
-        } else if (StringUtils.isNotEmpty(profile)) {
+        }
+        if (StringUtils.isNotEmpty(profile)) {
             return "^%[\\w\\-_,]*(?:" + profile + ")[\\w\\-_,]*\\." + propertyKey + "$";
         }
         return "^" + propertyKey + "$";

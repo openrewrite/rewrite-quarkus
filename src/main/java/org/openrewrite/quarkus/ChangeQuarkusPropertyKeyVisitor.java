@@ -57,7 +57,8 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
     public @Nullable Tree visit(@Nullable Tree tree, ExecutionContext ctx) {
         if (tree instanceof Properties.File) {
             return visitPropertiesFile(tree, ctx);
-        } else if (tree instanceof Yaml.Documents) {
+        }
+        if (tree instanceof Yaml.Documents) {
             return visitYamlDocuments(tree, ctx);
         }
         return tree;
