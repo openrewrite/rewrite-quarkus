@@ -83,7 +83,6 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               %prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
               %staging.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=write-sync
               %staging.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
-
               quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
               """;
