@@ -17,8 +17,10 @@ package org.openrewrite.quarkus;
 
 import org.openrewrite.internal.StringUtils;
 
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 final class QuarkusProfileUtils {
 
@@ -49,7 +51,7 @@ final class QuarkusProfileUtils {
 
     static String formatKey(String property, String value, String profile) {
         StringBuilder yaml = new StringBuilder();
-        formatKey(yaml, property, value, StringUtils.isNotEmpty(profile) ? Collections.singletonList(profile) : Collections.emptyList());
+        formatKey(yaml, property, value, StringUtils.isNotEmpty(profile) ? singletonList(profile) : emptyList());
         return yaml.toString();
     }
 

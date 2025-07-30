@@ -26,8 +26,9 @@ import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
     private static final MethodMatcher PERSIST_MATCHER = new MethodMatcher("io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase persist()");
@@ -73,7 +74,7 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
                                                         "    public <T extends ReactivePanacheMongoEntityBase> Uni<T> persistOrUpdate() {};" +
                                                         "}"
                                 )
-                        ).collect(Collectors.toList())
+                        ).collect(toList())
                 );
 
         private static boolean hasVoidParameterization(J.MethodInvocation method) {

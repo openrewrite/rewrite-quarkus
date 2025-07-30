@@ -25,8 +25,9 @@ import org.openrewrite.yaml.tree.Yaml;
 
 import java.nio.file.FileSystems;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 public class QuarkusExecutionContextView extends DelegatingExecutionContext {
 
@@ -73,7 +74,7 @@ public class QuarkusExecutionContextView extends DelegatingExecutionContext {
         if (!(tree instanceof Properties.File || tree instanceof Yaml.Documents)) {
             return false;
         }
-        List<String> expressions = pathExpressions != null ? pathExpressions : Collections.emptyList();
+        List<String> expressions = pathExpressions != null ? pathExpressions : emptyList();
         if (expressions.isEmpty()) {
             // If not defined, get reasonable defaults from the execution context.
             expressions = getDefaultApplicationConfigurationPaths();

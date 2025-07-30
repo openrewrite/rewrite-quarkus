@@ -27,8 +27,9 @@ import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
 
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.nCopies;
 
 public class Slf4jToQuarkusLogger extends Recipe {
 
@@ -82,7 +83,7 @@ public class Slf4jToQuarkusLogger extends Recipe {
                                 arg instanceof J.Literal && ((J.Literal) arg).getValue() instanceof String ? ((J.Literal) arg)
                                         .withValue(((String) ((J.Literal) arg).getValue()).replace("{}", "%s"))
                                         .withValueSource((((J.Literal) arg).getValueSource()).replace("{}", "%s")) : arg);
-                        String placeholders = String.join(", ", Collections.nCopies(args.size(), "#{any()}"));
+                        String placeholders = String.join(", ", nCopies(args.size(), "#{any()}"));
                         String template = String.format("Log.%s%s(%s)", mi.getSimpleName(), 1 < args.size() ? "f" : "", placeholders);
                         return JavaTemplate.builder(template)
                                 .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx, "quarkus-core"))

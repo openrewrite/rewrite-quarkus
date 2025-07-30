@@ -26,9 +26,11 @@ import org.openrewrite.quarkus.search.FindQuarkusProperties;
 import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 @RequiredArgsConstructor
 class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionContext> {
@@ -149,7 +151,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                     String keyWithoutProfile = QuarkusProfileUtils.getKeyWithoutProfile(key);
 
                     // Add a new property for the named profile with the changed key
-                    QuarkusProfileUtils.formatKey(newProperties, keyWithoutProfile, newValue, profile != null ? Collections.singletonList(profile) : Collections.emptyList());
+                    QuarkusProfileUtils.formatKey(newProperties, keyWithoutProfile, newValue, profile != null ? singletonList(profile) : emptyList());
 
                     // Add a property containing the value for the unmatched profiles with the original key
                     if (!remainingProfiles.isEmpty()) {

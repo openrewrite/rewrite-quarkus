@@ -26,8 +26,9 @@ import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class UsePanacheEntityBaseUniT extends Recipe {
     private static final MethodMatcher PERSIST_MATCHER = new MethodMatcher("io.quarkus.hibernate.reactive.panache.PanacheEntityBase persist()");
@@ -50,7 +51,7 @@ public class UsePanacheEntityBaseUniT extends Recipe {
                                                 "    public <T extends PanacheEntityBase> Uni<T> persistAndFlush() {};" +
                                                 "}"
                         )
-                ).collect(Collectors.toList()));
+                ).collect(toList()));
     }
 
     @Override
