@@ -31,8 +31,6 @@ import org.openrewrite.java.tree.J.Annotation;
 import org.openrewrite.java.tree.J.FieldAccess;
 import org.openrewrite.java.tree.J.Identifier;
 
-import java.util.Objects;
-
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class RefactorTemporalAnnotation extends Recipe {
@@ -89,17 +87,11 @@ public class RefactorTemporalAnnotation extends Recipe {
                 return decls;
             }
 
-            Annotation temporalAnnotation = FindAnnotations.find(decls, TEMPORAL_ANNOTATION).stream()
+            String newTypeToUse = FindAnnotations.find(decls, TEMPORAL_ANNOTATION)
+                    .stream()
                     .findFirst()
-                    .orElse(null);
-
-            if (temporalAnnotation == null) {
-                return decls;
-            }
-
-            // Extract the enum constant (DATE or TIMESTAMP)
-            String newTypeToUse = Objects.requireNonNull(temporalAnnotation.getArguments()).stream()
-                    .findFirst()
+                    .map(Annotation::getArguments)
+                    .map(args -> args.get(0))
                     .map(arg -> {
                         if (arg instanceof FieldAccess) {
                             return getNewType(((FieldAccess) arg).getSimpleName());
@@ -110,7 +102,6 @@ public class RefactorTemporalAnnotation extends Recipe {
                         return null;
                     })
                     .orElse(null);
-
             if (newTypeToUse == null) {
                 return decls;
             }
