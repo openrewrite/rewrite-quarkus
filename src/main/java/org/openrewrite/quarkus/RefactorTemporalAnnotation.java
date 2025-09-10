@@ -52,8 +52,8 @@ public class RefactorTemporalAnnotation extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Replace java.util.Date fields annotated with @Temporal "
-                + " with java.time.LocalDate, java.time.LocalTime, java.time.LocalDateTime or java.time.OffsetDateTime.";
+        return "Replace java.util.Date fields annotated with @Temporal " +
+                "with java.time.LocalDate, java.time.LocalTime, java.time.LocalDateTime or java.time.OffsetDateTime.";
     }
 
     @Option(displayName = "Use offsetDateTime",
@@ -81,7 +81,7 @@ public class RefactorTemporalAnnotation extends Recipe {
         }
 
         @Override
-        public J.@NotNull VariableDeclarations visitVariableDeclarations(J.@NotNull VariableDeclarations multiVariable, @NotNull ExecutionContext ctx) {
+        public J. VariableDeclarations visitVariableDeclarations(J. VariableDeclarations multiVariable, ExecutionContext ctx) {
             J.VariableDeclarations decls = super.visitVariableDeclarations(multiVariable, ctx);
 
             if (!DATE_MATCHER.matches(decls.getTypeExpression())) {
