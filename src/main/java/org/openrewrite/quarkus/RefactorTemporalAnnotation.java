@@ -47,17 +47,17 @@ public class RefactorTemporalAnnotation extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Refactor @Temporal annotation java.util.Date fields to java.time API";
+        return "Refactor `@Temporal` annotation `java.util.Date` fields to `java.time` API";
     }
 
     @Override
     public String getDescription() {
-        return "Replace java.util.Date fields annotated with @Temporal " +
-                "with java.time.LocalDate, java.time.LocalTime, java.time.LocalDateTime or java.time.OffsetDateTime.";
+        return "Replace `java.util.Date` fields annotated with `@Temporal` " +
+                "with `java.time.LocalDate`, `java.time.LocalTime`, `java.time.LocalDateTime` or `java.time.OffsetDateTime`.";
     }
 
     @Option(displayName = "Use offsetDateTime",
-            description = "If `true` the recipe will use OffsetDateTime instead of LocalDateTime. Default `false`.",
+            description = "If `true` the recipe will use `OffsetDateTime` instead of `LocalDateTime`. Default `false`.",
             required = false)
     @Nullable
     Boolean useOffsetDateTime;
@@ -66,8 +66,8 @@ public class RefactorTemporalAnnotation extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 Preconditions.and(
-                        new UsesType<>(ENTITY_ANNOTATION, true),
                         new UsesType<>(DATE_TYPE, true),
+                        new UsesType<>(ENTITY_ANNOTATION, true),
                         new UsesType<>(TEMPORAL_ANNOTATION, true)
                 ),
                 new TemporalRefactorVisitor(Boolean.TRUE.equals(useOffsetDateTime))
