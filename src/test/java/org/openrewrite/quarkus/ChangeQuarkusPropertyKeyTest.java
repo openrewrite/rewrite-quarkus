@@ -410,5 +410,49 @@ class ChangeQuarkusPropertyKeyTest {
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/custom.yaml"))
             );
         }
+
+        @Test
+        void changeKeyWithQueryEndingInWildcard() {
+            @Language("yml")
+            String after = """
+              quarkus:
+                hoobernate-search-orm:
+                  automatic-indexing:
+                    synchronization:
+                      strategy: read-sync
+                  unitname:
+                    automatic-indexing:
+                      synchronization:
+                        strategy: read-sync
+              '%dev':
+                quarkus:
+                  hoobernate-search-orm:
+                    automatic-indexing:
+                      synchronization:
+                        strategy: sync
+                    unitname:
+                      automatic-indexing:
+                        synchronization:
+                          strategy: sync
+              '%staging,prod':
+                quarkus:
+                  hoobernate-search-orm:
+                    automatic-indexing:
+                      synchronization:
+                        strategy: async
+                    unitname:
+                      automatic-indexing:
+                        synchronization:
+                          strategy: async
+              """;
+
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-search-orm(.*)",
+                "quarkus.hoobernate-search-orm$1",
+                null, true, List.of("**/custom.{properties,yaml,yml}"))),
+              yaml(sourceYaml, after, spec -> spec.path("src/main/resources/custom.yaml"))
+            );
+        }
     }
 }
