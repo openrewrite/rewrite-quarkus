@@ -23,7 +23,7 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-public class RefactorTemporalAnnotationTest implements RewriteTest {
+class RefactorTemporalAnnotationTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -39,8 +39,6 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
           //language=java
           java(
             """
-              package org.refactor.model;
-
               import jakarta.persistence.Column;
               import jakarta.persistence.Entity;
               import jakarta.persistence.Id;
@@ -51,7 +49,7 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "rent_house")
-              public class RentHouseEntity {
+              class RentHouseEntity {
                   @Id
                   @Column(name = "rent_house_id")
                   private Long id;
@@ -73,8 +71,6 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
               }
               """,
             """
-              package org.refactor.model;
-
               import jakarta.persistence.Column;
               import jakarta.persistence.Entity;
               import jakarta.persistence.Id;
@@ -85,7 +81,7 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "rent_house")
-              public class RentHouseEntity {
+              class RentHouseEntity {
                   @Id
                   @Column(name = "rent_house_id")
                   private Long id;
@@ -113,15 +109,13 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
           //language=java
           java(
             """
-              package org.refactor.model;
-
               import jakarta.persistence.Entity;
               import jakarta.persistence.Table;
               import java.util.Date;
 
               @Entity
               @Table(name = "some_entity")
-              public class SomeEntity {
+              class SomeEntity {
                   private Date createdOn;
               }
               """
@@ -135,8 +129,6 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
           //language=java
           java(
             """
-              package org.refactor.model;
-
               import java.util.Date;
               import jakarta.persistence.Temporal;
               import jakarta.persistence.TemporalType;
@@ -145,7 +137,7 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "some_entity")
-              public class MultiTemporalEntity {
+              class MultiTemporalEntity {
                   @Temporal(TemporalType.DATE)
                   private Date dateField;
 
@@ -157,8 +149,6 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
               }
               """,
             """
-              package org.refactor.model;
-
               import jakarta.persistence.Entity;
               import jakarta.persistence.Table;
 
@@ -168,7 +158,7 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "some_entity")
-              public class MultiTemporalEntity {
+              class MultiTemporalEntity {
                   private LocalDate dateField;
 
                   private LocalDateTime timestampField;
@@ -186,8 +176,6 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
           //language=java
           java(
             """
-              package org.refactor.model;
-
               import java.util.Date;
               import static jakarta.persistence.TemporalType.DATE;
               import jakarta.persistence.Temporal;
@@ -196,14 +184,12 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "some_entity")
-              public class SomeEntity {
+              class SomeEntity {
                   @Temporal(DATE)
                   private Date dateField;
               }
               """,
             """
-              package org.refactor.model;
-
               import jakarta.persistence.Entity;
               import jakarta.persistence.Table;
 
@@ -211,7 +197,7 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "some_entity")
-              public class SomeEntity {
+              class SomeEntity {
                   private LocalDate dateField;
               }
               """
@@ -226,8 +212,6 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
           //language=java
           java(
             """
-              package org.refactor.model;
-
               import java.util.Date;
               import jakarta.persistence.Temporal;
               import jakarta.persistence.TemporalType;
@@ -236,7 +220,7 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "some_entity")
-              public class MultiTemporalEntity {
+              class MultiTemporalEntity {
                   @Temporal(TemporalType.DATE)
                   private Date dateField;
 
@@ -248,8 +232,6 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
               }
               """,
             """
-              package org.refactor.model;
-
               import jakarta.persistence.Entity;
               import jakarta.persistence.Table;
 
@@ -259,7 +241,7 @@ public class RefactorTemporalAnnotationTest implements RewriteTest {
 
               @Entity
               @Table(name = "some_entity")
-              public class MultiTemporalEntity {
+              class MultiTemporalEntity {
                   private LocalDate dateField;
 
                   private OffsetDateTime timestampField;

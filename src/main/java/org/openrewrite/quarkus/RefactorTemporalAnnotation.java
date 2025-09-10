@@ -16,8 +16,8 @@
 package org.openrewrite.quarkus;
 
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
 import org.openrewrite.java.ChangeType;
@@ -66,22 +66,19 @@ public class RefactorTemporalAnnotation extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 new UsesType<>(ENTITY_ANNOTATION, true),
-                new TemporalRefactorVisitor(useOffsetDateTime)
+                new TemporalRefactorVisitor(Boolean.TRUE.equals(useOffsetDateTime))
         );
     }
 
+    @RequiredArgsConstructor
     private static class TemporalRefactorVisitor extends JavaIsoVisitor<ExecutionContext> {
 
         private static final TypeMatcher DATE_MATCHER = new TypeMatcher(DATE_TYPE);
 
-        private final Boolean useOffsetDT;
-
-        public TemporalRefactorVisitor(Boolean useOffsetDateTime) {
-            useOffsetDT = useOffsetDateTime;
-        }
+        private final boolean useOffsetDT;
 
         @Override
-        public J. VariableDeclarations visitVariableDeclarations(J. VariableDeclarations multiVariable, ExecutionContext ctx) {
+        public J.VariableDeclarations visitVariableDeclarations(J.VariableDeclarations multiVariable, ExecutionContext ctx) {
             J.VariableDeclarations decls = super.visitVariableDeclarations(multiVariable, ctx);
 
             if (!DATE_MATCHER.matches(decls.getTypeExpression())) {
@@ -115,21 +112,20 @@ public class RefactorTemporalAnnotation extends Recipe {
             }
 
             doAfterVisit(new RemoveAnnotation(TEMPORAL_ANNOTATION).getVisitor());
-            decls = (J.VariableDeclarations) new ChangeType(DATE_TYPE, newTypeToUse, null).getVisitor().visitNonNull(decls, ctx);
 
             maybeRemoveImport(DATE_TYPE);
             maybeAddImport(newTypeToUse);
-            return decls;
+            return (J.VariableDeclarations) new ChangeType(DATE_TYPE, newTypeToUse, null).getVisitor().visitNonNull(decls, ctx);
         }
 
-        private String getNewType(String temporalConstant) {
+        private @Nullable String getNewType(String temporalConstant) {
             switch (temporalConstant) {
                 case "DATE":
                     return JAVA_TIME_LOCAL_DATE;
                 case "TIME":
                     return JAVA_TIME_LOCAL_TIME;
                 case "TIMESTAMP":
-                    if (Boolean.TRUE.equals(useOffsetDT)) {
+                    if (useOffsetDT) {
                         return JAVA_TIME_OFFSETDATETIME;
                     } else {
                         return JAVA_TIME_LOCAL_DATE_TIME;
