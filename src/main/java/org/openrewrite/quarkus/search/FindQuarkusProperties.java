@@ -131,7 +131,7 @@ public class FindQuarkusProperties extends Recipe {
             public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<Yaml.Mapping.Entry> entries) {
                 entry = super.visitMappingEntry(entry, entries);
                 String prop = getProperty(getCursor());
-                if (pattern.matcher(prop).find()) {
+                if (pattern.matcher(prop).find() && !(entry.getValue() instanceof Yaml.Mapping)) {
                     YamlKey newKey = entry.getKey().copyPaste();
                     if (newKey instanceof Yaml.Scalar) {
                         newKey = ((Yaml.Scalar) newKey).withValue(prop);
