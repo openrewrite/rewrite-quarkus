@@ -104,27 +104,7 @@ class RefactorTemporalAnnotationTest implements RewriteTest {
     }
 
     @Test
-    void shouldChangeNothing() {
-        rewriteRun(
-          //language=java
-          java(
-            """
-              import jakarta.persistence.Entity;
-              import jakarta.persistence.Table;
-              import java.util.Date;
-
-              @Entity
-              @Table(name = "some_entity")
-              class SomeEntity {
-                  private Date createdOn;
-              }
-              """
-          )
-        );
-    }
-
-    @Test
-    void shouldRemoveTemporalAnnotationAndUseGoodType() {
+    void shouldRemoveTemporalAnnotationAndUseCorrespondingType() {
         rewriteRun(
           //language=java
           java(
@@ -247,6 +227,26 @@ class RefactorTemporalAnnotationTest implements RewriteTest {
                   private OffsetDateTime timestampField;
 
                   private LocalTime timeField;
+              }
+              """
+          )
+        );
+    }
+
+    @Test
+    void noAnnotationNoChange() {
+        rewriteRun(
+          //language=java
+          java(
+            """
+              import jakarta.persistence.Entity;
+              import jakarta.persistence.Table;
+              import java.util.Date;
+
+              @Entity
+              @Table(name = "some_entity")
+              class SomeEntity {
+                  private Date createdOn;
               }
               """
           )

@@ -45,6 +45,8 @@ public class RefactorTemporalAnnotation extends Recipe {
     private static final String JAVA_TIME_OFFSETDATETIME = "java.time.OffsetDateTime";
     private static final String JAVA_TIME_LOCAL_DATE_TIME = "java.time.LocalDateTime";
 
+    private static final TypeMatcher DATE_MATCHER = new TypeMatcher(DATE_TYPE);
+
     @Override
     public String getDisplayName() {
         return "Refactor @Temporal annotation java.util.Date fields to java.time API";
@@ -65,15 +67,17 @@ public class RefactorTemporalAnnotation extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                new UsesType<>(ENTITY_ANNOTATION, true),
+                Preconditions.and(
+                        new UsesType<>(ENTITY_ANNOTATION, true),
+                        new UsesType<>(DATE_TYPE, true),
+                        new UsesType<>(TEMPORAL_ANNOTATION, true)
+                ),
                 new TemporalRefactorVisitor(Boolean.TRUE.equals(useOffsetDateTime))
         );
     }
 
     @RequiredArgsConstructor
     private static class TemporalRefactorVisitor extends JavaIsoVisitor<ExecutionContext> {
-
-        private static final TypeMatcher DATE_MATCHER = new TypeMatcher(DATE_TYPE);
 
         private final boolean useOffsetDT;
 
