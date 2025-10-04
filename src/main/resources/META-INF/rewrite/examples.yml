@@ -15,7 +15,7 @@
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.AddQuarkusProperty
 examples:
-- description: ''
+- description: '`AddQuarkusPropertyTest#addNestedIntoExisting`'
   parameters:
   - quarkus.http.port
   - '9090'
@@ -28,6 +28,7 @@ examples:
     after: |
       quarkus.http.port=9090
       quarkus.http.root-path=/api
+    path: src/main/resources/application.properties
     language: properties
   - before: |
       quarkus:
@@ -38,12 +39,13 @@ examples:
         http:
           root-path: /api
           port: 9090
+    path: src/main/resources/application.yaml
     language: yaml
 ---
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.ConfigPropertiesToConfigMapping
 examples:
-- description: ''
+- description: '`ConfigPropertiesToConfigMappingTest#migrateAnnotatedInterfaces`'
   sources:
   - before: |
       import io.quarkus.arc.config.ConfigProperties;
@@ -68,7 +70,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.ConfigureQuarkusMavenPluginWithReasonableDefaults
 examples:
-- description: ''
+- description: '`ConfigureQuarkusMavenPluginWithReasonableDefaultsTest#configureQuarkusMavenPluginWithReasonableDefaults`'
   sources:
   - before: |
       <project>
@@ -125,7 +127,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.MigrateQuarkusMavenPluginNativeImageGoal
 examples:
-- description: ''
+- description: '`MigrateQuarkusMavenPluginNativeImageGoalTest#removeQuarkusMavenPluginNativeImageGoalTest`'
   sources:
   - before: |
       <project>
@@ -188,7 +190,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.MultiTransformHotStreamToMultiHotStream
 examples:
-- description: ''
+- description: '`MultiTransformHotStreamToMultiHotStreamTest#replaceTransform`'
   sources:
   - before: |
       import io.smallrye.mutiny.Multi;
@@ -222,14 +224,14 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.Quarkus1to1_13Migration
 examples:
-- description: ''
+- description: '`Quarkus1to113MigrationPropertiesTest#quarkusDevInstrumentation`'
   sources:
   - before: |
       quarkus.dev.instrumentation=true
     after: |
       quarkus.live-reload.instrumentation=true
     language: properties
-- description: ''
+- description: '`Quarkus1to113MigrationTest#changeMultiTransformAndByTakingFirst`'
   sources:
   - before: |
       import io.smallrye.mutiny.Multi;
@@ -284,7 +286,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.Slf4jToQuarkusLogger
 examples:
-- description: ''
+- description: '`Slf4JToQuarkusLoggerTest#shouldReplaceSlf4jLoggerWithQuarkusLogAndRemoveInject`'
   sources:
   - before: |
       import jakarta.enterprise.event.Observes;
@@ -323,7 +325,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
 examples:
-- description: ''
+- description: '`JavaEEtoQuarkus2CodeTranformationsTest#javaEEtoQuarkus2CodeTransformationsTest`'
   sources:
   - before: |
       package org.acme;
@@ -444,7 +446,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2Migration
 examples:
-- description: ''
+- description: '`JavaEEtoQuarkus2MavenDependenciesMigrationTest#convertJavaEEToQuarkusDependencies1`'
   sources:
   - before: |
       <?xml version="1.0" encoding="UTF-8"?>
@@ -621,7 +623,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.quarkus2.GrpcServiceAnnotationToGrpcClient
 examples:
-- description: ''
+- description: '`GrpcServiceAnnotationToGrpcClientTest#grpcServiceAnnotationToGrpcClient`'
   sources:
   - before: |
       package org.openrewrite.example;
@@ -652,7 +654,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.quarkus2.Quarkus1to2Migration
 examples:
-- description: ''
+- description: '`Quarkus1to2MigrationPropertiesTest#smallryeJwt`'
   sources:
   - before: |
       smallrye.jwt.sign.key-location=/keys/signing
@@ -661,7 +663,7 @@ examples:
       smallrye.jwt.sign.key.location=/keys/signing
       smallrye.jwt.encrypt.key.location=/keys/encrypt
     language: properties
-- description: ''
+- description: '`Quarkus1to2MigrationTest#quteResourcePathToLocation`'
   sources:
   - before: |
       import io.quarkus.qute.api.ResourcePath;
@@ -696,7 +698,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.quarkus2.RemoveAvroMavenPlugin
 examples:
-- description: ''
+- description: '`RemoveAvroMavenPluginTest#removeAvroMavenPluginIfQuarkusMavenPluginPresent`'
   sources:
   - before: |
       <project>
@@ -741,7 +743,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.quarkus2.UseIdentifierOnDefaultKafkaBroker
 examples:
-- description: ''
+- description: '`UseIdentifierOnDefaultKafkaBrokerTest#namedAnnotationToIdentifier`'
   sources:
   - before: |
       package org.openrewrite.example;
@@ -773,7 +775,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.quarkus2.UsePanacheEntityBaseStaticMethods
 examples:
-- description: ''
+- description: '`UsePanacheEntityBaseStaticMethodsTest#useStaticMethods`'
   sources:
   - before: |
       package org.openrewrite.example;
@@ -804,7 +806,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.quarkus2.UsePanacheEntityBaseUniT
 examples:
-- description: ''
+- description: '`UsePanacheEntityBaseUniTTest#replaceWithVoid`'
   sources:
   - before: |
       package org.openrewrite.example;
@@ -837,7 +839,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.quarkus.quarkus2.UseReactivePanacheMongoEntityBaseUniT
 examples:
-- description: ''
+- description: '`UseReactivePanacheMongoEntityBaseUniTTest#replaceWithVoid`'
   sources:
   - before: |
       package org.openrewrite.example;
