@@ -28,7 +28,7 @@ dependencies {
 
     implementation("org.openrewrite.recipe:rewrite-java-dependencies:${rewriteVersion}")
 
-    runtimeOnly("org.openrewrite:rewrite-java-17")
+    runtimeOnly("org.openrewrite:rewrite-java-21")
 
     testImplementation("org.openrewrite:rewrite-test")
 
@@ -40,7 +40,7 @@ dependencies {
 
     testImplementation("javax:javaee-api:7.0")
 
-    testRuntimeOnly("org.openrewrite:rewrite-java-17")
+    testRuntimeOnly("org.openrewrite:rewrite-java-21")
 
     testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
     testRuntimeOnly("io.quarkus:quarkus-qute:1.13.+")
