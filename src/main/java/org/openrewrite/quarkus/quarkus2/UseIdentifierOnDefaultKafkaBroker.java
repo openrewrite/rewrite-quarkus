@@ -49,8 +49,8 @@ public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
         public J.Annotation visitAnnotation(J.Annotation annotation, ExecutionContext ctx) {
             J.Annotation a = super.visitAnnotation(annotation, ctx);
             if (MATCHER.matches(a)) {
-                maybeAddImport("io.smallrye.common.annotation.Identifier");
                 maybeRemoveImport("javax.inject.Named");
+                maybeAddImport("io.smallrye.common.annotation.Identifier");
                 a = JavaTemplate.builder("@Identifier(\"default-kafka-broker\")")
                         .javaParser(JavaParser.fromJavaVersion()
                                 .dependsOn(singletonList(
