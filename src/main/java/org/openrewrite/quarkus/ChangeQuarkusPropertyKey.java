@@ -77,15 +77,9 @@ public class ChangeQuarkusPropertyKey extends Recipe {
         return validated;
     }
 
-    @Override
-    public String getDisplayName() {
-        return "Change Quarkus configuration property key";
-    }
+    String displayName = "Change Quarkus configuration property key";
 
-    @Override
-    public String getDescription() {
-        return "Change the key of a property in Quarkus configuration files.";
-    }
+    String description = "Change the key of a property in Quarkus configuration files.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

@@ -31,15 +31,9 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = false)
 @Value
 public class ConfigureQuarkusMavenPluginWithReasonableDefaults extends Recipe {
-    @Override
-    public String getDisplayName() {
-        return "Configure `quarkus-maven-plugin` with reasonable defaults";
-    }
+    String displayName = "Configure `quarkus-maven-plugin` with reasonable defaults";
 
-    @Override
-    public String getDescription() {
-        return "Configures the `quarkus-maven-plugin` with reasonable defaults, such as default activated `goals` and `<extensions>` configuration.";
-    }
+    String description = "Configures the `quarkus-maven-plugin` with reasonable defaults, such as default activated `goals` and `<extensions>` configuration.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

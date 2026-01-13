@@ -37,15 +37,9 @@ import java.util.Set;
 @Value
 public class FindQuarkusProfiles extends Recipe {
 
-    @Override
-    public String getDisplayName() {
-        return "Search Quarkus profiles";
-    }
+    String displayName = "Search Quarkus profiles";
 
-    @Override
-    public String getDescription() {
-        return "Search the properties for existing Quarkus profiles.";
-    }
+    String description = "Search the properties for existing Quarkus profiles.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

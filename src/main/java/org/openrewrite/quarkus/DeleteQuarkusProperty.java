@@ -78,15 +78,9 @@ public class DeleteQuarkusProperty extends Recipe {
         return validated;
     }
 
-    @Override
-    public String getDisplayName() {
-        return "Delete Quarkus configuration property";
-    }
+    String displayName = "Delete Quarkus configuration property";
 
-    @Override
-    public String getDescription() {
-        return "Delete a property from Quarkus configuration files.";
-    }
+    String description = "Delete a property from Quarkus configuration files.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

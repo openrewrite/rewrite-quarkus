@@ -75,15 +75,9 @@ public class AddQuarkusProperty extends Recipe {
     @Nullable
     List<String> pathExpressions;
 
-    @Override
-    public String getDisplayName() {
-        return "Add a Quarkus configuration property";
-    }
+    String displayName = "Add a Quarkus configuration property";
 
-    @Override
-    public String getDescription() {
-        return "Add a Quarkus configuration property to an existing configuration file if it does not already exist in that file.";
-    }
+    String description = "Add a Quarkus configuration property to an existing configuration file if it does not already exist in that file.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

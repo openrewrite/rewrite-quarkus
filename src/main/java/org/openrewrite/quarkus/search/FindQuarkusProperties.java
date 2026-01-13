@@ -36,15 +36,9 @@ import java.util.regex.Pattern;
 @Value
 public class FindQuarkusProperties extends Recipe {
 
-    @Override
-    public String getDisplayName() {
-        return "Find Quarkus property";
-    }
+    String displayName = "Find Quarkus property";
 
-    @Override
-    public String getDescription() {
-        return "Finds occurrences of a Quarkus property key.";
-    }
+    String description = "Finds occurrences of a Quarkus property key.";
 
     @Option(displayName = "Property key",
             description = "The property key to look for.",
