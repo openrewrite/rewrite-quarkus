@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus;
 
+import lombok.Getter;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
@@ -27,15 +28,11 @@ import org.openrewrite.java.tree.J;
 public class MultiTransformHotStreamToMultiHotStream extends Recipe {
     private static final MethodMatcher HOT_STREAM_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.groups.MultiTransform toHotStream()");
 
-    @Override
-    public String getDisplayName() {
-        return "Use Mutiny `multi.toHotStream()`";
-    }
+    @Getter
+    final String displayName = "Use Mutiny `multi.toHotStream()`";
 
-    @Override
-    public String getDescription() {
-        return "Replace Mutiny API usages of `multi.transform().toHotStream()` with `multi.toHotStream()`.";
-    }
+    @Getter
+    final String description = "Replace Mutiny API usages of `multi.transform().toHotStream()` with `multi.toHotStream()`.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

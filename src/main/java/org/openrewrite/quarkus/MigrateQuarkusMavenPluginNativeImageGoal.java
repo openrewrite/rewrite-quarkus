@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus;
 
+import lombok.Getter;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
@@ -28,17 +29,13 @@ import org.openrewrite.xml.tree.Xml;
 import java.util.Optional;
 
 public class MigrateQuarkusMavenPluginNativeImageGoal extends Recipe {
-    @Override
-    public String getDisplayName() {
-        return "Use `native` profile in `quarkus-maven-plugin`";
-    }
+    @Getter
+    final String displayName = "Use `native` profile in `quarkus-maven-plugin`";
 
-    @Override
-    public String getDescription() {
-        return "Migrates the `quarkus-maven-plugin` deprecated `native-image` goal. " +
-                "If the `native-image` goal needs to be removed, this adds `<quarkus.package.type>native</quarkus.package.type>` " +
-                "to the `native` profile `properties` section, given the `native` profile exists in the `pom.xml`.";
-    }
+    @Getter
+    final String description = "Migrates the `quarkus-maven-plugin` deprecated `native-image` goal. " +
+            "If the `native-image` goal needs to be removed, this adds `<quarkus.package.type>native</quarkus.package.type>` " +
+            "to the `native` profile `properties` section, given the `native` profile exists in the `pom.xml`.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

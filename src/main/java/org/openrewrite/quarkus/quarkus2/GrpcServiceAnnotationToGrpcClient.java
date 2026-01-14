@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
+import lombok.Getter;
 import org.openrewrite.*;
 import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.ChangeType;
@@ -27,15 +28,11 @@ public class GrpcServiceAnnotationToGrpcClient extends Recipe {
     private static final String GRPC_SERVICE_ANNOTATION_FQN = "io.quarkus.grpc.runtime.annotations.GrpcService";
     private static final String GRPC_CLIENT_ANNOTATION_FQN = "io.quarkus.grpc.GrpcClient";
 
-    @Override
-    public String getDisplayName() {
-        return "Use `@GrpcClient`";
-    }
+    @Getter
+    final String displayName = "Use `@GrpcClient`";
 
-    @Override
-    public String getDescription() {
-        return "The `@GrpcService` annotation is replaced with `@GrpcClient` in Quarkus 2.x. Removes the optional `@GrpcClient.value()` unless the service name is different from the name of annotated element.";
-    }
+    @Getter
+    final String description = "The `@GrpcService` annotation is replaced with `@GrpcClient` in Quarkus 2.x. Removes the optional `@GrpcClient.value()` unless the service name is different from the name of annotated element.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

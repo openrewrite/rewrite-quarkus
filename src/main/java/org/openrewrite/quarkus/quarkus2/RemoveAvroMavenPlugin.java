@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
+import lombok.Getter;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
@@ -26,15 +27,11 @@ import org.openrewrite.maven.search.FindPlugin;
 import org.openrewrite.xml.tree.Xml;
 
 public class RemoveAvroMavenPlugin extends Recipe {
-    @Override
-    public String getDisplayName() {
-        return "Remove `avro-maven-plugin`";
-    }
+    @Getter
+    final String displayName = "Remove `avro-maven-plugin`";
 
-    @Override
-    public String getDescription() {
-        return "Removes the `avro-maven-plugin` if the `quarkus-maven-plugin` is found in the project's `pom.xml`. Avro has been integrated with the Quarkus code generation mechanism. This replaces the need to use the Avro plugin.";
-    }
+    @Getter
+    final String description = "Removes the `avro-maven-plugin` if the `quarkus-maven-plugin` is found in the project's `pom.xml`. Avro has been integrated with the Quarkus code generation mechanism. This replaces the need to use the Avro plugin.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

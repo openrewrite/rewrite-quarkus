@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus;
 
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
@@ -40,16 +41,12 @@ public class Slf4jToQuarkusLogger extends Recipe {
     private static final MethodMatcher LOGGER_WARN = new MethodMatcher(ORG_SLF_4_J_LOGGER + " warn(String, ..)");
     private static final MethodMatcher LOGGER_ERROR = new MethodMatcher(ORG_SLF_4_J_LOGGER + " error(String, ..)");
 
-    @Override
-    public String getDisplayName() {
-        return "Migrate SLF4J Logger injection and usage to Quarkus static `Log`";
-    }
+    @Getter
+    final String displayName = "Migrate SLF4J Logger injection and usage to Quarkus static `Log`";
 
-    @Override
-    public String getDescription() {
-        return "Removes usage of SLF4J Logger fields, adjusts imports, and replaces logger method calls with static " +
-                "Quarkus Log calls, including message formatting and method renaming for parameterized logging.";
-    }
+    @Getter
+    final String description = "Removes usage of SLF4J Logger fields, adjusts imports, and replaces logger method calls with static " +
+            "Quarkus Log calls, including message formatting and method renaming for parameterized logging.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

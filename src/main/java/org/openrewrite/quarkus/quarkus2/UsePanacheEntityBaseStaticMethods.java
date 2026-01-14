@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
@@ -32,15 +33,11 @@ public class UsePanacheEntityBaseStaticMethods extends Recipe {
     private static final MethodMatcher GET_ENTITY_MANAGER = new MethodMatcher("io.quarkus.hibernate.orm.panache.PanacheEntityBase getEntityManager()");
     private static final MethodMatcher FLUSH = new MethodMatcher("io.quarkus.hibernate.orm.panache.PanacheEntityBase flush()");
 
-    @Override
-    public String getDisplayName() {
-        return "Use `PanacheEntityBase` static methods";
-    }
+    @Getter
+    final String displayName = "Use `PanacheEntityBase` static methods";
 
-    @Override
-    public String getDescription() {
-        return "The `getEntityManager()` and the `flush()` methods of `PanacheEntityBase` are now static methods.";
-    }
+    @Getter
+    final String description = "The `getEntityManager()` and the `flush()` methods of `PanacheEntityBase` are now static methods.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

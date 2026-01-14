@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus;
 
+import lombok.Getter;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
@@ -26,15 +27,11 @@ import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 
 public class ConfigPropertiesToConfigMapping extends Recipe {
-    @Override
-    public String getDisplayName() {
-        return "Use `@ConfigMapping`";
-    }
+    @Getter
+    final String displayName = "Use `@ConfigMapping`";
 
-    @Override
-    public String getDescription() {
-        return "Migrate Quarkus configuration classes annotated with `@ConfigProperties` to the equivalent Smallrye `@ConfigMapping`.";
-    }
+    @Getter
+    final String description = "Migrate Quarkus configuration classes annotated with `@ConfigProperties` to the equivalent Smallrye `@ConfigMapping`.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
+import lombok.Getter;
 import org.openrewrite.*;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
@@ -27,15 +28,11 @@ import static java.util.Collections.singletonList;
 
 public class UseIdentifierOnDefaultKafkaBroker extends Recipe {
 
-    @Override
-    public String getDisplayName() {
-        return "Use `@Identifier(\"default-kafka-broker\")`";
-    }
+    @Getter
+    final String displayName = "Use `@Identifier(\"default-kafka-broker\")`";
 
-    @Override
-    public String getDescription() {
-        return "Use `@io.smallrye.common.annotation.Identifier` on default kafka broker configuration.";
-    }
+    @Getter
+    final String description = "Use `@io.smallrye.common.annotation.Identifier` on default kafka broker configuration.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

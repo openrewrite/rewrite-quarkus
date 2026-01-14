@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
+import lombok.Getter;
 import org.openrewrite.*;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaParser;
@@ -35,15 +36,11 @@ public class UseReactivePanacheMongoEntityBaseUniT extends Recipe {
     private static final MethodMatcher UPDATE_MATCHER = new MethodMatcher("io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase update()");
     private static final MethodMatcher PERSIST_OR_UPDATE_MATCHER = new MethodMatcher("io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntityBase persistOrUpdate()");
 
-    @Override
-    public String getDisplayName() {
-        return "Use `Uni<T extends ReactivePanacheMongoEntityBase>`";
-    }
+    @Getter
+    final String displayName = "Use `Uni<T extends ReactivePanacheMongoEntityBase>`";
 
-    @Override
-    public String getDescription() {
-        return "The `persist()`, `update()`, and `persistOrUpdate()` methods now return a `Uni<T extends ReactivePanacheMongoEntityBase>` instead of a `Uni<Void>` to allow chaining the methods.";
-    }
+    @Getter
+    final String description = "The `persist()`, `update()`, and `persistOrUpdate()` methods now return a `Uni<T extends ReactivePanacheMongoEntityBase>` instead of a `Uni<Void>` to allow chaining the methods.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

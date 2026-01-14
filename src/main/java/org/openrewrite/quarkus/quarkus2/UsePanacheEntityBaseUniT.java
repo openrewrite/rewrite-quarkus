@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus.quarkus2;
 
+import lombok.Getter;
 import org.openrewrite.*;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaParser;
@@ -54,15 +55,11 @@ public class UsePanacheEntityBaseUniT extends Recipe {
                 ).collect(toList()));
     }
 
-    @Override
-    public String getDisplayName() {
-        return "Use `Uni<T extends PanacheEntityBase>`";
-    }
+    @Getter
+    final String displayName = "Use `Uni<T extends PanacheEntityBase>`";
 
-    @Override
-    public String getDescription() {
-        return "The `persist()` and `persistAndFlush()` methods now return an `Uni<T extends PanacheEntityBase>` instead of an `Uni<Void>` to allow chaining the methods.";
-    }
+    @Getter
+    final String description = "The `persist()` and `persistAndFlush()` methods now return an `Uni<T extends PanacheEntityBase>` instead of an `Uni<Void>` to allow chaining the methods.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
