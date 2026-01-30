@@ -16,7 +16,8 @@
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2Migration
 displayName: Migrate JavaEE to Quarkus 2
-description: These recipes help with the migration of a JavaEE application using EJBs and Hibernate to Quarkus 2. Additional transformations like JSF, JMS, Quarkus Tests may be necessary.
+description: These recipes help with the migration of a JavaEE application using EJBs and Hibernate to Quarkus 2. Additional transformations like JSF, JMS, Quarkus Tests may be necessary.preconditions:
+  - org.openrewrite.Singleton
 recipeList:
   - org.openrewrite.quarkus.migrate.javaee.AddQuarkus2MavenPlugins
   - org.openrewrite.quarkus.migrate.javaee.AddQuarkus2Dependencies
@@ -29,6 +30,8 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.quarkus.migrate.javaee.AddQuarkus2Dependencies
 displayName: Add Quarkus 2 dependencies
 description: Add Quarkus 2 dependencies to the project.
+preconditions:
+  - org.openrewrite.Singleton
 recipeList:
   # Add Basic Quarkus Extensions
   - org.openrewrite.java.dependencies.AddDependency:
@@ -63,6 +66,8 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.quarkus.migrate.javaee.RemoveJavaEEDependencies
 displayName: Remove JavaEE dependencies
 description: Remove JavaEE dependencies from the project.
+preconditions:
+  - org.openrewrite.Singleton
 recipeList:
   # Remove JavaEE dependencies
   - org.openrewrite.java.dependencies.RemoveDependency:
@@ -80,6 +85,8 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.quarkus.migrate.javaee.AddQuarkus2MavenPlugins
 displayName: Migrate JavaEE Maven Dependencies to Quarkus 2
 description: Upgrade Standard JavaEE dependencies to Quarkus 2 dependencies.
+preconditions:
+  - org.openrewrite.Singleton
 recipeList:
   # Add Quarkus BOM
   - org.openrewrite.maven.AddManagedDependency:
@@ -139,6 +146,8 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
 displayName: Migrate JavaEE Code to Quarkus 2
 description: Migrate Standard JavaEE Code to Quarkus 2.
+preconditions:
+  - org.openrewrite.Singleton
 recipeList:
   # Convert some EJB annotations to CDI
   - org.openrewrite.java.ChangeType:
