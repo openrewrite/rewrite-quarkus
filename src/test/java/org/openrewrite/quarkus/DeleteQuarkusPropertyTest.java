@@ -182,11 +182,8 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
 
         @Test
         void deleteValueOnDefaultProfileOnly() {
-            // intentional 2 blank lines because the compiler will remove the first one
             @Language("yml")
             String after = """
-
-
               '%dev':
                 quarkus:
                   hibernate-search-orm:
