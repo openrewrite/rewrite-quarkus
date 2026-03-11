@@ -15,6 +15,8 @@
  */
 package org.openrewrite.quarkus;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.openrewrite.internal.StringUtils;
 
 import java.util.List;
@@ -22,10 +24,8 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 final class QuarkusProfileUtils {
-
-    private QuarkusProfileUtils() {
-    }
 
     static String getKeyWithoutProfile(String propertyKey) {
         if (propertyKey.isEmpty() || propertyKey.charAt(0) != '%') {

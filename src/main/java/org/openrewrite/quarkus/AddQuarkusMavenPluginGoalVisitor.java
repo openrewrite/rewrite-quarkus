@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus;
 
+import lombok.RequiredArgsConstructor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.maven.MavenIsoVisitor;
 import org.openrewrite.maven.search.FindPlugin;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+@RequiredArgsConstructor
 public class AddQuarkusMavenPluginGoalVisitor extends MavenIsoVisitor<ExecutionContext> {
     private static final Predicate<? super Xml.Tag> TAG_KEY_NAME_MATCHES = tag -> "goal".equals(tag.getName());
     private static final Predicate<? super Xml.Tag> TAG_HAS_CONTENT = tag -> tag.getContent() != null && tag.getContent().size() == 1;
@@ -32,10 +34,6 @@ public class AddQuarkusMavenPluginGoalVisitor extends MavenIsoVisitor<ExecutionC
     private static final BiPredicate<? super Xml.Tag, String> TAG_CONTENT_MATCHES = (tag, str) -> ((Xml.CharData) tag.getContent().get(0)).getText().equals(str);
 
     private final String goalName;
-
-    public AddQuarkusMavenPluginGoalVisitor(String goalName) {
-        this.goalName = goalName;
-    }
 
 
     @Override
