@@ -32,7 +32,7 @@ class FindQuarkusPropertiesTest {
 
     @Test
     void validationOptions() {
-        FindQuarkusProperties recipe = new FindQuarkusProperties("quarkus.http.port", null, null, null);
+        var recipe = new FindQuarkusProperties("quarkus.http.port", null, null, null);
         assertThat(recipe.validate().isValid()).isTrue();
 
         recipe = new FindQuarkusProperties("quarkus.http.port", "dev", null, null);
