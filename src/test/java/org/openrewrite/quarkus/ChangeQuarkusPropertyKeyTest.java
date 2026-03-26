@@ -54,7 +54,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnDefaultProfileOnly() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
@@ -76,7 +76,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnlyOnSpecificProfile() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %prod.quarkus.hibernate-search-orm."unitname".indexing.plan.synchronization.strategy=async
@@ -100,7 +100,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnAllProfiles() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=async
@@ -122,7 +122,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnAllProfilesBecauseDefault() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=async
@@ -144,7 +144,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnCustomPath() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.indexing.plan.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
@@ -213,7 +213,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnDefaultProfileOnly() {
             @Language("yml")
-            String after = """
+            var after = """
               quarkus:
                 hibernate-search-orm:
                   indexing:
@@ -258,7 +258,7 @@ class ChangeQuarkusPropertyKeyTest {
 
         @Test
         void changeKeyOnlyOnSpecificProfile() {
-            @Language("yml") String after = """
+            @Language("yml") var after = """
               quarkus:
                 hibernate-search-orm:
                   automatic-indexing:
@@ -314,7 +314,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnAllProfiles() {
             @Language("yml")
-            String after = """
+            var after = """
               quarkus:
                 hibernate-search-orm:
                   indexing:
@@ -364,7 +364,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyOnCustomPath() {
             @Language("yml")
-            String after = """
+            var after = """
               quarkus:
                 hibernate-search-orm:
                   indexing:
@@ -414,7 +414,7 @@ class ChangeQuarkusPropertyKeyTest {
         @Test
         void changeKeyWithQueryEndingInWildcard() {
             @Language("yml")
-            String after = """
+            var after = """
               quarkus:
                 hoobernate-search-orm:
                   automatic-indexing:

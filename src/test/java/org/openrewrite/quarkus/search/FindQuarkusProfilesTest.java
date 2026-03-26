@@ -36,7 +36,7 @@ class FindQuarkusProfilesTest implements RewriteTest {
     @Test
     void propertiesFile() {
         @Language("properties")
-        String source = """
+        var source = """
           quarkus.http.port=8080
           %dev.quarkus.http.port=9090
           %staging,prod.quarkus.http.root-path=/quarkus
@@ -55,7 +55,7 @@ class FindQuarkusProfilesTest implements RewriteTest {
     @Test
     void yamlFile() {
         @Language("yml")
-        String source = """
+        var source = """
           quarkus:
             http:
               port: 8080

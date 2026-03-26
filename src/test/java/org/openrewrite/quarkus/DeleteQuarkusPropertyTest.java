@@ -57,7 +57,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
         @Test
         void deleteValueOnDefaultProfileOnly() {
             @Language("properties")
-            String after = """
+            var after = """
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
               %dev.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=sync
@@ -75,7 +75,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
         @Test
         void deleteValueOnlyOnSpecificProfile() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
@@ -183,7 +183,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
         @Test
         void deleteValueOnDefaultProfileOnly() {
             @Language("yml")
-            String after = """
+            var after = """
               '%dev':
                 quarkus:
                   hibernate-search-orm:
@@ -216,7 +216,7 @@ class DeleteQuarkusPropertyTest implements RewriteTest {
 
         @Test
         void deleteValueOnlyOnSpecificProfile() {
-            @Language("yml") String after = """
+            @Language("yml") var after = """
               quarkus:
                 hibernate-search-orm:
                   automatic-indexing:

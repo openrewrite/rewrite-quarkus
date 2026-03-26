@@ -54,7 +54,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueOnDefaultProfileOnly() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=async
@@ -76,7 +76,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueOnlyOnSpecificProfile() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=read-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=sync
               %prod.quarkus.hibernate-search-orm."unitname".automatic-indexing.synchronization.strategy=async
@@ -100,7 +100,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueAllProfiles() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
@@ -122,7 +122,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueAllProfilesBecauseDefault() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
@@ -144,7 +144,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueOnCustomPath() {
             @Language("properties")
-            String after = """
+            var after = """
               quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %dev.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
               %staging,prod.quarkus.hibernate-search-orm.automatic-indexing.synchronization.strategy=write-sync
@@ -213,7 +213,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueOnDefaultProfileOnly() {
             @Language("yml")
-            String after = """
+            var after = """
               quarkus:
                 hibernate-search-orm:
                   automatic-indexing:
@@ -256,7 +256,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
 
         @Test
         void changeValueOnlyOnSpecificProfile() {
-            @Language("yml") String after = """
+            @Language("yml") var after = """
               quarkus:
                 hibernate-search-orm:
                   automatic-indexing:
@@ -310,7 +310,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueOnAllProfiles() {
             @Language("yml")
-            String after = """
+            var after = """
               quarkus:
                 hibernate-search-orm:
                   automatic-indexing:
@@ -354,7 +354,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         @Test
         void changeValueOnCustomPath() {
             @Language("yml")
-            String after = """
+            var after = """
               quarkus:
                 hibernate-search-orm:
                   automatic-indexing:
