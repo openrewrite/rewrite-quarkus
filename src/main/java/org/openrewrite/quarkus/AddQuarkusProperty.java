@@ -93,7 +93,7 @@ public class AddQuarkusProperty extends Recipe {
                 if (t instanceof Yaml.Documents) {
                     t = createMergeYamlVisitor().getVisitor().visit(t, ctx);
                 } else if (t instanceof Properties.File) {
-                    t = new AddProperty(propertyName(property, profile), value, comment, null, null)
+                    t = new AddProperty(propertyName(property, profile), value, comment, null, null, null, null)
                             .getVisitor().visit(t, ctx);
                 }
                 return t;
