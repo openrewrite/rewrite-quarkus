@@ -100,6 +100,8 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                             newValue,
                             null,
                             null,
+                            null,
+                            null,
                             null
                     ).getVisitor().visit(tree, ctx);
 
@@ -110,6 +112,8 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                         tree = new org.openrewrite.properties.AddProperty(
                                 key,
                                 value,
+                                null,
+                                null,
                                 null,
                                 null,
                                 null
