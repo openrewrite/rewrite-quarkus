@@ -32,7 +32,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
     @Test
     void convertJavaEEToQuarkusDependencies1() {
         rewriteRun(
-          spec -> spec.expectedCyclesThatMakeChanges(2),
           // language=xml
           pomXml(
             """
@@ -305,18 +304,9 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
 
                 <dependencies>
                   <dependency>
-                    <groupId>io.quarkus</groupId>
-                    <artifactId>quarkus-junit5</artifactId>
-                    <scope>test</scope>
-                  </dependency>
-                  <dependency>
-                    <groupId>io.rest-assured</groupId>
-                    <artifactId>rest-assured</artifactId>
-                    <scope>test</scope>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
+                    <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                    <artifactId>jackson-jaxrs-json-provider</artifactId>
+                    <version>2.12.3</version>
                   </dependency>
                   <dependency>
                     <groupId>commons-beanutils</groupId>
@@ -348,9 +338,18 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
                     <artifactId>quarkus-undertow</artifactId>
                   </dependency>
                   <dependency>
-                    <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                    <artifactId>jackson-jaxrs-json-provider</artifactId>
-                    <version>2.12.3</version>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                  </dependency>
+                  <dependency>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-junit5</artifactId>
+                    <scope>test</scope>
+                  </dependency>
+                  <dependency>
+                    <groupId>io.rest-assured</groupId>
+                    <artifactId>rest-assured</artifactId>
+                    <scope>test</scope>
                   </dependency>
                   <dependency>
                     <groupId>junit</groupId>
