@@ -79,7 +79,7 @@ public class Slf4jToQuarkusLogger extends Recipe {
                         List<Expression> args = ListUtils.mapFirst(mi.getArguments(), arg ->
                                 arg instanceof J.Literal && ((J.Literal) arg).getValue() instanceof String ? ((J.Literal) arg)
                                         .withValue(((String) ((J.Literal) arg).getValue()).replace("{}", "%s"))
-                                        .withValueSource((((J.Literal) arg).getValueSource()).replace("{}", "%s")) : arg);
+                                        .withValueSource(((J.Literal) arg).getValueSource().replace("{}", "%s")) : arg);
                         String placeholders = String.join(", ", nCopies(args.size(), "#{any()}"));
                         String template = String.format("Log.%s%s(%s)", mi.getSimpleName(), 1 < args.size() ? "f" : "", placeholders);
                         return JavaTemplate.builder(template)
