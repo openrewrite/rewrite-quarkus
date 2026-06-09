@@ -4,3 +4,5 @@ build/
 .boot-releases
 out/
 .vscode/
+
+.context/
