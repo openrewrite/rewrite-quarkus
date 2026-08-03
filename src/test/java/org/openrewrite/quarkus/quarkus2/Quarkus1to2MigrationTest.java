@@ -30,8 +30,11 @@ class Quarkus1to2MigrationTest implements RewriteTest {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
             .classpath(
-              "quarkus-qute", "qute-core", "mongodb-driver-core",
-              "quarkus-mongodb-client", "mongodb-driver-sync"
+              "quarkus-qute",
+              "qute-core",
+              "mongodb-driver-core",
+              "quarkus-mongodb-client",
+              "mongodb-driver-sync"
             )
             .dependsOn(
               """

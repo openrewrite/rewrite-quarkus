@@ -28,7 +28,11 @@ class UseReactivePanacheMongoEntityBaseUniTTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpath("quarkus-mongodb-panache", "mutiny", "persistence-api", "reactive-streams")
+            .classpath(
+                "quarkus-mongodb-panache",
+                "mutiny",
+                "persistence-api",
+                "reactive-streams")
           )
           .recipe(new UseReactivePanacheMongoEntityBaseUniT());
     }

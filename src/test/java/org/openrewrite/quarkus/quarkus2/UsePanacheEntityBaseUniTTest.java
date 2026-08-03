@@ -28,7 +28,11 @@ class UsePanacheEntityBaseUniTTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpath("quarkus-hibernate-reactive-panache", "mutiny", "persistence-api", "reactive-streams")
+            .classpath(
+                "quarkus-hibernate-reactive-panache",
+                "mutiny",
+                "persistence-api",
+                "reactive-streams")
           )
           .recipe(new UsePanacheEntityBaseUniT());
     }
