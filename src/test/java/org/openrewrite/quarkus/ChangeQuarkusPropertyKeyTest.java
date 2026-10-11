@@ -604,5 +604,27 @@ class ChangeQuarkusPropertyKeyTest {
               )
             );
         }
+
+        @Test
+        void changeKeyUnderPlainDottedKey() {
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.http\\.cors$",
+                "quarkus.http.cors.enabled",
+                null, null, null)),
+              yaml(
+                """
+                  quarkus.http.cors: true
+                  """,
+                """
+                  quarkus:
+                    http:
+                      cors:
+                        enabled: true
+                  """,
+                spec -> spec.path("src/main/resources/application.yaml")
+              )
+            );
+        }
     }
 }

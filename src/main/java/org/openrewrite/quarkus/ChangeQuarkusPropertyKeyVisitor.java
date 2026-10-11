@@ -30,13 +30,15 @@ import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.emptySet;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 @RequiredArgsConstructor
 class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext> {
@@ -132,7 +134,10 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
 
     private @Nullable Tree visitYamlDocuments(Tree tree, ExecutionContext ctx) {
         Set<Yaml.Mapping.Entry> existingProperties = FindQuarkusProperties.find((Yaml.Documents) tree, oldPropertyKey, profile, changeAllProfiles);
-        Set<String> dottedKeys = existingProperties.isEmpty() ? emptySet() : findDottedKeys((Yaml.Documents) tree);
+        if (existingProperties.isEmpty()) {
+            return tree;
+        }
+        Set<String> dottedKeys = findQuotedDottedKeys((Yaml.Documents) tree);
         for (Yaml.Mapping.Entry entry : existingProperties) {
             String originalKey = entry.getKey().getValue();
             String keyWithoutProfile = QuarkusProfileUtils.getKeyWithoutProfile(originalKey);
@@ -140,7 +145,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
             String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(originalKey);
 
             if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
-                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, entry, profiles, dottedKeys);
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, entry, Arrays.asList(profiles), dottedKeys);
             } else {
                 List<String> remainingProfiles = new ArrayList<>(existingProperties.size());
                 for (String profile : profiles) {
@@ -150,11 +155,11 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                 }
 
                 // Remove the old property containing the original key with multiple profiles
-                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, entry, profile != null ? new String[]{profile} : new String[0], dottedKeys);
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, entry, profile != null ? singletonList(profile) : emptyList(), dottedKeys);
 
                 if (!remainingProfiles.isEmpty()) {
-                    // Add a new property for the matched profile with the transformed key
-                    tree = mergeYamlEntry(tree, ctx, keyWithoutProfile, entry, remainingProfiles.toArray(new String[0]), dottedKeys);
+                    // Add a property containing the value for the remaining unmatched profiles with the original key
+                    tree = mergeYamlEntry(tree, ctx, keyWithoutProfile, entry, remainingProfiles, dottedKeys);
                 }
             }
         }
@@ -175,11 +180,13 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         return input;
     }
 
-    private static Set<String> findDottedKeys(Yaml.Documents documents) {
+    private static Set<String> findQuotedDottedKeys(Yaml.Documents documents) {
         return new YamlIsoVisitor<Set<String>>() {
             @Override
             public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<String> dottedKeys) {
-                if (entry.getKey().getValue().contains(".")) {
+                if (entry.getKey() instanceof Yaml.Scalar &&
+                    ((Yaml.Scalar) entry.getKey()).getStyle() != Yaml.Scalar.Style.PLAIN &&
+                    entry.getKey().getValue().contains(".")) {
                     dottedKeys.add(entry.getKey().getValue());
                 }
                 return super.visitMappingEntry(entry, dottedKeys);
@@ -187,10 +194,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         }.reduce(documents, new HashSet<>());
     }
 
-    private static @Nullable Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, Yaml.Mapping.Entry entry, String[] profiles, Set<String> dottedKeys) {
-        if (tree == null) {
-            return null;
-        }
+    private static @Nullable Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, Yaml.Mapping.Entry entry, List<String> profiles, Set<String> dottedKeys) {
         Tree t = new org.openrewrite.yaml.DeleteProperty(oldKey, false, null, null)
                 .getVisitor()
                 .visit(tree, ctx);
@@ -201,10 +205,10 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
      * Merges the key with a placeholder value, which is then swapped for the original value, so that
      * values such as sequences, block scalars and quoted strings are carried over as-is.
      */
-    private static @Nullable Tree mergeYamlEntry(@Nullable Tree tree, ExecutionContext ctx, String key, Yaml.Mapping.Entry entry, String[] profiles, Set<String> dottedKeys) {
+    private static @Nullable Tree mergeYamlEntry(@Nullable Tree tree, ExecutionContext ctx, String key, Yaml.Mapping.Entry entry, List<String> profiles, Set<String> dottedKeys) {
         Tree merged = new org.openrewrite.yaml.MergeYaml(
                 "$",
-                QuarkusProfileUtils.formatKey(key, VALUE_PLACEHOLDER, String.join(",", profiles), dottedKeys),
+                QuarkusProfileUtils.formatKey(key, VALUE_PLACEHOLDER, profiles, dottedKeys),
                 false,
                 null, null, null, null, null)
                 .getVisitor().visit(tree, ctx);
@@ -254,7 +258,10 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
     }
 
     private static String shiftLines(String text, int shift) {
-        String[] lines = text.split("\\n", -1);
+        if (text.indexOf('\n') < 0) {
+            return text;
+        }
+        String[] lines = text.split("\n", -1);
         for (int i = 1; i < lines.length; i++) {
             String line = lines[i];
             if (StringUtils.isBlank(line)) {

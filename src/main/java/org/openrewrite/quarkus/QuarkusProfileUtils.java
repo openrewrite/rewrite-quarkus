@@ -17,15 +17,13 @@ package org.openrewrite.quarkus;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.openrewrite.internal.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singletonList;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 final class QuarkusProfileUtils {
@@ -52,23 +50,21 @@ final class QuarkusProfileUtils {
         return propertyKey.substring(1, index).split(",");
     }
 
-    static String formatKey(String property, String value, String profile, Set<String> dottedSegments) {
+    static String formatKey(String property, String value, List<String> profiles, Set<String> dottedSegments) {
         StringBuilder yaml = new StringBuilder();
-        formatKey(yaml, property, value, StringUtils.isNotEmpty(profile) ? singletonList(profile) : emptyList(), dottedSegments);
+        appendKey(yaml, property, value, profiles, dottedSegments);
         return yaml.toString();
     }
 
     static void formatKey(StringBuilder yaml, String property, String value, List<String> profiles) {
-        formatKey(yaml, property, value, profiles, emptySet());
-        if (yaml.length() > 0) {
-            yaml.append(System.lineSeparator());
-        }
+        appendKey(yaml, property, value, profiles, emptySet());
+        yaml.append(System.lineSeparator());
     }
 
     /**
      * @param dottedSegments keys containing dots that must stay a single segment, like a quoted persistence unit name
      */
-    private static void formatKey(StringBuilder yaml, String property, String value, List<String> profiles, Set<String> dottedSegments) {
+    private static void appendKey(StringBuilder yaml, String property, String value, List<String> profiles, Set<String> dottedSegments) {
         List<String> propertyParts = splitKey(property, dottedSegments);
 
         String indent = "";
@@ -93,21 +89,25 @@ final class QuarkusProfileUtils {
     private static List<String> splitKey(String property, Set<String> dottedSegments) {
         List<String> parts = new ArrayList<>();
         int start = 0;
-        nextPart:
         while (start < property.length()) {
-            for (String dotted : dottedSegments) {
-                int end = start + dotted.length();
-                if (property.startsWith(dotted, start) && (end == property.length() || property.charAt(end) == '.')) {
-                    parts.add('"' + dotted + '"');
-                    start = end + 1;
-                    continue nextPart;
-                }
-            }
+            String dotted = dottedSegmentAt(property, start, dottedSegments);
             int dot = property.indexOf('.', start);
-            int end = dot == -1 ? property.length() : dot;
-            parts.add(property.substring(start, end));
+            int end = dotted != null ? start + dotted.length() : dot == -1 ? property.length() : dot;
+            parts.add(dotted != null ? '"' + dotted + '"' : property.substring(start, end));
             start = end + 1;
         }
         return parts;
+    }
+
+    private static @Nullable String dottedSegmentAt(String property, int start, Set<String> dottedSegments) {
+        String longest = null;
+        for (String dotted : dottedSegments) {
+            int end = start + dotted.length();
+            if (property.startsWith(dotted, start) && (end == property.length() || property.charAt(end) == '.') &&
+                (longest == null || dotted.length() > longest.length())) {
+                longest = dotted;
+            }
+        }
+        return longest;
     }
 }
