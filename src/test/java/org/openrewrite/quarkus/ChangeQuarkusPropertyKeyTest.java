@@ -520,6 +520,43 @@ class ChangeQuarkusPropertyKeyTest {
         }
 
         @Test
+        void changeKeyWithLiteralBlockValueFollowedByOtherKeys() {
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.oidc\\.authentication\\.pkce-secret",
+                "quarkus.oidc.state-secret",
+                null, null, null)),
+              yaml(
+                """
+                  quarkus:
+                    oidc:
+                      authentication:
+                        pkce-secret: |
+                          first line
+                          second line
+                        cookie-path: /
+                      tenant-id: main
+                    log:
+                      level: INFO
+                  """,
+                """
+                  quarkus:
+                    oidc:
+                      authentication:
+                        cookie-path: /
+                      tenant-id: main
+                      state-secret: |
+                        first line
+                        second line
+                    log:
+                      level: INFO
+                  """,
+                spec -> spec.path("src/main/resources/application.yaml")
+              )
+            );
+        }
+
+        @Test
         void changeKeyWithQuotedValue() {
             rewriteRun(
               spec -> spec.recipe(new ChangeQuarkusPropertyKey(

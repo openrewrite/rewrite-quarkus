@@ -66,7 +66,6 @@ final class QuarkusProfileUtils {
     }
 
     /**
-     * @param value          the value as YAML, which may span several lines, like a block sequence or a literal scalar
      * @param dottedSegments keys containing dots that must stay a single segment, like a quoted persistence unit name
      */
     private static void formatKey(StringBuilder yaml, String property, String value, List<String> profiles, Set<String> dottedSegments) {
@@ -88,7 +87,7 @@ final class QuarkusProfileUtils {
             yaml.append(indent).append(part).append(":");
             indent = indent + "  ";
         }
-        appendValue(yaml, value, indent);
+        yaml.append(" ").append(value);
     }
 
     private static List<String> splitKey(String property, Set<String> dottedSegments) {
@@ -110,24 +109,5 @@ final class QuarkusProfileUtils {
             start = end + 1;
         }
         return parts;
-    }
-
-    private static void appendValue(StringBuilder yaml, String value, String indent) {
-        String[] lines = value.split("\\R", -1);
-        if (!lines[0].isEmpty()) {
-            yaml.append(' ').append(lines[0]);
-        }
-        int baseIndent = Integer.MAX_VALUE;
-        for (int i = 1; i < lines.length; i++) {
-            if (!StringUtils.isBlank(lines[i])) {
-                baseIndent = Math.min(baseIndent, StringUtils.indexOfNonWhitespace(lines[i]));
-            }
-        }
-        for (int i = 1; i < lines.length; i++) {
-            yaml.append(System.lineSeparator());
-            if (!StringUtils.isBlank(lines[i])) {
-                yaml.append(indent).append(lines[i].substring(baseIndent));
-            }
-        }
     }
 }

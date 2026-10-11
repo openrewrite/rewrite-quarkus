@@ -17,13 +17,15 @@ package org.openrewrite.quarkus;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
-import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.SourceFile;
 import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.internal.ListUtils;
+import org.openrewrite.internal.StringUtils;
 import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.quarkus.search.FindQuarkusProperties;
+import org.openrewrite.yaml.ShiftIndentVisitor;
 import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 
@@ -38,6 +40,8 @@ import static java.util.Collections.emptySet;
 
 @RequiredArgsConstructor
 class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext> {
+
+    private static final String VALUE_PLACEHOLDER = "__rewrite_quarkus_property_value__";
 
     final String oldPropertyKey;
 
@@ -130,14 +134,13 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         Set<Yaml.Mapping.Entry> existingProperties = FindQuarkusProperties.find((Yaml.Documents) tree, oldPropertyKey, profile, changeAllProfiles);
         Set<String> dottedKeys = existingProperties.isEmpty() ? emptySet() : findDottedKeys((Yaml.Documents) tree);
         for (Yaml.Mapping.Entry entry : existingProperties) {
-            String originalEntryValue = printValue(entry.getValue(), (Yaml.Documents) tree);
             String originalKey = entry.getKey().getValue();
             String keyWithoutProfile = QuarkusProfileUtils.getKeyWithoutProfile(originalKey);
             String transformedKey = replaceRegex(oldPropertyKey, newPropertyKey, keyWithoutProfile);
             String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(originalKey);
 
             if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
-                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profiles, dottedKeys);
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, entry, profiles, dottedKeys);
             } else {
                 List<String> remainingProfiles = new ArrayList<>(existingProperties.size());
                 for (String profile : profiles) {
@@ -147,16 +150,11 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                 }
 
                 // Remove the old property containing the original key with multiple profiles
-                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profile != null ? new String[]{profile} : new String[0], dottedKeys);
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, entry, profile != null ? new String[]{profile} : new String[0], dottedKeys);
 
                 if (!remainingProfiles.isEmpty()) {
                     // Add a new property for the matched profile with the transformed key
-                    tree = new org.openrewrite.yaml.MergeYaml(
-                            "$",
-                            QuarkusProfileUtils.formatKey(keyWithoutProfile, originalEntryValue, String.join(",", remainingProfiles), dottedKeys),
-                            false,
-                            null, null, null, null, null)
-                            .getVisitor().visit(tree, ctx);
+                    tree = mergeYamlEntry(tree, ctx, keyWithoutProfile, entry, remainingProfiles.toArray(new String[0]), dottedKeys);
                 }
             }
         }
@@ -177,19 +175,6 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         return input;
     }
 
-    private static String printValue(Yaml.Block value, Yaml.Documents documents) {
-        String printed = value.print(new Cursor(new Cursor(null, Cursor.ROOT_VALUE), documents));
-        int start = 0;
-        while (start < printed.length() && (printed.charAt(start) == ' ' || printed.charAt(start) == '\t')) {
-            start++;
-        }
-        int end = printed.length();
-        while (end > start && Character.isWhitespace(printed.charAt(end - 1))) {
-            end--;
-        }
-        return printed.substring(start, end);
-    }
-
     private static Set<String> findDottedKeys(Yaml.Documents documents) {
         return new YamlIsoVisitor<Set<String>>() {
             @Override
@@ -202,18 +187,90 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         }.reduce(documents, new HashSet<>());
     }
 
-    private static @Nullable Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, String value, String[] profiles, Set<String> dottedKeys) {
+    private static @Nullable Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, Yaml.Mapping.Entry entry, String[] profiles, Set<String> dottedKeys) {
         if (tree == null) {
             return null;
         }
         Tree t = new org.openrewrite.yaml.DeleteProperty(oldKey, false, null, null)
                 .getVisitor()
                 .visit(tree, ctx);
-        return new org.openrewrite.yaml.MergeYaml(
+        return mergeYamlEntry(t, ctx, newKey, entry, profiles, dottedKeys);
+    }
+
+    /**
+     * Merges the key with a placeholder value, which is then swapped for the original value, so that
+     * values such as sequences, block scalars and quoted strings are carried over as-is.
+     */
+    private static @Nullable Tree mergeYamlEntry(@Nullable Tree tree, ExecutionContext ctx, String key, Yaml.Mapping.Entry entry, String[] profiles, Set<String> dottedKeys) {
+        Tree merged = new org.openrewrite.yaml.MergeYaml(
                 "$",
-                QuarkusProfileUtils.formatKey(newKey, value, String.join(",", profiles), dottedKeys),
+                QuarkusProfileUtils.formatKey(key, VALUE_PLACEHOLDER, String.join(",", profiles), dottedKeys),
                 false,
                 null, null, null, null, null)
-                .getVisitor().visit(t, ctx);
+                .getVisitor().visit(tree, ctx);
+        return new YamlIsoVisitor<ExecutionContext>() {
+            @Override
+            public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry e, ExecutionContext ctx) {
+                if (e.getValue() instanceof Yaml.Scalar && VALUE_PLACEHOLDER.equals(((Yaml.Scalar) e.getValue()).getValue())) {
+                    int shift = indent(e.getPrefix()) - indent(entry.getPrefix());
+                    return e.withValue(withoutTrailingLineBreak(shiftIndent(entry.getValue(), shift)));
+                }
+                return super.visitMappingEntry(e, ctx);
+            }
+        }.visit(merged, ctx);
+    }
+
+    private static Yaml.Block shiftIndent(Yaml.Block value, int shift) {
+        if (shift == 0) {
+            return value;
+        }
+        return (Yaml.Block) new ShiftIndentVisitor<Integer>(value, shift) {
+            @Override
+            public Yaml.Scalar visitScalar(Yaml.Scalar scalar, Integer p) {
+                Yaml.Scalar s = super.visitScalar(scalar, p);
+                return s.withValue(shiftLines(s.getValue(), shift));
+            }
+        }.visitNonNull(value, 0);
+    }
+
+    /**
+     * A block scalar includes the line break that ends it, which the entry following its new location already has.
+     */
+    private static Yaml.Block withoutTrailingLineBreak(Yaml.Block block) {
+        if (block instanceof Yaml.Scalar) {
+            Yaml.Scalar scalar = (Yaml.Scalar) block;
+            String value = scalar.getValue();
+            return value.endsWith("\n") ? scalar.withValue(value.substring(0, value.length() - (value.endsWith("\r\n") ? 2 : 1))) : scalar;
+        }
+        if (block instanceof Yaml.Sequence && ((Yaml.Sequence) block).getOpeningBracketPrefix() == null) {
+            Yaml.Sequence sequence = (Yaml.Sequence) block;
+            return sequence.withEntries(ListUtils.mapLast(sequence.getEntries(), e -> e.withBlock(withoutTrailingLineBreak(e.getBlock()))));
+        }
+        if (block instanceof Yaml.Mapping && ((Yaml.Mapping) block).getOpeningBracePrefix() == null) {
+            Yaml.Mapping mapping = (Yaml.Mapping) block;
+            return mapping.withEntries(ListUtils.mapLast(mapping.getEntries(), e -> e.withValue(withoutTrailingLineBreak(e.getValue()))));
+        }
+        return block;
+    }
+
+    private static String shiftLines(String text, int shift) {
+        String[] lines = text.split("\\n", -1);
+        for (int i = 1; i < lines.length; i++) {
+            String line = lines[i];
+            if (StringUtils.isBlank(line)) {
+                continue;
+            }
+            if (shift > 0) {
+                lines[i] = StringUtils.repeat(" ", shift) + line;
+            } else if (StringUtils.indexOfNonWhitespace(line) >= -shift) {
+                lines[i] = line.substring(-shift);
+            }
+        }
+        return String.join("\n", lines);
+    }
+
+    private static int indent(String prefix) {
+        int lineBreak = prefix.lastIndexOf('\n');
+        return lineBreak < 0 ? 0 : prefix.length() - lineBreak - 1;
     }
 }
