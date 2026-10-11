@@ -17,19 +17,24 @@ package org.openrewrite.quarkus;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.SourceFile;
 import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.quarkus.search.FindQuarkusProperties;
+import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.emptySet;
 
 @RequiredArgsConstructor
 class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext> {
@@ -123,15 +128,16 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
 
     private @Nullable Tree visitYamlDocuments(Tree tree, ExecutionContext ctx) {
         Set<Yaml.Mapping.Entry> existingProperties = FindQuarkusProperties.find((Yaml.Documents) tree, oldPropertyKey, profile, changeAllProfiles);
+        Set<String> dottedKeys = existingProperties.isEmpty() ? emptySet() : findDottedKeys((Yaml.Documents) tree);
         for (Yaml.Mapping.Entry entry : existingProperties) {
-            String originalEntryValue = ((Yaml.Scalar) entry.getValue()).getValue();
+            String originalEntryValue = printValue(entry.getValue(), (Yaml.Documents) tree);
             String originalKey = entry.getKey().getValue();
             String keyWithoutProfile = QuarkusProfileUtils.getKeyWithoutProfile(originalKey);
             String transformedKey = replaceRegex(oldPropertyKey, newPropertyKey, keyWithoutProfile);
             String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(originalKey);
 
             if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
-                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profiles);
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profiles, dottedKeys);
             } else {
                 List<String> remainingProfiles = new ArrayList<>(existingProperties.size());
                 for (String profile : profiles) {
@@ -141,13 +147,13 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                 }
 
                 // Remove the old property containing the original key with multiple profiles
-                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profile != null ? new String[]{profile} : new String[0]);
+                tree = replaceYamlKey(tree, ctx, originalKey, transformedKey, originalEntryValue, profile != null ? new String[]{profile} : new String[0], dottedKeys);
 
                 if (!remainingProfiles.isEmpty()) {
                     // Add a new property for the matched profile with the transformed key
                     tree = new org.openrewrite.yaml.MergeYaml(
                             "$",
-                            QuarkusProfileUtils.formatKey(keyWithoutProfile, originalEntryValue, String.join(",", remainingProfiles)),
+                            QuarkusProfileUtils.formatKey(keyWithoutProfile, originalEntryValue, String.join(",", remainingProfiles), dottedKeys),
                             false,
                             null, null, null, null, null)
                             .getVisitor().visit(tree, ctx);
@@ -171,7 +177,32 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
         return input;
     }
 
-    private static @Nullable Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, String value, String[] profiles) {
+    private static String printValue(Yaml.Block value, Yaml.Documents documents) {
+        String printed = value.print(new Cursor(new Cursor(null, Cursor.ROOT_VALUE), documents));
+        int start = 0;
+        while (start < printed.length() && (printed.charAt(start) == ' ' || printed.charAt(start) == '\t')) {
+            start++;
+        }
+        int end = printed.length();
+        while (end > start && Character.isWhitespace(printed.charAt(end - 1))) {
+            end--;
+        }
+        return printed.substring(start, end);
+    }
+
+    private static Set<String> findDottedKeys(Yaml.Documents documents) {
+        return new YamlIsoVisitor<Set<String>>() {
+            @Override
+            public Yaml.Mapping.Entry visitMappingEntry(Yaml.Mapping.Entry entry, Set<String> dottedKeys) {
+                if (entry.getKey().getValue().contains(".")) {
+                    dottedKeys.add(entry.getKey().getValue());
+                }
+                return super.visitMappingEntry(entry, dottedKeys);
+            }
+        }.reduce(documents, new HashSet<>());
+    }
+
+    private static @Nullable Tree replaceYamlKey(@Nullable Tree tree, ExecutionContext ctx, String oldKey, String newKey, String value, String[] profiles, Set<String> dottedKeys) {
         if (tree == null) {
             return null;
         }
@@ -180,7 +211,7 @@ class ChangeQuarkusPropertyKeyVisitor extends TreeVisitor<Tree, ExecutionContext
                 .visit(tree, ctx);
         return new org.openrewrite.yaml.MergeYaml(
                 "$",
-                QuarkusProfileUtils.formatKey(newKey, value, String.join(",", profiles)),
+                QuarkusProfileUtils.formatKey(newKey, value, String.join(",", profiles), dottedKeys),
                 false,
                 null, null, null, null, null)
                 .getVisitor().visit(t, ctx);

@@ -19,9 +19,12 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.openrewrite.internal.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -49,14 +52,25 @@ final class QuarkusProfileUtils {
         return propertyKey.substring(1, index).split(",");
     }
 
-    static String formatKey(String property, String value, String profile) {
+    static String formatKey(String property, String value, String profile, Set<String> dottedSegments) {
         StringBuilder yaml = new StringBuilder();
-        formatKey(yaml, property, value, StringUtils.isNotEmpty(profile) ? singletonList(profile) : emptyList());
+        formatKey(yaml, property, value, StringUtils.isNotEmpty(profile) ? singletonList(profile) : emptyList(), dottedSegments);
         return yaml.toString();
     }
 
     static void formatKey(StringBuilder yaml, String property, String value, List<String> profiles) {
-        String[] propertyParts = property.split("\\.");
+        formatKey(yaml, property, value, profiles, emptySet());
+        if (yaml.length() > 0) {
+            yaml.append(System.lineSeparator());
+        }
+    }
+
+    /**
+     * @param value          the value as YAML, which may span several lines, like a block sequence or a literal scalar
+     * @param dottedSegments keys containing dots that must stay a single segment, like a quoted persistence unit name
+     */
+    private static void formatKey(StringBuilder yaml, String property, String value, List<String> profiles, Set<String> dottedSegments) {
+        List<String> propertyParts = splitKey(property, dottedSegments);
 
         String indent = "";
         if (!profiles.isEmpty()) {
@@ -66,17 +80,54 @@ final class QuarkusProfileUtils {
                     .append(System.lineSeparator());
             indent = indent + "  ";
         }
-        for (int i = 0; i < propertyParts.length; i++) {
-            String part = propertyParts[i];
+        for (int i = 0; i < propertyParts.size(); i++) {
+            String part = propertyParts.get(i);
             if (i > 0 && yaml.length() > 0) {
                 yaml.append(System.lineSeparator());
             }
             yaml.append(indent).append(part).append(":");
             indent = indent + "  ";
         }
-        yaml.append(" ").append(value);
-        if (yaml.length() > 0) {
+        appendValue(yaml, value, indent);
+    }
+
+    private static List<String> splitKey(String property, Set<String> dottedSegments) {
+        List<String> parts = new ArrayList<>();
+        int start = 0;
+        nextPart:
+        while (start < property.length()) {
+            for (String dotted : dottedSegments) {
+                int end = start + dotted.length();
+                if (property.startsWith(dotted, start) && (end == property.length() || property.charAt(end) == '.')) {
+                    parts.add('"' + dotted + '"');
+                    start = end + 1;
+                    continue nextPart;
+                }
+            }
+            int dot = property.indexOf('.', start);
+            int end = dot == -1 ? property.length() : dot;
+            parts.add(property.substring(start, end));
+            start = end + 1;
+        }
+        return parts;
+    }
+
+    private static void appendValue(StringBuilder yaml, String value, String indent) {
+        String[] lines = value.split("\\R", -1);
+        if (!lines[0].isEmpty()) {
+            yaml.append(' ').append(lines[0]);
+        }
+        int baseIndent = Integer.MAX_VALUE;
+        for (int i = 1; i < lines.length; i++) {
+            if (!StringUtils.isBlank(lines[i])) {
+                baseIndent = Math.min(baseIndent, StringUtils.indexOfNonWhitespace(lines[i]));
+            }
+        }
+        for (int i = 1; i < lines.length; i++) {
             yaml.append(System.lineSeparator());
+            if (!StringUtils.isBlank(lines[i])) {
+                yaml.append(indent).append(lines[i].substring(baseIndent));
+            }
         }
     }
 }

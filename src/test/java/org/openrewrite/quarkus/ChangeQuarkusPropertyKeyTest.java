@@ -454,5 +454,118 @@ class ChangeQuarkusPropertyKeyTest {
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/custom.yaml"))
             );
         }
+
+        @Test
+        void changeKeyWithSequenceValue() {
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.micrometer\\.binder\\.vertx\\.match-patterns",
+                "quarkus.micrometer.binder.http-server.match-patterns",
+                null, null, null)),
+              yaml(
+                """
+                  quarkus:
+                    micrometer:
+                      binder:
+                        vertx:
+                          match-patterns:
+                            - /api/fruits/[0-9]+=/api/fruits/{id}
+                            - /api/legumes/[0-9]+=/api/legumes/{id}
+                  """,
+                """
+                  quarkus:
+                    micrometer:
+                      binder:
+                        http-server:
+                          match-patterns:
+                            - /api/fruits/[0-9]+=/api/fruits/{id}
+                            - /api/legumes/[0-9]+=/api/legumes/{id}
+                  """,
+                spec -> spec.path("src/main/resources/application.yaml")
+              )
+            );
+        }
+
+        @Test
+        void changeKeyWithLiteralBlockValueOnProfile() {
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.oidc\\.authentication\\.pkce-secret",
+                "quarkus.oidc.authentication.state-secret",
+                null, null, null)),
+              yaml(
+                """
+                  '%dev':
+                    quarkus:
+                      oidc:
+                        authentication:
+                          pkce-secret: |
+                            first line
+                            second line
+                  greeting: hello
+                  """,
+                """
+                  greeting: hello
+                  '%dev':
+                    quarkus:
+                      oidc:
+                        authentication:
+                          state-secret: |
+                            first line
+                            second line
+                  """,
+                spec -> spec.path("src/main/resources/application.yaml")
+              )
+            );
+        }
+
+        @Test
+        void changeKeyWithQuotedValue() {
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.infinispan-client\\.auth-password",
+                "quarkus.infinispan-client.password",
+                null, null, null)),
+              yaml(
+                """
+                  quarkus:
+                    infinispan-client:
+                      auth-password: "s3cr3t: #1"
+                  """,
+                """
+                  quarkus:
+                    infinispan-client:
+                      password: "s3cr3t: #1"
+                  """,
+                spec -> spec.path("src/main/resources/application.yaml")
+              )
+            );
+        }
+
+        @Test
+        void changeKeyUnderQuotedDottedKey() {
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyKey(
+                "quarkus\\.hibernate-orm\\.(.+)\\.batch-fetch-size",
+                "quarkus.hibernate-orm.$1.fetch.batch-size",
+                null, null, null)),
+              yaml(
+                """
+                  quarkus:
+                    hibernate-orm:
+                      "my.pu":
+                        batch-fetch-size: 16
+                  """,
+                """
+                  quarkus:
+                    hibernate-orm:
+                      "my.pu":
+                        fetch:
+                          batch-size: 16
+                  """,
+                spec -> spec.path("src/main/resources/application.yaml")
+              )
+            );
+        }
     }
 }
