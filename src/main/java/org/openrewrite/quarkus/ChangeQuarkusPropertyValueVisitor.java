@@ -74,7 +74,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
             if (oldValue == null || oldValue.equals(entry.getValue().getText())) {
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(entry.getKey());
 
-                if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
+                if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles) || isOnlyProfile(profiles)) {
                     tree = new org.openrewrite.properties.ChangePropertyValue(entry.getKey(), newValue, oldValue, false, false)
                             .getVisitor()
                             .visit(tree, ctx);
@@ -126,6 +126,11 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
         return tree;
     }
 
+    // An entry scoped to just the target profile needs no split, which also covers the one this visitor adds.
+    private boolean isOnlyProfile(String[] profiles) {
+        return profiles.length == 1 && profiles[0].equals(profile);
+    }
+
     private @Nullable Tree visitYamlDocuments(Tree tree, ExecutionContext ctx) {
         Set<Yaml.Mapping.Entry> existingProperties = FindQuarkusProperties.find((Yaml.Documents) tree, propertyKey, profile, changeAllProfiles);
         for (Yaml.Mapping.Entry entry : existingProperties) {
@@ -135,7 +140,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
 
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(key);
 
-                if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles)) {
+                if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles) || isOnlyProfile(profiles)) {
                     tree = new org.openrewrite.yaml.ChangePropertyValue(key, newValue, oldValue, false, null, null)
                             .getVisitor()
                             .visit(tree, ctx);

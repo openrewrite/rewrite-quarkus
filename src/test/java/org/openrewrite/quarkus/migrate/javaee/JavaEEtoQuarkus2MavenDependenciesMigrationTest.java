@@ -212,7 +212,6 @@ class JavaEEtoQuarkus2MavenDependenciesMigrationTest implements RewriteTest {
     @Test
     void convertJavaEEToQuarkusDependencies2() {
         rewriteRun(
-          spec -> spec.expectedCyclesThatMakeChanges(2),
           // language=xml
           pomXml(
             """
