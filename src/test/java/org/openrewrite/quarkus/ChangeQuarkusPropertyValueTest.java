@@ -98,6 +98,14 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
         }
 
         @Test
+        void profileMustMatchWholeName() {
+            rewriteRun(
+              spec -> spec.recipe(new ChangeQuarkusPropertyValue("quarkus\\.foo", "new", null, "prod", false, null)),
+              properties("%preprod.quarkus.foo=old", spec -> spec.path("src/main/resources/application.properties"))
+            );
+        }
+
+        @Test
         void changeValueAllProfiles() {
             @Language("properties")
             var after = """

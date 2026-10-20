@@ -192,7 +192,7 @@ public class FindQuarkusProperties extends Recipe {
             return "^(?:%[\\w\\-_,]+\\.)?" + propertyKey + "$";
         }
         if (StringUtils.isNotEmpty(profile)) {
-            return "^%[\\w\\-_,]*(?:" + profile + ")[\\w\\-_,]*\\." + propertyKey + "$";
+            return "^%(?:[\\w\\-]+,)*(?:" + profile + ")(?:,[\\w\\-]+)*\\." + propertyKey + "$";
         }
         return "^" + propertyKey + "$";
     }
