@@ -21,6 +21,8 @@ recipeList:
   - org.openrewrite.quarkus.migrate.javaee.AddQuarkus2MavenPlugins
   - org.openrewrite.quarkus.migrate.javaee.AddQuarkus2Dependencies
   - org.openrewrite.quarkus.migrate.javaee.RemoveJavaEEDependencies
+  # AddQuarkus2MavenPlugins sorts dependencies before AddQuarkus2Dependencies adds more
+  - org.openrewrite.maven.SortDependencies
 
   - org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration
 

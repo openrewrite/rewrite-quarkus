@@ -92,7 +92,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyValue(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "write-sync",
-                null, "staging", false, null)).expectedCyclesThatMakeChanges(2),
+                null, "staging", false, null)),
               properties(sourceProperties, after, spec -> spec.path("src/main/resources/application.properties"))
             );
         }
@@ -302,7 +302,7 @@ class ChangeQuarkusPropertyValueTest implements RewriteTest {
               spec -> spec.recipe(new ChangeQuarkusPropertyValue(
                 "quarkus\\.hibernate-search-orm(\\..*)?\\.automatic-indexing\\.synchronization\\.strategy",
                 "write-sync",
-                null, "staging", false, null)).expectedCyclesThatMakeChanges(2),
+                null, "staging", false, null)),
               yaml(sourceYaml, after, spec -> spec.path("src/main/resources/application.yaml"))
             );
         }
