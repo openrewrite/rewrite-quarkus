@@ -32,29 +32,32 @@ dependencies {
 
     testImplementation("org.openrewrite:rewrite-test")
 
-    testImplementation("javax.xml.ws:jaxws-api:2.3.1")
-    testImplementation("jakarta.xml.ws:jakarta.xml.ws-api:3.0.0")
-
-    testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
-    testImplementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.0")
-
-    testImplementation("javax:javaee-api:7.0")
-
     testRuntimeOnly("org.openrewrite:rewrite-java-21")
-
-    testRuntimeOnly("io.quarkus:quarkus-grpc:1.13.+")
-    testRuntimeOnly("io.quarkus:quarkus-qute:1.13.+")
-    testRuntimeOnly("io.quarkus:quarkus-mongodb-client:1.13.+")
-    testRuntimeOnly("io.quarkus:quarkus-mongodb-panache:1.13.+")
-    testRuntimeOnly("io.quarkus:quarkus-hibernate-orm-panache:1.13.+")
-    testRuntimeOnly("io.quarkus:quarkus-hibernate-reactive-panache:1.13.+")
-    testRuntimeOnly("io.smallrye.reactive:mutiny:0.12.+")
-
-    testRuntimeOnly("jakarta.inject:jakarta.inject-api:2.0.1")
-    testRuntimeOnly("jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0")
     testRuntimeOnly("org.projectlombok:lombok:latest.release")
 }
 
 recipeDependencies {
     parserClasspath("io.quarkus:quarkus-core:3.+")
+
+    testParserClasspath("io.quarkus:quarkus-arc:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-grpc:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-qute:1.13.7.Final")
+    testParserClasspath("io.quarkus.qute:qute-core:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-mongodb-client:1.13.7.Final")
+    testParserClasspath("org.mongodb:mongodb-driver-core:4.2.3")
+    testParserClasspath("org.mongodb:mongodb-driver-sync:4.2.3")
+    testParserClasspath("io.quarkus:quarkus-mongodb-panache:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-mongodb-panache-common:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-hibernate-orm-panache:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-hibernate-orm-panache-common:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-hibernate-reactive-panache:1.13.7.Final")
+    testParserClasspath("io.quarkus:quarkus-hibernate-reactive-panache-common:1.13.7.Final")
+    testParserClasspath("io.smallrye.reactive:mutiny:0.14.0")
+    testParserClasspath("org.reactivestreams:reactive-streams:1.0.3")
+    testParserClasspath("io.smallrye.common:smallrye-common-annotation:1.6.0")
+    testParserClasspath("jakarta.persistence:jakarta.persistence-api:2.2.3")
+    testParserClasspath("javax:javaee-api:7.0")
+    testParserClasspath("jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0")
+    testParserClasspath("jakarta.inject:jakarta.inject-api:2.0.1")
+    testParserClasspath("org.slf4j:slf4j-api:1.7.36")
 }

@@ -18,6 +18,7 @@ package org.openrewrite.quarkus;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
@@ -30,7 +31,7 @@ class Quarkus1to113MigrationTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpath("mutiny", "reactive-streams"))
+            .classpathFromResources(new InMemoryExecutionContext(), "mutiny-0", "reactive-streams-1"))
           .recipe(Environment.builder()
             .scanRuntimeClasspath("org.openrewrite.quarkus")
             .build()
@@ -103,7 +104,7 @@ class Quarkus1to113MigrationTest implements RewriteTest {
         public void defaults(RecipeSpec spec) {
             spec.parser(JavaParser.fromJavaVersion()
                 .logCompilationWarningsAndErrors(true)
-                .classpath("mutiny", "reactive-streams"))
+                .classpathFromResources(new InMemoryExecutionContext(), "mutiny-0", "reactive-streams-1"))
               .recipe(Environment.builder()
                 .scanRuntimeClasspath("org.openrewrite.quarkus")
                 .build()

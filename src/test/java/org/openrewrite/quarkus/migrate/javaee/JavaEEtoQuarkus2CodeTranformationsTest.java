@@ -17,6 +17,7 @@ package org.openrewrite.quarkus.migrate.javaee;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -29,7 +30,7 @@ class JavaEEtoQuarkus2CodeTranformationsTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpath("javaee-api"))
+            .classpathFromResources(new InMemoryExecutionContext(), "javaee-api-7"))
           .recipeFromResources("org.openrewrite.quarkus.migrate.javaee.JavaEEtoQuarkus2CodeMigration");
     }
 

@@ -17,6 +17,8 @@ package org.openrewrite.quarkus;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -28,13 +30,14 @@ class Slf4JToQuarkusLoggerTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipes(new Slf4jToQuarkusLogger())
-          .parser(JavaParser.fromJavaVersion().classpath(
-            "jakarta.enterprise.cdi-api",
-            "jakarta.inject",
-            "lombok",
-            "quarkus-core",
-            "slf4j-api"
-          ));
+          .parser(JavaParser.fromJavaVersion().classpath(ListUtils.concatAll(
+            JavaParser.dependenciesFromResources(new InMemoryExecutionContext(),
+              "jakarta.enterprise.cdi-api-4",
+              "jakarta.inject-api-2",
+              "quarkus-core-3",
+              "slf4j-api-1"),
+            JavaParser.dependenciesFromClasspath("lombok")
+          )));
     }
 
     @DocumentExample

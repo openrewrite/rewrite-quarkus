@@ -17,6 +17,7 @@ package org.openrewrite.quarkus.quarkus2;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -28,11 +29,12 @@ class UseReactivePanacheMongoEntityBaseUniTTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpath(
-                "quarkus-mongodb-panache",
-                "mutiny",
-                "persistence-api",
-                "reactive-streams")
+            .classpathFromResources(new InMemoryExecutionContext(),
+                "quarkus-mongodb-panache-1",
+                "quarkus-mongodb-panache-common-1",
+                "mutiny-0",
+                "jakarta.persistence-api-2",
+                "reactive-streams-1")
           )
           .recipe(new UseReactivePanacheMongoEntityBaseUniT());
     }
