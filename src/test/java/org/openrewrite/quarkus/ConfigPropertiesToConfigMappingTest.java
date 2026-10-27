@@ -18,6 +18,7 @@ package org.openrewrite.quarkus;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.Issue;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
@@ -30,7 +31,7 @@ class ConfigPropertiesToConfigMappingTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpath("quarkus-arc")
+            .classpathFromResources(new InMemoryExecutionContext(), "quarkus-arc-1")
           ).recipe(new ConfigPropertiesToConfigMapping());
     }
 
