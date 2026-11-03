@@ -29,7 +29,10 @@ class UsePanacheEntityBaseStaticMethodsTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion()
             .logCompilationWarningsAndErrors(true)
-            .classpathFromResources(new InMemoryExecutionContext(), "quarkus-hibernate-orm-panache-1", "quarkus-hibernate-orm-panache-common-1", "jakarta.persistence-api-2")
+            .classpathFromResources(new InMemoryExecutionContext(),
+                "quarkus-hibernate-orm-panache-1",
+                "quarkus-hibernate-orm-panache-common-1",
+                "jakarta.persistence-api-2")
             .dependsOn(
               """
                 package org.openrewrite.example;
