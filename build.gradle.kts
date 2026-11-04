@@ -22,6 +22,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:latest.release")
 
     implementation(platform("org.openrewrite:rewrite-bom:${rewriteVersion}"))
+    implementation("org.openrewrite:rewrite-gradle")
     implementation("org.openrewrite:rewrite-java")
     implementation("org.openrewrite:rewrite-maven")
     implementation("org.openrewrite:rewrite-properties")
