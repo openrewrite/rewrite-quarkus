@@ -32,6 +32,7 @@ import org.openrewrite.semver.Semver;
 import org.openrewrite.semver.VersionComparator;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 
@@ -98,7 +99,10 @@ public class UpgradeQuarkusGradleProperties extends ScanningRecipe<Set<MavenRepo
                         values.put(entry.getKey(), entry.getValue().getText());
                     }
                 }
-                String currentVersion = values.getOrDefault(PLATFORM_VERSION, values.get(PLUGIN_VERSION));
+                String currentVersion = Stream.of(values.get(PLATFORM_VERSION), values.get(PLUGIN_VERSION))
+                        .filter(Objects::nonNull)
+                        .min((v1, v2) -> comparator.compare(null, v1, v2))
+                        .orElse(null);
                 if (currentVersion == null) {
                     return file;
                 }
