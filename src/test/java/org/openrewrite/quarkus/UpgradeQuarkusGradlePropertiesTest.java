@@ -69,6 +69,25 @@ class UpgradeQuarkusGradlePropertiesTest implements RewriteTest {
     }
 
     @Test
+    void upgradePluginVersionBehindPlatformVersion() {
+        rewriteRun(
+          spec -> spec.recipe(new UpgradeQuarkusGradleProperties("3.20.0")),
+          //language=properties
+          properties(
+            """
+              quarkusPluginVersion=3.15.1
+              quarkusPlatformVersion=3.20.0
+              """,
+            """
+              quarkusPluginVersion=3.20.0
+              quarkusPlatformVersion=3.20.0
+              """,
+            spec -> spec.path("gradle.properties")
+          )
+        );
+    }
+
+    @Test
     void doNotDowngrade() {
         rewriteRun(
           //language=properties
