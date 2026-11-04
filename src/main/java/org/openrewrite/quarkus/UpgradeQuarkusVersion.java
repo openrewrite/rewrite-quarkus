@@ -21,7 +21,6 @@ import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.Validated;
 import org.openrewrite.java.dependencies.UpgradeDependencyVersion;
-import org.openrewrite.maven.UpgradePluginVersion;
 import org.openrewrite.semver.Semver;
 
 import java.util.Arrays;
@@ -53,7 +52,7 @@ public class UpgradeQuarkusVersion extends Recipe {
                 new UpgradeDependencyVersion("io.quarkus.platform", "quarkus-bom", newVersion, null, null, null),
                 new UpgradeDependencyVersion("io.quarkus", "quarkus-bom", newVersion, null, null, null),
                 new UpgradeDependencyVersion("io.quarkus", "quarkus-universe-bom", newVersion, null, null, null),
-                new UpgradePluginVersion("io.quarkus*", "quarkus-maven-plugin", newVersion, null, null, null),
+                new org.openrewrite.maven.UpgradePluginVersion("io.quarkus*", "quarkus-maven-plugin", newVersion, null, null, null),
                 new org.openrewrite.gradle.plugins.UpgradePluginVersion("io.quarkus", newVersion, null),
                 new UpgradeQuarkusGradleProperties(newVersion)
         );
