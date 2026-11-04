@@ -20,9 +20,6 @@ import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openrewrite.properties.Assertions.properties;
 
@@ -46,14 +43,10 @@ class UpgradeQuarkusGradlePropertiesTest implements RewriteTest {
               quarkusPlatformArtifactId=quarkus-bom
               quarkusPlatformVersion=3.15.1
               """,
-            spec -> spec.path("gradle.properties").after(after -> {
-                Matcher platform = Pattern.compile("quarkusPlatformVersion=(3\\.20\\.\\d+(\\.\\d+)?)").matcher(after);
-                assertThat(platform.find()).isTrue();
-                assertThat(after)
-                  .contains("quarkusPluginVersion=" + platform.group(1))
-                  .contains("quarkusPlatformGroupId=io.quarkus.platform");
-                return after;
-            })
+            spec -> spec.path("gradle.properties").after(after -> assertThat(after)
+              .containsPattern("(?ms)quarkusPluginVersion=(3\\.20\\.\\d+(\\.\\d+)?)$.*quarkusPlatformVersion=\\1$")
+              .contains("quarkusPlatformGroupId=io.quarkus.platform")
+              .actual())
           )
         );
     }
@@ -68,10 +61,9 @@ class UpgradeQuarkusGradlePropertiesTest implements RewriteTest {
               quarkusPlatformArtifactId=quarkus-bom
               quarkusPlatformVersion=3.15.1
               """,
-            spec -> spec.path("gradle.properties").after(after -> {
-                assertThat(after).containsPattern("quarkusPlatformVersion=3\\.20\\.\\d+(\\.\\d+)?$");
-                return after;
-            })
+            spec -> spec.path("gradle.properties").after(after -> assertThat(after)
+              .containsPattern("quarkusPlatformVersion=3\\.20\\.\\d+(\\.\\d+)?$")
+              .actual())
           )
         );
     }
