@@ -33,7 +33,6 @@ dependencies {
 
     testImplementation("org.openrewrite:rewrite-test")
 
-    testRuntimeOnly("org.openrewrite:rewrite-java-21")
     testRuntimeOnly("org.projectlombok:lombok:latest.release")
 }
 
