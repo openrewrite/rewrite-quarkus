@@ -24,6 +24,7 @@ import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.search.UsesMethod;
 import org.openrewrite.java.tree.J;
+import org.openrewrite.java.tree.JavaType;
 
 public class MultiTransformHotStreamToMultiHotStream extends Recipe {
     private static final MethodMatcher HOT_STREAM_METHOD_MATCHER = new MethodMatcher("io.smallrye.mutiny.groups.MultiTransform toHotStream()");
@@ -50,8 +51,28 @@ public class MultiTransformHotStreamToMultiHotStream extends Recipe {
                 if (mi.getSelect() instanceof J.MethodInvocation) {
                     J.MethodInvocation mSelect = (J.MethodInvocation) mi.getSelect();
                     if (TRANSFORM_METHOD_MATCHER.matches(mSelect) || SELECT_METHOD_MATCHER.matches(mSelect)) {
-                        return mi.withSelect(mSelect.getSelect());
+                        return onReceiverOf(mi, mSelect);
                     }
+                }
+            }
+            return mi;
+        }
+
+        private static J.MethodInvocation onReceiverOf(J.MethodInvocation toHotStream, J.MethodInvocation group) {
+            J.MethodInvocation mi = toHotStream.withSelect(group.getSelect());
+            JavaType.Method hotStream = mi.getMethodType();
+            JavaType.Method groupType = group.getMethodType();
+            if (hotStream == null || groupType == null) {
+                return mi;
+            }
+            JavaType.FullyQualified multi = groupType.getDeclaringType();
+            for (JavaType.Method method : multi.getMethods()) {
+                if ("toHotStream".equals(method.getName()) && method.getParameterTypes().isEmpty()) {
+                    // The methods Multi lists are declared on the raw Multi and return Multi<T>. The parser declares
+                    // a call's method on Multi<T>, as transform()'s is, and has it return Multi of the type the call
+                    // binds T to.
+                    return mi.withName(mi.getName().withType(
+                            method.withDeclaringType(multi).withReturnType(hotStream.getReturnType())));
                 }
             }
             return mi;

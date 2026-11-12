@@ -21,6 +21,7 @@ import org.openrewrite.DocumentExample;
 import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.config.Environment;
 import org.openrewrite.java.JavaParser;
+import org.openrewrite.test.RecipeQualityValidation;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -42,6 +43,8 @@ class Quarkus1to113MigrationTest implements RewriteTest {
     @Test
     void changeMultiTransformAndByTakingFirst() {
         rewriteRun(
+          // ChangeMethodName keeps the old method's type, such as MultiTransform for transform() renamed to select()
+          spec -> spec.recipeQualityValidation(RecipeQualityValidation.builder().parserTypedTrees(false).build()),
           java(
             """
               import io.smallrye.mutiny.Multi;

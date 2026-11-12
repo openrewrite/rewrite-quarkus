@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
+import org.openrewrite.test.RecipeQualityValidation;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -43,6 +44,8 @@ class UseReactivePanacheMongoEntityBaseUniTTest implements RewriteTest {
     @Test
     void replaceWithVoid() {
         rewriteRun(
+          // the classpath has Quarkus 1's Panache, whose persist() returns Uni<Void>, and the recipe writes Quarkus 2's
+          spec -> spec.recipeQualityValidation(RecipeQualityValidation.builder().parserTypedTrees(false).build()),
           java(
             """
               package org.openrewrite.example;
