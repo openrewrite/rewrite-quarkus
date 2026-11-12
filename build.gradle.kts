@@ -61,3 +61,8 @@ recipeDependencies {
     testParserClasspath("jakarta.inject:jakarta.inject-api:2.0.1")
     testParserClasspath("org.slf4j:slf4j-api:1.7.36")
 }
+
+tasks.withType<Test>().configureEach {
+    // Fails a test whose recipe gives the code it writes other types than a parser gives that code
+    systemProperty("org.openrewrite.test.parserTypedTrees", true)
+}
