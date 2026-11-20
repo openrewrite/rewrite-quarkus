@@ -21,8 +21,11 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.SourceFile;
 import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.properties.AddProperty;
+import org.openrewrite.properties.DeleteProperty;
 import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.quarkus.search.FindQuarkusProperties;
+import org.openrewrite.yaml.MergeYaml;
 import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.ArrayList;
@@ -70,12 +73,12 @@ public class DeleteQuarkusPropertyVisitor extends TreeVisitor<Tree, ExecutionCon
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(entry.getKey());
 
                 if (profiles.length == 0 || !Boolean.FALSE.equals(searchAllProfiles)) {
-                    tree = new org.openrewrite.properties.DeleteProperty(entry.getKey(), false)
+                    tree = new DeleteProperty(entry.getKey(), false)
                             .getVisitor()
                             .visit(tree, ctx);
                 } else {
                     // Remove the old property containing the original key with multiple profiles
-                    tree = new org.openrewrite.properties.DeleteProperty(entry.getKey(), false)
+                    tree = new DeleteProperty(entry.getKey(), false)
                             .getVisitor()
                             .visit(tree, ctx);
 
@@ -92,7 +95,7 @@ public class DeleteQuarkusPropertyVisitor extends TreeVisitor<Tree, ExecutionCon
                         // Add a property containing the value for the remaining unmatched profiles with the original key
                         String key = "%" + String.join(",", remainingProfiles) + "." + keyWithoutProfile;
                         String value = entry.getValue().getText();
-                        tree = new org.openrewrite.properties.AddProperty(
+                        tree = new AddProperty(
                                 key,
                                 value,
                                 null,
@@ -142,7 +145,7 @@ public class DeleteQuarkusPropertyVisitor extends TreeVisitor<Tree, ExecutionCon
                         QuarkusProfileUtils.formatKey(newProperties, keyWithoutProfile, originalEntryValue, remainingProfiles);
 
                         // Merge the new property with the existing properties
-                        tree = new org.openrewrite.yaml.MergeYaml(
+                        tree = new MergeYaml(
                                 "$",
                                 newProperties.toString(),
                                 false,
