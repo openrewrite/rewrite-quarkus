@@ -21,8 +21,12 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.SourceFile;
 import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.properties.AddProperty;
+import org.openrewrite.properties.ChangePropertyValue;
+import org.openrewrite.properties.DeleteProperty;
 import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.quarkus.search.FindQuarkusProperties;
+import org.openrewrite.yaml.MergeYaml;
 import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.ArrayList;
@@ -75,12 +79,12 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                 String[] profiles = QuarkusProfileUtils.getProfilesFromPropertyKey(entry.getKey());
 
                 if (profiles.length == 0 || !Boolean.FALSE.equals(changeAllProfiles) || isOnlyProfile(profiles)) {
-                    tree = new org.openrewrite.properties.ChangePropertyValue(entry.getKey(), newValue, oldValue, false, false)
+                    tree = new ChangePropertyValue(entry.getKey(), newValue, oldValue, false, false)
                             .getVisitor()
                             .visit(tree, ctx);
                 } else {
                     // Remove the old property containing the original key with multiple profiles
-                    tree = new org.openrewrite.properties.DeleteProperty(entry.getKey(), false)
+                    tree = new DeleteProperty(entry.getKey(), false)
                             .getVisitor()
                             .visit(tree, ctx);
 
@@ -95,7 +99,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
 
                     // Add a new property for the matched profile
                     String key = "%" + profile + "." + keyWithoutProfile;
-                    tree = new org.openrewrite.properties.AddProperty(
+                    tree = new AddProperty(
                             key,
                             newValue,
                             null,
@@ -109,7 +113,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                         // Add a property containing the value for the remaining unmatched profiles with the original key
                         key = "%" + String.join(",", remainingProfiles) + "." + keyWithoutProfile;
                         String value = entry.getValue().getText();
-                        tree = new org.openrewrite.properties.AddProperty(
+                        tree = new AddProperty(
                                 key,
                                 value,
                                 null,
@@ -170,7 +174,7 @@ class ChangeQuarkusPropertyValueVisitor extends TreeVisitor<Tree, ExecutionConte
                     }
 
                     // Merge the new property with the existing properties
-                    tree = new org.openrewrite.yaml.MergeYaml(
+                    tree = new MergeYaml(
                             "$",
                             newProperties.toString(),
                             false,
