@@ -15,6 +15,7 @@
  */
 package org.openrewrite.quarkus;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
@@ -87,43 +88,47 @@ class UpgradeQuarkusGradlePropertiesTest implements RewriteTest {
         );
     }
 
-    @Test
-    void doNotDowngrade() {
-        rewriteRun(
-          //language=properties
-          properties(
-            """
-              quarkusPluginVersion=3.21.0
-              quarkusPlatformVersion=3.21.0
-              """,
-            spec -> spec.path("gradle.properties")
-          )
-        );
-    }
+    @Nested
+    class NoChange {
 
-    @Test
-    void onlyGradleProperties() {
-        rewriteRun(
-          //language=properties
-          properties(
-            """
-              quarkusPlatformVersion=3.15.1
-              """,
-            spec -> spec.path("src/main/resources/application.properties")
-          )
-        );
-    }
+        @Test
+        void doNotDowngrade() {
+            rewriteRun(
+              //language=properties
+              properties(
+                """
+                  quarkusPluginVersion=3.21.0
+                  quarkusPlatformVersion=3.21.0
+                  """,
+                spec -> spec.path("gradle.properties")
+              )
+            );
+        }
 
-    @Test
-    void noQuarkusVersions() {
-        rewriteRun(
-          //language=properties
-          properties(
-            """
-              org.gradle.caching=true
-              """,
-            spec -> spec.path("gradle.properties")
-          )
-        );
+        @Test
+        void onlyGradleProperties() {
+            rewriteRun(
+              //language=properties
+              properties(
+                """
+                  quarkusPlatformVersion=3.15.1
+                  """,
+                spec -> spec.path("src/main/resources/application.properties")
+              )
+            );
+        }
+
+        @Test
+        void noQuarkusVersions() {
+            rewriteRun(
+              //language=properties
+              properties(
+                """
+                  org.gradle.caching=true
+                  """,
+                spec -> spec.path("gradle.properties")
+              )
+            );
+        }
     }
 }
